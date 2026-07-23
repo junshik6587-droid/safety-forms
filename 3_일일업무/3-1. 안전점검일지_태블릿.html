@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>안전점검일지</title>
+<style>
+  :root{ --line:#333; --hd:#1f4e79; --hdbg:#dbe5f1; --accent:#1f6feb; --ok:#127c2b; --no:#b02a2a; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; font-family:"맑은 고딕","Malgun Gothic",AppleGothic,sans-serif; color:#111; background:#f2f4f7; }
+  .wrap{ max-width:1000px; margin:0 auto; padding:12px; }
+  .paper{ background:#fff; padding:18px 20px 26px; box-shadow:0 1px 6px rgba(0,0,0,.15); }
+  .top{ display:flex; align-items:flex-start; gap:12px; }
+  h1{ flex:1; text-align:center; font-size:22px; margin:2px 0 12px; letter-spacing:3px; }
+  .appr{ border-collapse:collapse; font-size:11px; }
+  .appr td{ border:1px solid var(--line); text-align:center; }
+  .appr .h{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:3px 6px; }
+  .appr .b{ width:60px; height:40px; }
+  .meta{ display:flex; flex-wrap:wrap; gap:8px 18px; align-items:center; border:1.5px solid var(--line); padding:10px 12px; margin-bottom:10px; font-size:14px; }
+  .meta label{ font-weight:700; margin-right:4px; }
+  .meta input[type=text],.meta input[type=date]{ border:none; border-bottom:1px solid #999; font-size:14px; padding:3px 4px; font-family:inherit; }
+  .sitesel,.wxsel{ font-size:14px; font-weight:700; padding:5px 8px; font-family:inherit; border:1.5px solid var(--accent); border-radius:5px; color:var(--hd); }
+  .wxsel{ font-weight:400; border-color:#999; color:#111; }
+  table.grid{ width:100%; border-collapse:collapse; font-size:13px; margin-bottom:10px; }
+  table.grid th,table.grid td{ border:1px solid var(--line); padding:5px 6px; text-align:center; }
+  table.grid thead th{ background:var(--hdbg); color:var(--hd); font-size:12px; }
+  table.grid td.lbl{ background:var(--hdbg); color:var(--hd); font-weight:700; }
+  table.grid input{ width:100%; border:none; text-align:center; font-size:14px; font-family:inherit; padding:5px 2px; }
+  .work{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+  .work .box{ flex:1; min-width:220px; border:1.5px solid var(--line); }
+  .work .box .h{ background:var(--hdbg); color:var(--hd); font-weight:700; font-size:13px; padding:6px 8px; border-bottom:1px solid var(--line); }
+  .work textarea{ width:100%; min-height:80px; border:none; font-size:13px; font-family:inherit; padding:8px; resize:vertical; }
+  .chkttl{ background:var(--hd); color:#fff; font-weight:700; font-size:14px; padding:7px 10px; border-radius:6px 6px 0 0; }
+  table.chk{ width:100%; border-collapse:collapse; font-size:13px; }
+  table.chk th,table.chk td{ border:1px solid var(--line); padding:4px 6px; }
+  table.chk thead th{ background:var(--hdbg); color:var(--hd); font-size:12px; text-align:center; }
+  table.chk td.grp{ background:#eef3fb; color:var(--hd); font-weight:700; text-align:center; width:96px; }
+  table.chk td.item{ text-align:left; }
+  .seg{ display:flex; width:120px; margin:0 auto; }
+  .seg button{ flex:1; border:1px solid #ccc; background:#f4f6f8; font-size:12px; font-weight:700; padding:6px 0; cursor:pointer; font-family:inherit; color:#8a929c; }
+  .seg button.y.on{ background:var(--ok); color:#fff; border-color:var(--ok); }
+  .seg button.n.on{ background:var(--no); color:#fff; border-color:var(--no); }
+  .mini{ border:1px solid var(--accent); background:#fff; color:var(--accent); font-size:11px; font-weight:700; border-radius:5px; padding:2px 8px; cursor:pointer; font-family:inherit; float:right; }
+  .eqtbl{ width:100%; border-collapse:collapse; font-size:13px; }
+  .eqtbl th,.eqtbl td{ border:1px solid var(--line); padding:1px 3px; text-align:center; }
+  .eqtbl thead th{ background:#eef3fb; color:var(--hd); font-size:11px; padding:3px; }
+  .eqtbl select,.eqtbl input{ width:100%; border:none; font-size:13px; font-family:inherit; padding:5px 2px; text-align:center; background:transparent; }
+  .eqtbl select:focus,.eqtbl input:focus{ outline:2px solid var(--accent); outline-offset:-2px; }
+  .edu td.lbl{ background:var(--hdbg); color:var(--hd); font-weight:700; }
+  .vlabel{ writing-mode:vertical-rl; text-orientation:upright; letter-spacing:3px; padding:6px 2px; white-space:nowrap; text-align:center; }
+  .foot{ text-align:center; font-weight:700; font-size:12px; border:1.5px solid var(--line); padding:7px; margin-top:10px; background:#fafafa; }
+  .note{ border:1.5px solid var(--line); margin-top:10px; } .note .h{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:6px 8px; font-size:13px; }
+  .note textarea{ width:100%; min-height:56px; border:none; font-size:14px; font-family:inherit; padding:8px; resize:vertical; }
+  .controls{ position:sticky; bottom:0; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:12px; background:rgba(242,244,247,.95); margin-top:14px; }
+  .btn{ border:none; border-radius:8px; padding:12px 18px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; }
+  .btn.p{ background:var(--accent); color:#fff; } .btn.g{ background:#5b6470; color:#fff; } .btn.d{ background:#fff; color:#333; border:1.5px solid #bbb; }
+  @media print{
+    body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:0; }
+    .controls{ display:none !important; }
+    thead th,td.lbl,td.grp,.chkttl,.seg button.on,.appr .h{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    @page{ size:A4 portrait; margin:9mm; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="paper">
+  <h1>안 전 점 검 일 지</h1>
+
+  <div class="meta">
+    <div><label>현장명</label><select id="site" class="sitesel"></select></div>
+    <div><label>일자</label><input type="date" id="day"></div>
+    <div><label>날씨</label><select id="wx" class="wxsel"><option>맑음</option><option>흐림</option><option>비</option><option>눈</option></select></div>
+  </div>
+
+  <table class="grid">
+    <thead><tr><th>구분</th><th>직원</th><th>직영</th><th>협력업체</th><th>일계</th></tr></thead>
+    <tbody><tr><td class="lbl">투입인원(명)</td>
+      <td><input type="text" data-c="p_off"></td><td><input type="text" data-c="p_own"></td><td><input type="text" data-c="p_par"></td>
+      <td><input type="text" data-c="p_day"></td></tr></tbody>
+  </table>
+
+  <div class="work">
+    <div class="box"><div class="h">금일 주요작업</div><textarea data-c="w_work"></textarea></div>
+    <div class="box">
+      <div class="h">장비투입현황 <button type="button" class="mini" onclick="addEq()">＋ 장비</button></div>
+      <table class="eqtbl"><thead><tr><th>장비</th><th style="width:70px">대수</th></tr></thead><tbody id="eqrows"></tbody></table>
+    </div>
+  </div>
+
+  <div class="chkttl">안전점검사항 <span style="font-weight:400;font-size:12px">(각 항목 양호/불량 선택)</span></div>
+  <table class="chk">
+    <thead><tr><th style="width:96px">구분</th><th>점검항목</th><th style="width:130px">양호 / 불량</th></tr></thead>
+    <tbody id="chkbody"></tbody>
+  </table>
+
+  <table class="grid edu" style="margin-top:12px">
+    <thead><tr><th style="width:32px">구분</th><th>교육구분</th><th style="width:62px">인원</th><th style="width:108px">재해건수</th><th style="width:148px">특기사항<br>(행사,교육,점검 등)</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="lbl vlabel" rowspan="3">안전교육</td>
+        <td><input type="text" data-c="edu_g1"></td>
+        <td style="white-space:nowrap"><input type="text" data-c="edu_n1" style="width:38px"> 명</td>
+        <td class="lbl" rowspan="3" style="font-weight:400;color:#111;background:#fff">금일 <input type="text" data-c="acc_day" style="width:34px;border:none;border-bottom:1px solid #999;text-align:center"> 명<br>누계 <input type="text" data-c="acc_tot" style="width:34px;border:none;border-bottom:1px solid #999;text-align:center"> 명</td>
+        <td rowspan="3" style="padding:0"><textarea data-c="edu_note" style="width:100%;border:none;font-family:inherit;font-size:13px;min-height:82px;resize:vertical;padding:6px"></textarea></td>
+      </tr>
+      <tr><td><input type="text" data-c="edu_g2"></td><td style="white-space:nowrap"><input type="text" data-c="edu_n2" style="width:38px"> 명</td></tr>
+      <tr><td><input type="text" data-c="edu_g3"></td><td style="white-space:nowrap"><input type="text" data-c="edu_n3" style="width:38px"> 명</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note"><div class="h">순회점검 지시 및 추가사항</div><textarea data-c="patrol" style="min-height:70px"></textarea></div>
+
+  <div class="foot">- 위험성평가 전파일지, 안전조치 이행 및 작업중지권 확인, 건강상태확인 후면 첨부 -</div>
+ </div>
+</div>
+
+<div class="controls">
+  <button class="btn p" onclick="printDoc()">📄 PDF로 저장 / 인쇄</button>
+  <button class="btn d" onclick="allGood()">전체 양호</button>
+  <button class="btn d" onclick="saveDraft()">💾 임시저장</button>
+  <button class="btn g" onclick="clearAll()">전체 초기화</button>
+</div>
+
+<script src="../sites.js"></script>
+<script>
+const CHECKS = [
+  ["현장 정리정돈", ["작업장 및 주변 정리정돈 상태는?","작업용 공도구 정리정돈 상태는?","야적장 및 창고 정리정돈 상태는?"]],
+  ["개인보호구", ["근로자 개인보호구 착용상태는?","작업별 개인보호구는 적정한가?","불량·파손된 개인보호구는 없는가?"]],
+  ["작업용 공도구", ["작업 전 공도구 점검은 실시하였는가?","공도구 접지 및 보호커버 상태는?","전선 피복 및 플러그 상태는?"]],
+  ["안전시설", ["작업장내 추락위험구간은 없는가?","방호조치 미실시 개구부는 없는가?","근로자 이동통로는 확보되었는가?","낙하물 위험구간 방호조치는 되었는가?"]],
+  ["장비", ["장비작업계획은 수립하였는가?","작업 전 장비점검은 실시하였는가?","장비작업구간 신호수 배치하였는가?"]],
+  ["근로자", ["작업자가 작업내용을 숙지하였는가?","작업자의 건강상태는 양호한가?","불안전한 행동을 하지는 않는가?"]],
+  ["기계설비", ["기계설비 청소 및 정비상태는?","안전장치는 제거하지 않았는가?","작동상태에는 이상이 없는가?"]],
+  ["차량운행", ["현장내 규정속도 준수하고 있는가?","차량과 근로자 동선은 구분되었는가?"]],
+  ["기타", ["현장내 환경 저해요소는 없는가?","기타 잠재위험요인은 없는가?"]]
+];
+
+const DEFAULT_SITES=["아르시엘 방배 732 공동주택 신축공사","이태원동 106-2 단독주택 신축현장","보라동 20-1 단독주택 신축현장","평창동 496-4 단독주택"];
+function buildSites(){ const sel=document.getElementById('site'); sel.innerHTML='';
+  ((window.SITES && window.SITES.length)?window.SITES:DEFAULT_SITES).forEach(s=> sel.appendChild(new Option(s,s))); }
+
+function buildChecks(){
+  const tb=document.getElementById('chkbody'); tb.innerHTML='';
+  CHECKS.forEach((g,gi)=>{
+    g[1].forEach((it,ii)=>{
+      const tr=document.createElement('tr');
+    

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>안전보건협의체 회의록</title>
+<style>
+  :root{ --line:#333; --hd:#1f4e79; --hdbg:#dbe5f1; --accent:#1f6feb; --ok:#127c2b; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; font-family:"맑은 고딕","Malgun Gothic",AppleGothic,sans-serif; color:#111; background:#f2f4f7; }
+  .wrap{ max-width:1000px; margin:0 auto; padding:12px; }
+  .paper{ background:#fff; padding:18px 20px 26px; box-shadow:0 1px 6px rgba(0,0,0,.15); }
+  .top{ display:flex; align-items:flex-start; gap:12px; }
+  h1{ flex:1; text-align:center; font-size:21px; margin:2px 0 12px; letter-spacing:1.5px; }
+  .appr{ border-collapse:collapse; font-size:11px; }
+  .appr td{ border:1px solid var(--line); text-align:center; }
+  .appr .h{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:3px 6px; }
+  .appr .b{ width:46px; height:38px; }
+  .block{ border:1.5px solid var(--line); margin-bottom:10px; }
+  .brow{ display:flex; border-bottom:1px solid var(--line); font-size:14px; }
+  .brow:last-child{ border-bottom:none; }
+  .bl{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:8px 10px; min-width:110px; display:flex; align-items:center; }
+  .bc{ padding:6px 10px; flex:1; display:flex; align-items:center; flex-wrap:wrap; gap:6px 14px; }
+  .bc input[type=text],.bc input[type=date],.bc input[type=time]{ border:none; border-bottom:1px solid #999; font-size:14px; padding:3px 4px; font-family:inherit; }
+  .bc input.grow{ flex:1; min-width:150px; }
+  .sitesel{ font-size:14px; font-weight:700; padding:5px 8px; font-family:inherit; border:1.5px solid var(--accent); border-radius:5px; color:var(--hd); }
+  .chk{ display:inline-flex; align-items:center; gap:5px; cursor:pointer; user-select:none; font-size:13px; }
+  .chk .b{ width:19px; height:19px; border:1.6px solid var(--line); display:inline-flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; }
+  .chk.on .b{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  .sec{ border:1.5px solid var(--line); margin-bottom:10px; }
+  .sec .h{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:6px 10px; font-size:13px; border-bottom:1px solid var(--line); }
+  .sec textarea{ width:100%; min-height:64px; border:none; font-size:14px; font-family:inherit; padding:8px 10px; resize:vertical; }
+  table{ width:100%; border-collapse:collapse; font-size:13px; }
+  th,td{ border:1px solid var(--line); padding:3px 5px; text-align:center; }
+  thead th{ background:var(--hdbg); color:var(--hd); font-size:12px; padding:6px 4px; }
+  .colno{ width:36px; } .colgb{ width:120px; } .colpos{ width:120px; } .colnm{ width:110px; } .colsig{ width:auto; }
+  td.cell-in input{ width:100%; border:none; text-align:center; font-size:14px; padding:6px 2px; font-family:inherit; background:transparent; }
+  td.cell-in input:focus{ outline:2px solid var(--accent); outline-offset:-2px; }
+  td.cell-in select{ width:100%; border:none; font-size:13px; font-family:inherit; text-align:center; }
+  .sigcell{ position:relative; height:44px; padding:0; cursor:pointer; }
+  .sigcell canvas{ display:block; width:100%; height:44px; }
+  .sigcell .ph{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:12px; pointer-events:none; }
+  .mini{ border:1px solid var(--accent); background:#fff; color:var(--accent); font-size:11px; font-weight:700; border-radius:5px; padding:2px 8px; cursor:pointer; font-family:inherit; }
+  .photopage{ margin-top:16px; }
+  .phhead{ background:var(--hd); color:#fff; font-weight:700; padding:8px 12px; border-radius:6px 6px 0 0; display:flex; justify-content:space-between; align-items:center; }
+  .photogrid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:10px; border:1.5px solid var(--line); border-top:none; }
+  .pslot{ border:1px solid var(--line); }
+  .pslot .frame{ position:relative; width:100%; aspect-ratio:4/3; background:#f4f6f8; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; }
+  .pslot .frame img{ width:100%; height:100%; object-fit:contain; display:none; }
+  .pslot .frame .add{ color:#8a929c; font-size:14px; font-weight:700; text-align:center; padding:8px; }
+  .pslot .del{ position:absolute; top:5px; right:5px; background:rgba(0,0,0,.55); color:#fff; border:none; border-radius:50%; width:26px; height:26px; font-size:15px; line-height:1; cursor:pointer; display:none; }
+  .pslot.has .del{ display:block; }
+  .pslot .cap{ width:100%; border:none; border-top:1px solid var(--line); padding:6px 8px; font-family:inherit; font-size:13px; text-align:center; }
+  .controls{ position:sticky; bottom:0; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:12px; background:rgba(242,244,247,.95); margin-top:14px; }
+  .btn{ border:none; border-radius:8px; padding:12px 18px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; }
+  .btn.p{ background:var(--accent); color:#fff; } .btn.g{ background:#5b6470; color:#fff; } .btn.d{ background:#fff; color:#333; border:1.5px solid #bbb; }
+  .modal{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:50; }
+  .modal.show{ display:flex; }
+  .msheet{ background:#fff; border-radius:14px; width:min(94vw,720px); padding:16px; }
+  .msheet h3{ margin:0 0 4px; font-size:17px; text-align:center; }
+  .msheet p{ margin:0 0 10px; text-align:center; color:#666; font-size:13px; }
+  .padwrap{ border:2px dashed #9aa4b0; border-radius:10px; background:#fff; }
+  #padBig{ display:block; width:100%; height:300px; touch-action:none; border-radius:10px; }
+  .msheet .row{ display:flex; gap:10px; margin-top:12px; } .msheet .row .btn{ flex:1; }
+  @media print{
+    body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:0; }
+    .controls,.modal,.mini,.pslot .del{ display:none !important; }
+    .photopage{ break-before:page; page-break-before:always; }
+    .pslot .frame{ background:#fff; }
+    thead th,.bl,.sec .h,.chk.on .b,.appr .h{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    @page{ size:A4 portrait; margin:9mm; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="paper">
+  <h1 style="text-align:center;letter-spacing:1.5px">안전보건협의체 회의록</h1>
+
+  <div class="block">
+    <div class="brow"><div class="bl">현장명</div><div class="bc"><select id="site" class="sitesel"></select></div></div>
+    <div class="brow">
+      <div class="bl">회의일시</div>
+      <div class="bc"><input type="date" id="day"> <input type="time" id="time"></div>
+    </div>
+    <div class="brow"><div class="bl">회의장소</div><div class="bc"><input type="text" class="grow" id="place" placeholder="현장 회의실"></div></div>
+    <div class="brow"><div class="bl">회의구분</div><div class="bc" id="kind">
+      <div class="chk on" data-v="정기"><span class="b">✓</span>정기</div>
+      <div class="chk" data-v="임시"><span class="b"></span>임시</div>
+    </div></div>
+  </div>
+
+  <div class="sec"><div class="h">협의사항</div><textarea data-c="agenda"></textarea></div>
+  <div class="sec"><div class="h">의결사항</div><textarea data-c="decide"></textarea></div>
+  <div class="sec"><div class="h">근로자 의견청취</div><textarea data-c="opinion"></textarea></div>
+  <div class="sec"><div class="h">첨부문서</div><textarea data-c="attach" style="min-height:40px"></textarea></div>
+
+  <div style="font-weight:700;color:var(--hd);margin:6px 0">참석자 명단 · 서명</div>
+  <table id="tbl">
+    <thead><tr><th class="colno">No</th><th class="colgb">구분</th><th class="colpos">직위</th><th class="colnm">성명</th><th class="colsig">서명 (터치)</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+  <div class="photopage">
+    <div class="phhead">사진대지 <button type="button" class="mini" onclick="addPhoto()">＋ 사진칸 추가</button></div>
+    <div class="photogrid" id="photogrid"></div>
+  </div>
+ </div>
+</div>
+
+<div class="controls">
+  <button class="btn p" onclick="printDoc()">📄 PDF로 저장 / 인쇄</button>
+  <button class="btn d" onclick="addRow()">＋ 참석자 추가</button>
+  <button class="btn d" onclick="saveDraft()">💾 임시저장</button>
+  <button class="btn g" onclick="clearAll()">전체 초기화</button>
+</div>
+
+<div class="modal" id="modal">
+  <div class="msheet">
+    <h3 id="mTitle">서명</h3><p>아래 칸에 손가락 또는 스타일러스로 서명하세요</p>
+    <div class="padwrap"><canvas id="padBig"></canvas></div>
+    <div class="row"><button class="btn d" onclick="undoBig()">↩ 지우기</button><button class="btn g" onclick="closeModal()">취소</button><button class="btn p" onclick="confirmSig()">✔ 서명 완료</button></div>
+  </div>
+</div>
+
+<script src="../sites.js"></script>
+<script>
+const ROWS_DEFAULT = 12;
+const DPR = Math.max(window.devicePixelRatio||1, 2);
+let curIndex=null;
+
+const DEFAULT_SITES=["아르시엘 방배 732 공동주택 신축공사","이태원동 106-2 단독주택 신축현장","보라동 20-1 단독주택 신축현장","평창동 496-4 단독주택"];
+function buildSites(){ const sel=document.getElementById('site'); sel.innerHTML='';
+  const list=(window.SITES && window.SITES.length)?window.SITES:DEFAULT_SITES;
+  list.forEach(s=> sel.appendChild(new Option(s,s))); }
+
+document.querySelectorAll('#kind .chk').forEach(c=>c.addEventListener('click',()=>{
+  document.querySelectorAll('#kind .chk').forEach(x=>{x.classList.remove('on');x.querySelector('.b').textContent='';});
+  c.classList.add('on'); c.querySelector('.b').textContent='✓';
+}));
+
+function makeRow(n){
+  const tr=document.createElement('tr');
+  tr.innerHTML=`
+    <td class="colno">${n}</td>
+    <td class="cell-in colgb"><select data-k="gb"><option>도급인</option><option>관계수급인</option></select></td>
+    <td class="cell-in colpos"><select data-k="pos"><option>위원</option><option>대표</option><option>간사</option></select></td>
+    <td class="cell-in colnm"><input type="text" data-k="nm"></td>
+    <td class="sigcell colsig"><canvas></canvas><div class="ph">여기를 눌러 서명</div></td>`;
+  tr.querySelector('.sigcell').addEventListener('click',function(){ openModal(this); });
+  return tr;
+}
+function addRow(){ const b=document.getElementById('rows'); b.appendChild(makeRow(b.children.length+1)); }
+function buildRows(k){ const b=document.getElementById('rows'); b.innerHTML=''; for(let i=1;i<=k;i++) b.appendChild(makeRow(i)); }
+
+const modal=document.getElementById('modal'), padBig=document.getElementById('padBig'), bctx=padBig.getContext('2d');
+let drawing=false, hasInk=false, last=null;
+function sizeBig(){ const r=padBig.getBoundingClientRect(); padBig.width=r.width*DPR; padBig.height=r.height*DPR;
+  bctx.setTransform(1,0,0,1,0,0); bctx.scale(DPR,DPR); bctx.lineWidth=2.6; bctx.lineCap='round'; bctx.lineJoin='round'; bctx.strokeStyle='#000000'; hasInk=false; }
+function posBig(e){ const r=padBig.getBoundingClientRect(); return {x:e.clientX-r.left,y:e.clientY-r.top}; }
+function startB(e){ e.preventDefault(); drawing=true; last=posBig(e); try{ padBig.setPointerCapture(e.pointerId);}catch(_){}
+  bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(last.x+0.1,last.y+0.1); bctx.stroke(); hasInk=true; }
+function moveB(e){ if(!drawing)return; e.preventDefault(); const p=posBig(e); bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(p.x,p.y); bctx.stroke(); last=p; hasInk=true; }
+function endB(e){ if(drawing){ drawing=false; try{ padBig.releasePointerCapture(e.pointerId);}catch(_){} } }
+padBig.addEventListener('pointerdown',startB); padBig.addEventListener('pointermove',moveB);
+padBig.addEventListener('pointerup',endB); padBig.addEventListener('pointercancel',endB);
+function openModal(cell){ curIndex=cell; const tr=cell.closest('tr'); const nm=tr.querySelector('[data-k=nm]').value||tr.children[0].textContent;
+  document.getElementById('mTitle').textContent=nm?nm+' 님 서명':'서명'; modal.classList.add('show'); requestAnimationFrame(sizeBig); }
+function closeModal(){ modal.classList.remove('show'); }
+function undoBig(){ bctx.save(); bctx.setTransform(1,0,0,1,0,0); bctx.clearRect(0,0,padBig.width,padBig.height); bctx.restore(); hasInk=false; }
+function confirmSig(){ if(!hasInk){ closeModal(); return; } const cell=curIndex, cnv=cell.querySelector('canvas'), r=cell.getBoundingClientRect();
+  cnv.width=r.width*DPR; cnv.height=44*DPR; cnv.getContext('2d').drawImage(padBig,0,0,padBig.width,padBig.height,0,0,cnv.width,cnv.height);
+  cell.querySelector('.ph').style.display='none'; closeModal(); }
+
+/* 사진대지 */
+const PHOTO_DEFAULT = 4;
+const PHOTO_MAXW = 1000;
+function readScaled(file, cb){
+  const r=new FileReader();
+  r.onload=()=>{ const im=new Image(); im.onload=()=>{
+      let w=im.width, h=im.height; if(w>PHOTO_MAXW){ h=Math.round(h*PHOTO_MAXW/w); w=PHOTO_MAXW; }
+      const c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(im,0,0,w,h);
+      cb(c.toDataURL('image/jpeg',0.82)); }; im.src=r.result; };
+  r.readAsDataURL(file);
+}
+function setPhoto(slot,url){ const img=slot.querySelector('img'); img.src=url; img.style.display='block';
+  slot.querySelector('.add').style.display='none'; slot.classList.add('has'); }
+function clearPhoto(slot){ const img=slot.querySelector('img'); img.src=''; img.style.display='none';
+  slot.querySelector('.add').style.display=''; slot.classList.remove('has'); slot.querySelector('input[type=file]').value=''; }
+function makePhotoSlot(){
+  const d=document.createElement('div'); d.className='pslot';
+  d.innerHTML=`<div class="frame"><div class="add">＋ 사진 촬영 / 선택</div><img alt=""><button type="button" class="del" title="삭제">×</button>
+    <input type="file" accept="image/*" capture="environment
