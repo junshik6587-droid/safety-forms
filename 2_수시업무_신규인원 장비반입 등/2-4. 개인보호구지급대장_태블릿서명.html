@@ -174,4 +174,21 @@ function saveDraft(){
 function loadDraft(){
   let d; try{ d=JSON.parse(localStorage.getItem('ppeDraft')); }catch(e){ return false; }
   if(!d || !Array.isArray(d.rows)) return false;
-  buildSites(); if(d.site) document.getElementById('site').value=d.site; day.v
+  buildSites(); if(d.site) document.getElementById('site').value=d.site; day.value=d.day||'';
+  buildRows(Math.max(d.rows.length,ROWS_DEFAULT));
+  const trs=document.querySelectorAll('#rows tr');
+  d.rows.forEach((rd,i)=>{ const tr=trs[i]; if(!tr)return;
+    tr.querySelector('[data-k=dt]').value=rd.dt||''; tr.querySelector('[data-k=job]').value=rd.job||''; tr.querySelector('[data-k=nm]').value=rd.nm||'';
+    (rd.p||[]).forEach((v,j)=>{ const t=tr.querySelectorAll('.tick')[j]; if(t&&v){ t.classList.add('on'); t.textContent='✓'; }});
+    if(rd.etc) tr.querySelector('[data-k=etc]').value=rd.etc;
+    if(rd.sig){ const img=new Image(), cnv=tr.querySelector('.sigcell canvas'), r=tr.querySelector('.sigcell').getBoundingClientRect();
+      img.onload=()=>{ cnv.width=r.width*DPR; cnv.height=40*DPR; cnv.getContext('2d').drawImage(img,0,0,cnv.width,cnv.height); };
+      img.src=rd.sig; tr.querySelector('.sigcell .ph').style.display='none'; }
+  });
+  return true;
+}
+buildSites();
+if(!loadDraft()){ buildRows(ROWS_DEFAULT); setToday(); }
+</script>
+</body>
+</html>

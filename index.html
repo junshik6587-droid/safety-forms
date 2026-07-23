@@ -117,4 +117,15 @@ function filter(){
   document.getElementById('empty').style.display=shown?'none':'block';
 }
 
-/*
+/* PWA install prompt */
+let deferred=null;
+window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); deferred=e; document.getElementById('install').style.display='block'; });
+function doInstall(){ if(deferred){ deferred.prompt(); deferred.userChoice.finally(()=>{ deferred=null; document.getElementById('install').style.display='none'; }); }
+  else { alert('브라우저 메뉴에서 "홈 화면에 추가"를 선택하세요.'); } }
+window.addEventListener('appinstalled',()=>{ document.getElementById('install').style.display='none'; });
+
+/* service worker */
+if('serviceWorker' in navigator){ window.addEventListener('load',()=>{ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }); }
+</script>
+</body>
+</html>

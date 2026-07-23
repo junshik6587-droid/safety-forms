@@ -271,4 +271,25 @@ function loadDraft(){
   buildRows(Math.max(d.rows.length,ROWS_DEFAULT));
   const trs=document.querySelectorAll('#rows tr');
   d.rows.forEach((rd,i)=>{
-    const tr=trs[i]; if(!tr) retur
+    const tr=trs[i]; if(!tr) return;
+    tr.querySelector('[data-k=co]').value=rd.co||'';
+    tr.querySelector('[data-k=nm]').value=rd.nm||'';
+    tr.querySelector('[data-k=bg]').value=rd.bg||'';
+    [['t1',rd.t1],['t2',rd.t2],['t3',rd.t3]].forEach(([k,v])=>{
+      if(v){ const btn=tr.querySelector(`[data-k=${k}] [data-v=${v}]`); if(btn) btn.classList.add(v==='y'?'sel-y':'sel-n'); }
+    });
+    if(rd.sig){ const img=new Image(); const cnv=tr.querySelector('.sigcell canvas');
+      const r=tr.querySelector('.sigcell').getBoundingClientRect();
+      img.onload=()=>{ cnv.width=r.width*DPR; cnv.height=46*DPR; cnv.getContext('2d').drawImage(img,0,0,cnv.width,cnv.height); };
+      img.src=rd.sig; tr.querySelector('.sigcell .ph').style.display='none'; }
+  });
+  return true;
+}
+function setToday(){ const t=new Date(); document.getElementById('day').value=t.toISOString().slice(0,10); }
+
+/* init */
+buildSites();
+if(!loadDraft()){ buildRows(ROWS_DEFAULT); setToday(); }
+</script>
+</body>
+</html>

@@ -145,4 +145,58 @@ function buildChecks(){
   CHECKS.forEach((g,gi)=>{
     g[1].forEach((it,ii)=>{
       const tr=document.createElement('tr');
-    
+      let grpcell = ii===0 ? `<td class="grp" rowspan="${g[1].length}">${g[0]}</td>` : '';
+      tr.innerHTML = grpcell + `<td class="item">${ii+1}. ${it}</td>
+        <td><div class="seg" data-k="${gi}_${ii}"><button type="button" class="y on">양호</button><button type="button" class="n">불량</button></div></td>`;
+      const seg=tr.querySelector('.seg');
+      seg.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+        seg.querySelector('.y').classList.toggle('on', b.classList.contains('y'));
+        seg.querySelector('.n').classList.toggle('on', b.classList.contains('n'));
+      }));
+      tb.appendChild(tr);
+    });
+  });
+}
+function allGood(){ document.querySelectorAll('.seg').forEach(s=>{ s.querySelector('.y').classList.add('on'); s.querySelector('.n').classList.remove('on'); }); }
+
+/* 장비투입현황 */
+const EQUIP = ["백호 1.0","백호 0.8","백호 0.6","백호 0.3","펌프카","크레인 50T","크레인 25T","크레인 15T","지게차"];
+function makeEqRow(){
+  const tr=document.createElement('tr');
+  let opts='<option value=""></option>'+EQUIP.map(e=>`<option>${e}</option>`).join('');
+  tr.innerHTML=`<td><select data-e="name">${opts}</select></td><td><input type="text" data-e="cnt" placeholder="대"></td>`;
+  return tr;
+}
+function addEq(){ document.getElementById('eqrows').appendChild(makeEqRow()); }
+function buildEq(k){ const b=document.getElementById('eqrows'); b.innerHTML=''; for(let i=0;i<k;i++) b.appendChild(makeEqRow()); }
+
+function printDoc(){ window.print(); }
+function setToday(){ document.getElementById('day').value=new Date().toISOString().slice(0,10); }
+function allC(){ return [...document.querySelectorAll('[data-c]')]; }
+function clearAll(){ if(!confirm('입력한 내용을 모두 지울까요?'))return; try{localStorage.removeItem('checkDraft');}catch(e){}
+  buildSites(); buildChecks(); buildEq(4); allC().forEach(el=>el.value=''); document.getElementById('wx').value='맑음'; setToday(); }
+function segVal(k){ const s=document.querySelector(`.seg[data-k="${k}"]`); return s.querySelector('.n.on')?'n':'y'; }
+function saveDraft(){
+  const data={ site:document.getElementById('site').value, day:day.value, wx:document.getElementById('wx').value,
+    fields:Object.fromEntries(allC().map(el=>[el.dataset.c, el.value])),
+    eq:[...document.querySelectorAll('#eqrows tr')].map(tr=>({ name:tr.querySelector('[data-e=name]').value, cnt:tr.querySelector('[data-e=cnt]').value })),
+    checks:Object.fromEntries([...document.querySelectorAll('.seg')].map(s=>[s.dataset.k, segVal(s.dataset.k)])) };
+  try{ localStorage.setItem('checkDraft',JSON.stringify(data)); alert('임시저장 완료.'); }catch(e){ alert('저장 실패: '+e.message); }
+}
+function loadDraft(){
+  let d; try{ d=JSON.parse(localStorage.getItem('checkDraft')); }catch(e){ return false; }
+  if(!d) return false;
+  buildSites(); if(d.site) document.getElementById('site').value=d.site;
+  day.value=d.day||''; if(d.wx) document.getElementById('wx').value=d.wx;
+  buildChecks();
+  const eq=(d.eq&&d.eq.length)?d.eq:null; buildEq(eq?eq.length:4);
+  if(eq){ const trs=document.querySelectorAll('#eqrows tr'); eq.forEach((e,i)=>{ if(trs[i]){ trs[i].querySelector('[data-e=name]').value=e.name||''; trs[i].querySelector('[data-e=cnt]').value=e.cnt||''; }}); }
+  if(d.fields) allC().forEach(el=>{ if(d.fields[el.dataset.c]!=null) el.value=d.fields[el.dataset.c]; });
+  if(d.checks) Object.entries(d.checks).forEach(([k,v])=>{ const s=document.querySelector(`.seg[data-k="${k}"]`); if(s){ s.querySelector('.y').classList.toggle('on',v==='y'); s.querySelector('.n').classList.toggle('on',v==='n'); }});
+  return true;
+}
+buildSites();
+if(!loadDraft()){ buildChecks(); buildEq(4); setToday(); }
+</script>
+</body>
+</html>

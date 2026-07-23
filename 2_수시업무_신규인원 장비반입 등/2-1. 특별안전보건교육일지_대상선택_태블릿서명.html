@@ -416,4 +416,20 @@ function loadDraft(){
   if(d.timeEnd) document.getElementById('timeEnd').value=d.timeEnd;
   if(d.fields) allInputs().forEach(el=>{ if(d.fields[el.dataset.c]!=null) el.value=d.fields[el.dataset.c]; });
   buildRows(Math.max(d.rows.length,ROWS_DEFAULT));
-  const trs=document.querySelectorAll('#rows 
+  const trs=document.querySelectorAll('#rows tr');
+  d.rows.forEach((rd,i)=>{
+    const tr=trs[i]; if(!tr) return;
+    tr.querySelector('[data-k=co]').value=rd.co||'';
+    tr.querySelector('[data-k=nm]').value=rd.nm||'';
+    if(rd.sig){ const img=new Image(), cnv=tr.querySelector('.sigcell canvas'), r=tr.querySelector('.sigcell').getBoundingClientRect();
+      img.onload=()=>{ cnv.width=r.width*DPR; cnv.height=48*DPR; cnv.getContext('2d').drawImage(img,0,0,cnv.width,cnv.height); };
+      img.src=rd.sig; tr.querySelector('.sigcell .ph').style.display='none'; }
+  });
+  return true;
+}
+
+/* init */
+if(!loadDraft()){ buildSites(); buildTarget(); buildTimes(); renderSubjects(); buildRows(ROWS_DEFAULT); setToday(); }
+</script>
+</body>
+</html>
