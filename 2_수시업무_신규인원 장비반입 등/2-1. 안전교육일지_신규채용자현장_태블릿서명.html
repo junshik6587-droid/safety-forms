@@ -300,7 +300,9 @@ function confirmSig(){
 }
 
 /* ---------- actions ---------- */
-function printDoc(){ window.print(); }
+function setPrintTitle(){ document.title=('신규채용자_안전보건교육일지_'+((document.getElementById('day')||{}).value||new Date().toISOString().slice(0,10))).replace(/[\\/:*?"<>|]/g,'_'); }
+window.addEventListener('beforeprint', setPrintTitle);
+function printDoc(){ setPrintTitle(); window.print(); }
 function setToday(){ document.getElementById('day').value=new Date().toISOString().slice(0,10); }
 function allInputs(){ return [...document.querySelectorAll('[data-c]')]; }
 

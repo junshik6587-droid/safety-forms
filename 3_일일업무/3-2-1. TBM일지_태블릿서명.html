@@ -239,7 +239,9 @@ function confirmSig(){
 }
 
 /* ---------- actions ---------- */
-function printDoc(){ window.print(); }
+function setPrintTitle(){ document.title=('TBM일지_'+((document.getElementById('day')||{}).value||new Date().toISOString().slice(0,10))).replace(/[\\/:*?"<>|]/g,'_'); }
+window.addEventListener('beforeprint', setPrintTitle);
+function printDoc(){ setPrintTitle(); window.print(); }
 function clearAll(){
   if(!confirm('입력한 내용과 서명을 모두 지울까요?')) return;
   try{ localStorage.removeItem('tbmDraft'); }catch(e){}

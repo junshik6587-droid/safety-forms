@@ -170,7 +170,9 @@ function makeEqRow(){
 function addEq(){ document.getElementById('eqrows').appendChild(makeEqRow()); }
 function buildEq(k){ const b=document.getElementById('eqrows'); b.innerHTML=''; for(let i=0;i<k;i++) b.appendChild(makeEqRow()); }
 
-function printDoc(){ window.print(); }
+function setPrintTitle(){ document.title=('안전점검일지_'+((document.getElementById('day')||{}).value||new Date().toISOString().slice(0,10))).replace(/[\\/:*?"<>|]/g,'_'); }
+window.addEventListener('beforeprint', setPrintTitle);
+function printDoc(){ setPrintTitle(); window.print(); }
 function setToday(){ document.getElementById('day').value=new Date().toISOString().slice(0,10); }
 function allC(){ return [...document.querySelectorAll('[data-c]')]; }
 function clearAll(){ if(!confirm('입력한 내용을 모두 지울까요?'))return; try{localStorage.removeItem('checkDraft');}catch(e){}

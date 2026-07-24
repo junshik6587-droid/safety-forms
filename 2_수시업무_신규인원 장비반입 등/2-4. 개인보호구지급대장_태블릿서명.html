@@ -158,7 +158,9 @@ function confirmSig(){ if(!hasInk){ closeModal(); return; } const cell=curIndex,
   cell.querySelector('.ph').style.display='none'; closeModal(); }
 
 /* actions */
-function printDoc(){ window.print(); }
+function setPrintTitle(){ document.title=('개인보호구_지급대장_'+((document.getElementById('day')||{}).value||new Date().toISOString().slice(0,10))).replace(/[\\/:*?"<>|]/g,'_'); }
+window.addEventListener('beforeprint', setPrintTitle);
+function printDoc(){ setPrintTitle(); window.print(); }
 function setToday(){ document.getElementById('day').value=new Date().toISOString().slice(0,10); }
 function clearAll(){ if(!confirm('입력한 내용과 서명을 모두 지울까요?'))return; try{localStorage.removeItem('ppeDraft');}catch(e){} buildSites(); buildRows(ROWS_DEFAULT); setToday(); }
 function saveDraft(){
