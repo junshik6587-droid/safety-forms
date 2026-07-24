@@ -10,12 +10,7 @@
   html,body{ margin:0; font-family:"맑은 고딕","Malgun Gothic",AppleGothic,sans-serif; color:#111; background:#f2f4f7; }
   .wrap{ max-width:1000px; margin:0 auto; padding:12px; }
   .paper{ background:#fff; padding:18px 20px 26px; box-shadow:0 1px 6px rgba(0,0,0,.15); }
-  .top{ display:flex; align-items:flex-start; gap:12px; }
-  h1{ flex:1; text-align:center; font-size:21px; margin:2px 0 12px; letter-spacing:1.5px; }
-  .appr{ border-collapse:collapse; font-size:11px; }
-  .appr td{ border:1px solid var(--line); text-align:center; }
-  .appr .h{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:3px 6px; }
-  .appr .b{ width:46px; height:38px; }
+  h1{ text-align:center; font-size:21px; margin:2px 0 12px; letter-spacing:1.5px; }
   .block{ border:1.5px solid var(--line); margin-bottom:10px; }
   .brow{ display:flex; border-bottom:1px solid var(--line); font-size:14px; }
   .brow:last-child{ border-bottom:none; }
@@ -40,17 +35,25 @@
   .sigcell{ position:relative; height:44px; padding:0; cursor:pointer; }
   .sigcell canvas{ display:block; width:100%; height:44px; }
   .sigcell .ph{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:12px; pointer-events:none; }
-  .mini{ border:1px solid var(--accent); background:#fff; color:var(--accent); font-size:11px; font-weight:700; border-radius:5px; padding:2px 8px; cursor:pointer; font-family:inherit; }
+  .mini{ border:1px solid #fff; background:rgba(255,255,255,.2); color:#fff; font-size:11px; font-weight:700; border-radius:5px; padding:2px 8px; cursor:pointer; font-family:inherit; }
+  /* 사진대지 (노사협의체 원본 양식: 큰 사진 + 내용/위치/일자) */
   .photopage{ margin-top:16px; }
-  .phhead{ background:var(--hd); color:#fff; font-weight:700; padding:8px 12px; border-radius:6px 6px 0 0; display:flex; justify-content:space-between; align-items:center; }
-  .photogrid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:10px; border:1.5px solid var(--line); border-top:none; }
-  .pslot{ border:1px solid var(--line); }
-  .pslot .frame{ position:relative; width:100%; aspect-ratio:4/3; background:#f4f6f8; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; }
+  .phhead{ background:var(--hd); color:#fff; font-weight:700; padding:8px 12px; border-radius:6px 6px 0 0; display:flex; justify-content:space-between; align-items:center; letter-spacing:2px; }
+  .phnote{ font-size:12px; color:#8a929c; padding:6px 2px; }
+  .photogrid{ padding:10px; border:1.5px solid var(--line); border-top:none; }
+  .pslot{ border:1.5px solid var(--line); margin-bottom:12px; }
+  .pslot:last-child{ margin-bottom:0; }
+  .pslot .frame{ position:relative; width:100%; aspect-ratio:16/10; background:#f4f6f8; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; }
   .pslot .frame img{ width:100%; height:100%; object-fit:contain; display:none; }
   .pslot .frame .add{ color:#8a929c; font-size:14px; font-weight:700; text-align:center; padding:8px; }
-  .pslot .del{ position:absolute; top:5px; right:5px; background:rgba(0,0,0,.55); color:#fff; border:none; border-radius:50%; width:26px; height:26px; font-size:15px; line-height:1; cursor:pointer; display:none; }
+  .pslot .del{ position:absolute; top:6px; right:6px; background:rgba(0,0,0,.55); color:#fff; border:none; border-radius:50%; width:28px; height:28px; font-size:16px; line-height:1; cursor:pointer; display:none; }
   .pslot.has .del{ display:block; }
-  .pslot .cap{ width:100%; border:none; border-top:1px solid var(--line); padding:6px 8px; font-family:inherit; font-size:13px; text-align:center; }
+  table.pmeta{ width:100%; border-collapse:collapse; border-top:1.5px solid var(--line); }
+  table.pmeta td{ border:1px solid var(--line); padding:0; }
+  table.pmeta td.pl{ background:var(--hdbg); color:var(--hd); font-weight:700; text-align:center; padding:7px 6px; width:62px; white-space:nowrap; }
+  table.pmeta td.dtc{ width:150px; }
+  table.pmeta input{ width:100%; border:none; font-family:inherit; font-size:13px; padding:7px 8px; background:transparent; }
+  table.pmeta input:focus{ outline:2px solid var(--accent); outline-offset:-2px; }
   .controls{ position:sticky; bottom:0; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:12px; background:rgba(242,244,247,.95); margin-top:14px; }
   .btn{ border:none; border-radius:8px; padding:12px 18px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; }
   .btn.p{ background:var(--accent); color:#fff; } .btn.g{ background:#5b6470; color:#fff; } .btn.d{ background:#fff; color:#333; border:1.5px solid #bbb; }
@@ -64,11 +67,14 @@
   .msheet .row{ display:flex; gap:10px; margin-top:12px; } .msheet .row .btn{ flex:1; }
   @media print{
     body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:0; }
-    .controls,.modal,.mini,.pslot .del,.pslot .add{ display:none !important; }
-    .photopage{ break-before:page; page-break-before:always; }
-    .pslot .frame{ background:#fff; aspect-ratio:auto; height:150px; }
-    .pslot .cap::placeholder{ color:transparent !important; }
-    thead th,.bl,.sec .h,.chk.on .b,.appr .h{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .controls,.modal,.mini,.pslot .del,.pslot .add,.phnote{ display:none !important; }
+    .photopage.nophoto{ display:none !important; }
+    .photopage:not(.nophoto){ break-before:page; page-break-before:always; }
+    .phhead{ background:var(--hdbg) !important; color:var(--hd) !important; border:1.5px solid var(--line); border-bottom:none; border-radius:0; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .pslot{ break-inside:avoid; }
+    .pslot .frame{ background:#fff; aspect-ratio:auto; height:300px; }
+    table.pmeta input::placeholder{ color:transparent !important; }
+    thead th,.bl,.sec .h,.chk.on .b,table.pmeta td.pl{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
     @page{ size:A4 portrait; margin:9mm; }
   }
 </style>
@@ -103,7 +109,8 @@
   </table>
 
   <div class="photopage">
-    <div class="phhead">사진대지 <button type="button" class="mini" onclick="addPhoto()">＋ 사진칸 추가</button></div>
+    <div class="phhead">사 진 대 지 <button type="button" class="mini" onclick="addPhoto()">＋ 사진 추가</button></div>
+    <div class="phnote">※ 사진을 넣지 않으면 인쇄·PDF에서 사진대지 페이지는 출력되지 않습니다.</div>
     <div class="photogrid" id="photogrid"></div>
   </div>
  </div>
@@ -173,8 +180,8 @@ function confirmSig(){ if(!hasInk){ closeModal(); return; } const cell=curIndex,
   cnv.width=r.width*DPR; cnv.height=44*DPR; cnv.getContext('2d').drawImage(padBig,0,0,padBig.width,padBig.height,0,0,cnv.width,cnv.height);
   cell.querySelector('.ph').style.display='none'; closeModal(); }
 
-/* 사진대지 */
-const PHOTO_DEFAULT = 4;
+/* 사진대지 (노사협의체 원본 양식) */
+const PHOTO_DEFAULT = 2;
 const PHOTO_MAXW = 1000;
 function readScaled(file, cb){
   const r=new FileReader();
@@ -191,8 +198,11 @@ function clearPhoto(slot){ const img=slot.querySelector('img'); img.src=''; img.
 function makePhotoSlot(){
   const d=document.createElement('div'); d.className='pslot';
   d.innerHTML=`<div class="frame"><div class="add">＋ 사진 촬영 / 선택</div><img alt=""><button type="button" class="del" title="삭제">×</button>
-    <input type="file" accept="image/*" capture="environment" style="display:none"></div>
-    <input type="text" class="cap" placeholder="사진 설명">`;
+      <input type="file" accept="image/*" capture="environment" style="display:none"></div>
+    <table class="pmeta">
+      <tr><td class="pl">내 용</td><td colspan="3"><input type="text" data-pk="content" placeholder="작업 · 점검 내용"></td></tr>
+      <tr><td class="pl">위 치</td><td><input type="text" data-pk="loc" placeholder="위치"></td><td class="pl">일 자</td><td class="dtc"><input type="date" data-pk="date"></td></tr>
+    </table>`;
   const frame=d.querySelector('.frame'), inp=d.querySelector('input[type=file]'), del=d.querySelector('.del');
   frame.addEventListener('click',e=>{ if(e.target===del)return; inp.click(); });
   inp.addEventListener('change',()=>{ const f=inp.files[0]; if(f) readScaled(f,url=>setPhoto(d,url)); });
@@ -202,7 +212,14 @@ function makePhotoSlot(){
 function addPhoto(){ document.getElementById('photogrid').appendChild(makePhotoSlot()); }
 function buildPhotos(k){ const g=document.getElementById('photogrid'); g.innerHTML=''; for(let i=0;i<k;i++) g.appendChild(makePhotoSlot()); }
 
-function printDoc(){ window.print(); }
+/* 인쇄 시: 사진이 하나도 없으면 사진대지 페이지 숨김 */
+function updatePhotoPrint(){
+  const any=document.querySelector('#photogrid .pslot.has');
+  document.querySelector('.photopage').classList.toggle('nophoto', !any);
+}
+window.addEventListener('beforeprint', updatePhotoPrint);
+
+function printDoc(){ updatePhotoPrint(); window.print(); }
 function setToday(){ document.getElementById('day').value=new Date().toISOString().slice(0,10); }
 function allC(){ return [...document.querySelectorAll('[data-c]')]; }
 function clearAll(){ if(!confirm('입력한 내용과 서명을 모두 지울까요?'))return; try{localStorage.removeItem('cmtDraft');}catch(e){}
@@ -216,7 +233,12 @@ function saveDraft(){
       gb:tr.querySelector('[data-k=gb]').value, pos:tr.querySelector('[data-k=pos]').value, nm:tr.querySelector('[data-k=nm]').value,
       sig:(tr.querySelector('.sigcell .ph').style.display==='none')?tr.querySelector('.sigcell canvas').toDataURL('image/png'):''
     })),
-    photos:[...document.querySelectorAll('#photogrid .pslot')].map(p=>({ img:p.classList.contains('has')?p.querySelector('img').src:'', cap:p.querySelector('.cap').value })) };
+    photos:[...document.querySelectorAll('#photogrid .pslot')].map(p=>({
+      img:p.classList.contains('has')?p.querySelector('img').src:'',
+      content:p.querySelector('[data-pk=content]').value,
+      loc:p.querySelector('[data-pk=loc]').value,
+      date:p.querySelector('[data-pk=date]').value
+    })) };
   try{ localStorage.setItem('cmtDraft',JSON.stringify(data)); alert('임시저장 완료.'); }catch(e){ alert('저장 실패: '+e.message); }
 }
 function loadDraft(){
@@ -236,7 +258,10 @@ function loadDraft(){
   });
   const ph=(d.photos&&d.photos.length)?d.photos:null; buildPhotos(ph?ph.length:PHOTO_DEFAULT);
   if(ph){ const slots=document.querySelectorAll('#photogrid .pslot'); ph.forEach((p,i)=>{ const s=slots[i]; if(!s)return;
-    s.querySelector('.cap').value=p.cap||''; if(p.img) setPhoto(s,p.img); }); }
+    if(p.content!=null) s.querySelector('[data-pk=content]').value=p.content;
+    if(p.loc!=null) s.querySelector('[data-pk=loc]').value=p.loc;
+    if(p.date!=null) s.querySelector('[data-pk=date]').value=p.date;
+    if(p.img) setPhoto(s,p.img); }); }
   return true;
 }
 buildSites();
