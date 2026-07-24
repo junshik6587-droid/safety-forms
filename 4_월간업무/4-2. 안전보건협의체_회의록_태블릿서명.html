@@ -64,9 +64,10 @@
   .msheet .row{ display:flex; gap:10px; margin-top:12px; } .msheet .row .btn{ flex:1; }
   @media print{
     body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:0; }
-    .controls,.modal,.mini,.pslot .del{ display:none !important; }
+    .controls,.modal,.mini,.pslot .del,.pslot .add{ display:none !important; }
     .photopage{ break-before:page; page-break-before:always; }
-    .pslot .frame{ background:#fff; }
+    .pslot .frame{ background:#fff; aspect-ratio:auto; height:150px; }
+    .pslot .cap::placeholder{ color:transparent !important; }
     thead th,.bl,.sec .h,.chk.on .b,.appr .h{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
     @page{ size:A4 portrait; margin:9mm; }
   }
