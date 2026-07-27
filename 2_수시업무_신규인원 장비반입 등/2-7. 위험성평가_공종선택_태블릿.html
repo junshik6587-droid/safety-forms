@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>위험성평가 (공종 선택형)</title>
+<style>
+  :root{ --line:#333; --hd:#1f4e79; --hdbg:#dbe5f1; --accent:#1f6feb; --rA:#ff3b30; --rB:#ffcc00; --rC:#34c759; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; font-family:"맑은 고딕","Malgun Gothic",AppleGothic,sans-serif; color:#111; background:#f2f4f7; }
+  .wrap{ max-width:1250px; margin:0 auto; padding:12px; }
+  .selbar{ background:#fff; border:1.5px solid var(--accent); border-radius:10px; padding:10px 14px; margin-bottom:12px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:15px; font-weight:700; color:var(--hd); }
+  .selbar select{ font-size:15px; font-weight:700; padding:7px 8px; font-family:inherit; border:1.5px solid var(--accent); border-radius:6px; color:var(--hd); min-width:200px; }
+  .selbar .btnload{ background:var(--accent); color:#fff; border:none; border-radius:6px; padding:8px 12px; font-weight:700; font-family:inherit; cursor:pointer; }
+  .paper{ background:#fff; padding:16px 18px 24px; box-shadow:0 1px 6px rgba(0,0,0,.15); }
+  h1{ text-align:center; font-size:20px; margin:2px 0 12px; letter-spacing:2px; }
+  .meta{ display:flex; flex-wrap:wrap; gap:8px 18px; align-items:center; border:1.5px solid var(--line); padding:10px 12px; margin-bottom:10px; font-size:14px; }
+  .meta label{ font-weight:700; margin-right:4px; }
+  .meta input[type=text],.meta input[type=date]{ border:none; border-bottom:1px solid #999; font-size:14px; padding:3px 4px; font-family:inherit; }
+  .sitesel,.kindsel{ font-size:14px; font-weight:700; padding:5px 8px; font-family:inherit; border:1.5px solid var(--accent); border-radius:5px; color:var(--hd); }
+  .kindsel{ border-color:#999; color:#111; font-weight:400; }
+  /* 위험성 수준 판단기준 범례 */
+  .legend{ width:100%; border-collapse:collapse; font-size:12px; margin-bottom:12px; }
+  .legend th,.legend td{ border:1px solid var(--line); padding:6px 8px; text-align:center; vertical-align:middle; }
+  .legend thead th{ background:var(--hdbg); color:var(--hd); }
+  .legend td.left{ text-align:left; }
+  .legend .lv{ font-weight:800; width:120px; }
+  .legend .a{ background:var(--rA); color:#fff; }
+  .legend .b{ background:var(--rB); color:#111; }
+  .legend .c{ background:var(--rC); color:#fff; }
+  .legend .crit{ font-weight:700; width:110px; }
+  .scroll{ overflow-x:auto; }
+  table.risk{ width:100%; border-collapse:collapse; font-size:12px; min-width:1150px; }
+  table.risk th,table.risk td{ border:1px solid var(--line); padding:2px 4px; vertical-align:top; }
+  table.risk thead th{ background:var(--hdbg); color:var(--hd); font-size:12px; text-align:center; padding:5px 3px; }
+  td.no{ width:30px; text-align:center; }
+  .colstep{ width:104px; } .coltyp{ width:64px; } .colrisk{ width:60px; } .colmgmt{ width:58px; } .colwho{ width:64px; } .coldt{ width:88px; } .colimp{ width:58px; }
+  table.risk td textarea{ width:100%; border:none; font-family:inherit; font-size:12px; padding:4px; resize:vertical; min-height:44px; background:transparent; }
+  table.risk td input{ width:100%; border:none; font-family:inherit; font-size:12px; padding:4px 2px; text-align:center; background:transparent; }
+  table.risk td select{ width:100%; border:none; font-family:inherit; font-size:12px; text-align:center; padding:3px 0; }
+  table.risk td textarea:focus,table.risk td input:focus,table.risk td select:focus{ outline:2px solid var(--accent); outline-offset:-2px; }
+  select.rk.a{ background:var(--rA); color:#fff; font-weight:800; }
+  select.rk.b{ background:var(--rB); color:#111; font-weight:800; }
+  select.rk.c{ background:var(--rC); color:#fff; font-weight:800; }
+  .empty{ text-align:center; color:#888; padding:30px; font-size:14px; }
+  .controls{ position:sticky; bottom:0; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:12px; background:rgba(242,244,247,.95); margin-top:14px; }
+  .btn{ border:none; border-radius:8px; padding:12px 18px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; }
+  .btn.p{ background:var(--accent); color:#fff; } .btn.g{ background:#5b6470; color:#fff; } .btn.d{ background:#fff; color:#333; border:1.5px solid #bbb; }
+  @media print{
+    body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:0; }
+    .selbar,.controls{ display:none !important; } .scroll{ overflow:visible; } table.risk{ min-width:0; font-size:10px; }
+    thead th,.legend .a,.legend .b,.legend .c,select.rk.a,select.rk.b,select.rk.c{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    @page{ size:A4 landscape; margin:7mm; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="selbar">
+   <span>공종 선택</span>
+   <select id="gong"></select>
+   <button type="button" class="btnload" onclick="loadGong()">공종 불러오기</button>
+   <span style="font-weight:400;font-size:12px;color:#888">※ 선택 후 불러오면 해당 공종 위험요인·대책이 자동으로 채워집니다</span>
+ </div>
+
+ <div class="paper">
+  <h1>위 험 성 평 가</h1>
+  <div class="meta">
+    <div><label>현장명</label><select id="site" class="sitesel"></select></div>
+    <div><label>평가구분</label><select id="kind" class="kindsel"><option>최초</option><option>수시</option><option>월간</option></select></div>
+    <div><label>작업공종</label><input type="text" id="workname" placeholder="공종명"></div>
+    <div><label>업체명</label><input type="text" id="company" placeholder="업체명"></div>
+    <div><label>작성자</label><input type="text" id="writer"></div>
+    <div><label>작성일</label><input type="date" id="day"></div>
+  </div>
+
+  <table class="legend">
+    <thead><tr><th>위험성 수준</th><th>판단 기준</th><th>허용 가능 여부</th></tr></thead>
+    <tbody>
+      <tr><td class="lv a">상 (빨강)<br>매우 높음</td><td class="left">사고 발생 시 사망 또는 장애가 남을 수 있는 위험 / 산업안전보건법에 따른 기준을 만족하지 못하는 경우</td><td rowspan="2" class="crit">허용 불가</td></tr>
+      <tr><td class="lv b">중 (노랑)<br>보통</td><td class="left">사고 발생 시 요양이 필요한 위험 / 아차사고 사례가 있는 경우</td></tr>
+      <tr><td class="lv c">하 (초록)<br>매우 낮음</td><td class="left">작업 수행에 영향을 미치지 않는 경미한 부상 또는 질병이 예상되는 경우</td><td class="crit">허용 가능</td></tr>
+    </tbody>
+  </table>
+
+  <div class="scroll">
+  <table class="risk" id="tbl">
+    <thead>
+      <tr>
+        <th class="no">No</th>
+        <th class="colstep">작업단계</th>
+        <th>위험요인 (~에 의한 ~위험)</th>
+        <th class="coltyp">재해형태</th>
+        <th class="colrisk">위험성</th>
+        <th class="colmgmt">관리대상</th>
+        <th>안전보건대책 (제거/대체/시설/교육/관리)</th>
+        <th class="colwho">담당자</th>
+        <th class="coldt">조치일자</th>
+        <th class="colimp">중요도</th>
+      </tr>
+    </thead>
+    <tbody id="rows"><tr><td colspan="10" class="empty">상단에서 공종을 선택하고 "공종 불러오기"를 누르세요.</td></tr></tbody>
+  </table>
+  </div>
+ </div>
+</div>
+
+<div class="controls">
+  <button class="btn p" onclick="printDoc()">📄 PDF로 저장 / 인쇄</button>
+  <button class="btn d" onclick="addRow()">＋ 행 추가</button>
+  <button class="btn d" onclick="saveDraft()">💾 임시저장</button>
+  <button class="btn g" onclick="clearAll()">전체 초기화</button>
+  <a class="btn d" href="../index.html" style="text-decoration:none">← 메인</a>
+</div>
+
+<script src="../sites.js"></script>
+<script src="riskdata.js"></script>
+<script>
+const DEFAULT_SITES=["아르시엘 방배 732 공동주택 신축공사","이태원동 106-2 단독주택 신축현장","보라동 20-1 단독주택 신축현장","평창동 496-4 단독주택"];
+function buildSites(){ const sel=document.getElementById('site'); sel.innerHTML='';
+  ((window.SITES&&window.SITES.length)?window.SITES:DEFAULT_SITES).forEach(s=> sel.appendChild(new Option(s,s))); }
+function buildGong(){ const sel=document.getElementById('gong'); sel.innerHTML='';
+  const order=(window.RISK_ORDER&&window.RISK_ORDER.length)?window.RISK_ORDER:Object.keys(window.RISK||{});
+  order.forEach(g=> sel.appendChild(new Option(g,g))); }
+
+function colorRisk(sel){ sel.classList.remove('a','b','c'); const v=sel.value;
+  if(v==='상')sel.classList.add('a'); else if(v==='중')sel.classList.add('b'); else if(v==='하')sel.classList.add('c'); }
+function rkSelect(dk,v){
+  return `<select class="rk" data-k="${dk}" onchange="colorRisk(this)"><option value=""></option>`+
+    ['상','중','하'].map(x=>`<option${x===v?' selected':''}>${x}</option>`).join('')+`</select>`;
+}
+function mgmtSelect(v){
+  return `<select data-k="mgmt"><option value=""></option>`+['○','-'].map(x=>`<option${x===v?' selected':''}>${x}</option>`).join('')+`</select>`;
+}
+function esc(s){ return (s||'').replace(/"/g,'&quot;'); }
+function makeRow(n, r){
+  r=r||{loc:'',step:'',haz:'',typ:'',risk:'',mgmt:'',mea:'',who:'',dt:'',imp:''};
+  const step=(r.loc&&r.step&&r.loc!==r.step)?(r.loc+' / '+r.step):(r.step||r.loc||'');
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td class="no">${n}</td>
+    <td class="colstep"><textarea data-k="step">${step}</textarea></td>
+    <td><textarea data-k="haz">${r.haz||''}</textarea></td>
+    <td class="coltyp"><input type="text" data-k="typ" value="${esc(r.typ)}"></td>
+    <td class="colrisk">${rkSelect('risk', r.risk||'')}</td>
+    <td class="colmgmt">${mgmtSelect(r.mgmt||'')}</td>
+    <td><textarea data-k="mea">${r.mea||''}</textarea></td>
+    <td class="colwho"><input type="text" data-k="who" value="${esc(r.who)}"></td>
+    <td class="coldt"><input type="text" data-k="dt" value="${esc(r.dt)}" placeholder="  .  .  "></td>
+    <td class="colimp">${rkSelect('imp', r.imp||'')}</td>`;
+  return tr;
+}
+function afterRender(){ document.querySelectorAll('#rows select.rk').forEach(colorRisk); }
+function renderRows(list){
+  const b=document.getElementById('rows'); b.innerHTML='';
+  if(!list||!list.length){ b.innerHTML='<tr><td colspan="10" class="empty">상단에서 공종을 선택하고 "공종 불러오기"를 누르세요.</td></tr>'; return; }
+  list.forEach((r,i)=> b.appendChild(makeRow(i+1, r))); afterRender();
+}
+function loadGong(){
+  const g=document.getElementById('gong').value;
+  const rows=(window.RISK&&window.RISK[g])?window.RISK[g]:[];
+  document.getElementById('workname').value=g;
+  renderRows(rows.map(r=>({loc:r.loc,step:r.step,haz:r.haz,typ:r.typ,mea:r.mea,risk:'',mgmt:'',who:'',dt:'',imp:''})));
+}
+function addRow(){ const b=document.getElementById('rows'); if(b.querySelector('.empty')) b.innerHTML='';
+  b.appendChild(makeRow(b.children.length+1)); }
+
+function collectRows(){
+  return [...document.querySelectorAll('#rows tr')].filter(tr=>tr.querySelector('[data-k=haz]')).map(tr=>({
+    step:tr.querySelector('[data-k=step]').value, haz:tr.querySelector('[data-k=haz]').value,
+    typ:tr.querySelector('[data-k=typ]').value, risk:tr.querySelector('[data-k=risk]').value,
+    mgmt:tr.querySelector('[data-k=mgmt]').value, mea:tr.querySelector('[data-k=mea]').value,
+    who:tr.querySelector('[data-k=who]').value, dt:tr.querySelector('[data-k=dt]').value, imp:tr.querySelector('[data-k=imp]').value
+  }));
+}
+function setPrintTitle(){ document.title=('위험성평가_'+(document.getElementById('workname').value||'')+'_'+((document.getElementById('day')||{}).value||new Date().toISOString().slice(0,10))).replace(/[\\/:*?"<>|]/g,'_'); }
+window.addEventListener('beforeprint', setPrintTitle);
+function printDoc(){ setPrintTitle(); window.print(); }
+function setToday(){ document.getElementById('day').value=new Date().toISOString().slice(0,10); }
+function metaObj(){ return {site:site.value,kind:document.getElementById('kind').value,workname:document.getElementById('workname').value,company:document.getElementById('company').value,writer:document.getElementById('writer').value,day:document.getElementById('day').value}; }
+function clearAll(){ if(!confirm('입력한 내용을 모두 지울까요?'))return; try{localStorage.removeItem('riskDraft');}catch(e){}
+  buildSites(); document.getElementById('company').value=''; document.getElementById('writer').value=''; document.getElementById('workname').value=''; setToday(); renderRows([]); }
+function saveDraft(){
+  const data={ meta:metaObj(), gong:document.getElementById('gong').value, rows:collectRows() };
+  try{ localStorage.setItem('riskDraft',JSON.stringify(data)); alert('임시저장 완료.'); }catch(e){ alert('저장 실패: '+e.message); }
+}
+function loadDraft(){
+  let d; try{ d=JSON.parse(localStorage.getItem('riskDraft')); }catch(e){ return false; }
+  if(!d) return false;
+  buildSites(); buildGong();
+  if(d.gong) document.getElementById('gong').value=d.gong;
+  const m=d.meta||{};
+  if(m.site) site.value=m.site; if(m.kind) document.getElementById('kind').value=m.kind;
+  document.getElementById('company').value=m.company||''; document.getElementById('writer').value=m.writer||'';
+  document.getElementById('workname').value=m.workname||''; document.getElementById('day').value=m.day||new Date().toISOString().slice(0,10);
+  renderRows(d.rows||[]);
+  return true;
+}
+buildSites(); buildGong();
+if(!loadDraft()){ setToday(); }
+</script>
+</body>
+</html>

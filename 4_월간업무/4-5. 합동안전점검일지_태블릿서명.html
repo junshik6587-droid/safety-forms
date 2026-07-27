@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>합동안전보건점검일지</title>
+<style>
+  :root{ --line:#333; --hd:#1f4e79; --hdbg:#dbe5f1; --accent:#1f6feb; --ok:#127c2b; --no:#b02a2a; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; font-family:"맑은 고딕","Malgun Gothic",AppleGothic,sans-serif; color:#111; background:#f2f4f7; }
+  .wrap{ max-width:1000px; margin:0 auto; padding:12px; }
+  .paper{ background:#fff; padding:18px 20px 26px; box-shadow:0 1px 6px rgba(0,0,0,.15); }
+  h1{ text-align:center; font-size:21px; margin:2px 0 12px; letter-spacing:2px; }
+  .meta{ display:flex; flex-wrap:wrap; gap:8px 18px; align-items:center; border:1.5px solid var(--line); padding:10px 12px; margin-bottom:10px; font-size:14px; }
+  .meta label{ font-weight:700; margin-right:4px; }
+  .meta input[type=text],.meta input[type=date]{ border:none; border-bottom:1px solid #999; font-size:14px; padding:3px 4px; font-family:inherit; }
+  .sitesel{ font-size:14px; font-weight:700; padding:5px 8px; font-family:inherit; border:1.5px solid var(--accent); border-radius:5px; color:var(--hd); }
+  .chkttl{ background:var(--hd); color:#fff; font-weight:700; font-size:14px; padding:7px 10px; border-radius:6px 6px 0 0; }
+  table{ width:100%; border-collapse:collapse; font-size:13px; }
+  th,td{ border:1px solid var(--line); padding:4px 6px; }
+  thead th{ background:var(--hdbg); color:var(--hd); font-size:12px; text-align:center; }
+  td.no{ width:32px; text-align:center; } td.item{ text-align:left; } td.bigo input{ width:100%; border:none; font-size:13px; font-family:inherit; padding:3px 2px; text-align:center; }
+  .colbigo{ width:120px; }
+  .seg{ display:flex; width:118px; margin:0 auto; }
+  .seg button{ flex:1; border:1px solid #ccc; background:#f4f6f8; font-size:12px; font-weight:700; padding:6px 0; cursor:pointer; font-family:inherit; color:#8a929c; }
+  .seg button.y.on{ background:var(--ok); color:#fff; border-color:var(--ok); }
+  .seg button.n.on{ background:var(--no); color:#fff; border-color:var(--no); }
+  .colres{ width:130px; text-align:center; }
+  .note{ border:1.5px solid var(--line); margin-top:10px; } .note .h{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:6px 8px; font-size:13px; }
+  .note textarea{ width:100%; min-height:56px; border:none; font-size:14px; font-family:inherit; padding:8px; resize:vertical; }
+  .subttl{ font-weight:700; color:var(--hd); margin:14px 0 6px; }
+  .colgb{ width:130px; } .colnm{ width:110px; } .colsig{ width:auto; }
+  td.cell-in input{ width:100%; border:none; text-align:center; font-size:14px; padding:6px 2px; font-family:inherit; background:transparent; }
+  td.cell-in select{ width:100%; border:none; font-size:13px; font-family:inherit; text-align:center; }
+  .sigcell{ position:relative; height:44px; padding:0; cursor:pointer; }
+  .sigcell canvas{ display:block; width:100%; height:44px; }
+  .sigcell .ph{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:12px; pointer-events:none; }
+  .mini{ border:1px solid #fff; background:rgba(255,255,255,.2); color:#fff; font-size:11px; font-weight:700; border-radius:5px; padding:2px 8px; cursor:pointer; font-family:inherit; }
+  .photopage{ margin-top:16px; }
+  .phhead{ background:var(--hd); color:#fff; font-weight:700; padding:8px 12px; border-radius:6px 6px 0 0; display:flex; justify-content:space-between; align-items:center; letter-spacing:2px; }
+  .phnote{ font-size:12px; color:#8a929c; padding:6px 2px; }
+  .photogrid{ padding:10px; border:1.5px solid var(--line); border-top:none; }
+  .pslot{ border:1.5px solid var(--line); margin-bottom:12px; } .pslot:last-child{ margin-bottom:0; }
+  .pslot .frame{ position:relative; width:100%; aspect-ratio:16/10; background:#f4f6f8; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; }
+  .pslot .frame img{ width:100%; height:100%; object-fit:contain; display:none; }
+  .pslot .frame .add{ color:#8a929c; font-size:14px; font-weight:700; text-align:center; padding:8px; }
+  .pslot .del{ position:absolute; top:6px; right:6px; background:rgba(0,0,0,.55); color:#fff; border:none; border-radius:50%; width:28px; height:28px; font-size:16px; line-height:1; cursor:pointer; display:none; }
+  .pslot.has .del{ display:block; }
+  table.pmeta{ width:100%; border-collapse:collapse; border-top:1.5px solid var(--line); }
+  table.pmeta td{ border:1px solid var(--line); padding:0; }
+  table.pmeta td.pl{ background:var(--hdbg); color:var(--hd); font-weight:700; text-align:center; padding:7px 6px; width:62px; white-space:nowrap; }
+  table.pmeta td.dtc{ width:150px; }
+  table.pmeta input{ width:100%; border:none; font-family:inherit; font-size:13px; padding:7px 8px; background:transparent; }
+  .controls{ position:sticky; bottom:0; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:12px; background:rgba(242,244,247,.95); margin-top:14px; }
+  .btn{ border:none; border-radius:8px; padding:12px 18px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; }
+  .btn.p{ background:var(--accent); color:#fff; } .btn.g{ background:#5b6470; color:#fff; } .btn.d{ background:#fff; color:#333; border:1.5px solid #bbb; }
+  .modal{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:50; }
+  .modal.show{ display:flex; }
+  .msheet{ background:#fff; border-radius:14px; width:min(94vw,720px); padding:16px; }
+  .msheet h3{ margin:0 0 4px; font-size:17px; text-align:center; } .msheet p{ margin:0 0 10px; text-align:center; color:#666; font-size:13px; }
+  .padwrap{ border:2px dashed #9aa4b0; border-radius:10px; background:#fff; }
+  #padBig{ display:block; width:100%; height:300px; touch-action:none; border-radius:10px; }
+  .msheet .row{ display:flex; gap:10px; margin-top:12px; } .msheet .row .btn{ flex:1; }
+  @media print{
+    body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:0; }
+    .controls,.modal,.mini,.pslot .del,.pslot .add,.phnote{ display:none !important; }
+    .photopage.nophoto{ display:none !important; }
+    .photopage:not(.nophoto){ break-before:page; page-break-before:always; }
+    .phhead{ background:var(--hdbg) !important; color:var(--hd) !important; border:1.5px solid var(--line); border-bottom:none; border-radius:0; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .pslot{ break-inside:avoid; } .pslot .frame{ background:#fff; aspect-ratio:auto; height:300px; }
+    thead th,.chkttl,.note .h,.seg button.on,td.pl{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    @page{ size:A4 portrait; margin:9mm; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="paper">
+  <h1>합동안전보건점검일지</h1>
+  <div class="meta">
+    <div><label>현장명</label><select id="site" class="sitesel"></select></div>
+    <div><label>점검일시</label><input type="date" id="day"></div>
+    <div><label>점검장소</label><input type="text" id="place" placeholder="점검 장소"></div>
+    <div><label>점검자</label><input type="text" id="inspector" placeholder="점검자"></div>
+  </div>
+
+  <div class="chkttl">합동안전보건점검표 <span style="font-weight:400;font-size:12px">(각 항목 양호/불량 선택)</span></div>
+  <table class="chk">
+    <thead><tr><th class="no">No</th><th>점검내용</th><th class="colres">점검결과</th><th class="colbigo">비고</th></tr></thead>
+    <tbody id="chkbody"></tbody>
+  </table>
+
+  <div class="note"><div class="h">지적사항</div><textarea data-c="point"></textarea></div>
+  <div class="note"><div class="h">조치사항</div><textarea data-c="action"></textarea></div>
+
+  <div class="subttl">점검자(참석자) 명단 · 서명</div>
+  <table id="tbl">
+    <thead><tr><th class="no">No</th><th class="colgb">구분</th><th class="colnm">직책·업체</th><th class="colnm">성명</th><th class="colsig">서명 (터치)</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+  <div class="photopage">
+    <div class="phhead">사 진 대 지 <button type="button" class="mini" onclick="addPhoto()">＋ 사진 추가</button></div>
+    <div class="phnote">※ 사진을 넣지 않으면 인쇄·PDF에서 사진대지 페이지는 출력되지 않습니다.</div>
+    <div class="photogrid" id="photogrid"></div>
+  </div>
+ </div>
+</div>
+
+<div class="controls">
+  <button class="btn p" onclick="printDoc()">📄 PDF로 저장 / 인쇄</button>
+  <button class="btn d" onclick="allGood()">전체 양호</button>
+  <button class="btn d" onclick="addRow()">＋ 점검자 추가</button>
+  <button class="btn d" onclick="saveDraft()">💾 임시저장</button>
+  <button class="btn g" onclick="clearAll()">전체 초기화</button>
+  <a class="btn d" href="../index.html" style="text-decoration:none">← 메인</a>
+</div>
+
+<div class="modal" id="modal">
+  <div class="msheet">
+    <h3 id="mTitle">서명</h3><p>아래 칸에 손가락 또는 스타일러스로 서명하세요</p>
+    <div class="padwrap"><canvas id="padBig"></canvas></div>
+    <div class="row"><button class="btn d" onclick="undoBig()">↩ 지우기</button><button class="btn g" onclick="closeModal()">취소</button><button class="btn p" onclick="confirmSig()">✔ 서명 완료</button></div>
+  </div>
+</div>
+
+<script src="../sites.js"></script>
+<script>
+const CHECKS=[
+ "작업환경(정리정돈 등)의 이상유무",
+ "크레인(타워·이동식), 호이스트 등 양중장비의 이상유무",
+ "백호우 등 건설기계의 이상유무",
+ "목재가공용 둥근톱의 방호장치 및 누전차단기·정리정돈 등의 이상유무",
+ "휴대용톱·드릴·절단기·밴딩기 등 전동기계기구의 접지·피복상태·누전차단기 등의 이상유무",
+ "용접기(전기·가스) 등의 이상유무",
+ "분전반의 접지·누전차단기·시건장치·회로명표시·관리책임자표기 등의 이상유무",
+ "전선의 피복상태 및 누전차단기·접지 등의 이상유무",
+ "안전표지판(금지·지시·경고·안내)의 부착상태",
+ "보호구(안전모·안전화·안전대 등) 및 작업복장의 착용상태",
+ "작업안전수칙(전기·일반·기계·위험물 등)의 이행유무",
+ "안전통로(경사로·계단·사다리 등)의 확보 및 조명상태",
+ "바닥 및 계단·슬라브 단부 등 개구부 추락방지(안전난간·방호울·추락방망·덮개 등) 이상유무",
+ "타워크레인으로 자재인양 시 안전수칙 준수유무",
+ "낙하물 재해방지를 위한 안전조치(방호선반·낙하물방지망 등) 이상유무",
+ "B/T 사용 작업 시 안전난간대·작업발판 등 이상유무",
+ "가스·유류용기 등 위험물 관리상태의 이상유무",
+ "비계설치 시 안전난간대·작업발판 설치유무",
+ "방화설비(소화기·방화사 등)의 이상유무",
+ "안전담당자·신호수·유도수 등 배치상태",
+ "굴착사면 안전조치 상태(경사면 기울기·배수로 등)",
+ "굴착면 인접부의 중량물 및 토사 적치 여부",
+ "흙막이 지보공의 설치상태(재료·이음부위·토류벽의 변위 등)"
+];
+const ROWS_DEFAULT=8;
+const DPR=Math.max(window.devicePixelRatio||1,2);
+let curIndex=null;
+const DEFAULT_SITES=["아르시엘 방배 732 공동주택 신축공사","이태원동 106-2 단독주택 신축현장","보라동 20-1 단독주택 신축현장","평창동 496-4 단독주택"];
+function buildSites(){ const sel=document.getElementById('site'); sel.innerHTML='';
+  ((window.SITES&&window.SITES.length)?window.SITES:DEFAULT_SITES).forEach(s=> sel.appendChild(new Option(s,s))); }
+
+function buildChecks(){
+  const tb=document.getElementById('chkbody'); tb.innerHTML='';
+  CHECKS.forEach((it,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td class="no">${i+1}</td><td class="item">${it}</td>
+      <td class="colres"><div class="seg" data-k="c${i}"><button type="button" class="y on">양호</button><button type="button" class="n">불량</button></div></td>
+      <td class="bigo"><input type="text" data-b="b${i}"></td>`;
+    const seg=tr.querySelector('.seg');
+    seg.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+      seg.querySelector('.y').classList.toggle('on',b.classList.contains('y'));
+      seg.querySelector('.n').classList.toggle('on',b.classList.contains('n'));
+    }));
+    tb.appendChild(tr);
+  });
+}
+function allGood(){ document.querySelectorAll('.seg').forEach(s=>{ s.querySelector('.y').classList.add('on'); s.querySelector('.n').classList.remove('on'); }); }
+
+function makeRow(n){
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td class="no">${n}</td>
+    <td class="cell-in colgb"><select data-k="gb"><option>원청(도급인)</option><option>협력업체(수급인)</option></select></td>
+    <td class="cell-in colnm"><input type="text" data-k="job"></td>
+    <td class="cell-in colnm"><input type="text" data-k="nm"></td>
+    <td class="sigcell colsig"><canvas></canvas><div class="ph">여기를 눌러 서명</div></td>`;
+  tr.querySelector('.sigcell').addEventListener('click',function(){ openModal(this); });
+  return tr;
+}
+function addRow(){ const b=document.getElementById('rows'); b.appendChild(makeRow(b.children.length+1)); }
+function buildRows(k){ const b=document.getElementById('rows'); b.innerHTML=''; for(let i=1;i<=k;i++) b.appendChild(makeRow(i)); }
+
+const modal=document.getElementById('modal'), padBig=document.getElementById('padBig'), bctx=padBig.getContext('2d');
+let drawing=false, hasInk=false, last=null;
+function sizeBig(){ const r=padBig.getBoundingClientRect(); padBig.width=r.width*DPR; padBig.height=r.height*DPR;
+  bctx.setTransform(1,0,0,1,0,0); bctx.scale(DPR,DPR); bctx.lineWidth=2.6; bctx.lineCap='round'; bctx.lineJoin='round'; bctx.strokeStyle='#000000'; hasInk=false; }
+function posBig(e){ const r=padBig.getBoundingClientRect(); return {x:e.clientX-r.left,y:e.clientY-r.top}; }
+function startB(e){ e.preventDefault(); drawing=true; last=posBig(e); try{ padBig.setPointerCapture(e.pointerId);}catch(_){}
+  bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(last.x+0.1,last.y+0.1); bctx.stroke(); hasInk=true; }
+function moveB(e){ if(!drawing)return; e.preventDefault(); const p=posBig(e); bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(p.x,p.y); bctx.stroke(); last=p; hasInk=true; }
+function endB(e){ if(drawing){ drawing=false; try{ padBig.releasePointerCapture(e.pointerId);}catch(_){} } }
+padBig.addEventListener('pointerdown',startB); padBig.addEventListener('pointermove',moveB);
+padBig.addEventListener('pointerup',endB); padBig.addEventListener('pointercancel',endB);
+function openModal(cell){ curIndex=cell; const tr=cell.closest('tr'); const nm=tr.querySelector('[data-k=nm]').value||tr.children[0].textContent;
+  document.getElementById('mTitle').textContent=nm?nm+' 님 서명':'서명'; modal.classList.add('show'); requestAnimationFrame(sizeBig); }
+function closeModal(){ modal.classList.remove('show'); }
+function undoBig(){ bctx.save(); bctx.setTransform(1,0,0,1,0,0); bctx.clearRect(0,0,padBig.width,padBig.height); bctx.restore(); hasInk=false; }
+function confirmSig(){ if(!hasInk){ closeModal(); return; } const cell=curIndex, cnv=cell.querySelector('canvas'), r=cell.getBoundingClientRect();
+  cnv.width=r.width*DPR; cnv.height=44*DPR; cnv.getContext('2d').drawImage(padBig,0,0,padBig.width,padBig.height,0,0,cnv.width,cnv.height);
+  cell.querySelector('.ph').style.display='none'; closeModal(); }
+
+const PHOTO_DEFAULT=2, PHOTO_MAXW=1000;
+function readScaled(file,cb){ const r=new FileReader();
+  r.onload=()=>{ const im=new Image(); im.onload=()=>{ let w=im.width,h=im.height; if(w>PHOTO_MAXW){h=Math.round(h*PHOTO_MAXW/w);w=PHOTO_MAXW;}
+    const c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(im,0,0,w,h); cb(c.toDataURL('image/jpeg',0.82)); }; im.src=r.result; };
+  r.readAsDataURL(file); }
+function setPhoto(s,u){ const img=s.querySelector('img'); img.src=u; img.style.display='block'; s.querySelector('.add').style.display='none'; s.classList.add('has'); }
+function clearPhoto(s){ const img=s.querySelector('img'); img.src=''; img.style.display='none'; s.querySelector('.add').style.display=''; s.classList.remove('has'); s.querySelector('input[type=file]').value=''; }
+function makePhotoSlot(){
+  const d=document.createElement('div'); d.className='pslot';
+  d.innerHTML=`<div class="frame"><div class="add">＋ 사진 촬영 / 선택</div><img alt=""><button type="button" class="del" title="삭제">×</button>
+      <input type="file" accept="image/*" capture="environment" style="display:none"></div>
+    <table class="pmeta">
+      <tr><td class="pl">내 용</td><td colspan="3"><input type="text" data-pk="content" placeholder="점검 내용"></td></tr>
+      <tr><td class="pl">위 치</td><td><input type="text" data-pk="loc" placeholder="위치"></td><td class="pl">일 자</td><td class="dtc"><input type="date" data-pk="date"></td></tr>
+    </table>`;
+  const frame=d.querySelector('.frame'), inp=d.querySelector('input[type=file]'), del=d.querySelector('.del');
+  frame.addEventListener('click',e=>{ if(e.target===del)return; inp.click(); });
+  inp.addEventListener('change',()=>{ const f=inp.files[0]; if(f) readScaled(f,u=>setPhoto(d,u)); });
+  del.addEventListener('click',()=>clearPhoto(d));
+  return d;
+}
+function addPhoto(){ document.getElementById('photogrid').appendChild(makePhotoSlot()); }
+function buildPhotos(k){ const g=document.getElementById('photogrid'); g.innerHTML=''; for(let i=0;i<k;i++) g.appendChild(makePhotoSlot()); }
+function updatePhotoPrint(){ const any=document.querySelector('#photogrid .pslot.has'); document.querySelector('.photopage').classList.toggle('nophoto',!any); }
+window.addEventListener('beforeprint', updatePhotoPrint);
+
+function setPrintTitle(){ document.title=('합동안전보건점검일지_'+((document.getElementById('day')||{}).value||new Date().toISOString().slice(0,10))).replace(/[\\/:*?"<>|]/g,'_'); }
+window.addEventListener('beforeprint', setPrintTitle);
+function printDoc(){ updatePhotoPrint(); setPrintTitle(); window.print(); }
+function setToday(){ document.getElementById('day').value=new Date().toISOString().slice(0,10); }
+function allC(){ return [...document.querySelectorAll('[data-c]')]; }
+function segVal(k){ const s=document.querySelector(`.seg[data-k="${k}"]`); return s.querySelector('.n.on')?'n':'y'; }
+function clearAll(){ if(!confirm('입력한 내용과 서명을 모두 지울까요?'))return; try{localStorage.removeItem('jointDraft');}catch(e){}
+  buildSites(); buildChecks(); buildRows(ROWS_DEFAULT); buildPhotos(PHOTO_DEFAULT); setToday();
+  document.getElementById('place').value=''; document.getElementById('inspector').value=''; allC().forEach(el=>el.value=''); }
+function saveDraft(){
+  const data={ site:document.getElementById('site').value, day:day.value, place:document.getElementById('place').value, inspector:document.getElementById('inspector').value,
+    fields:Object.fromEntries(allC().map(el=>[el.dataset.c,el.value])),
+    checks:Object.fromEntries([...document.querySelectorAll('.seg')].map(s=>[s.dataset.k, segVal(s.dataset.k)])),
+    bigo:Object.fromEntries([...document.querySelectorAll('[data-b]')].map(el=>[el.dataset.b, el.value])),
+    rows:[...document.querySelectorAll('#rows tr')].map(tr=>({ gb:tr.querySelector('[data-k=gb]').value, job:tr.querySelector('[data-k=job]').value, nm:tr.querySelector('[data-k=nm]').value,
+      sig:(tr.querySelector('.sigcell .ph').style.display==='none')?tr.querySelector('.sigcell canvas').toDataURL('image/png'):'' })),
+    photos:[...document.querySelectorAll('#photogrid .pslot')].map(p=>({ img:p.classList.contains('has')?p.querySelector('img').src:'', content:p.querySelector('[data-pk=content]').value, loc:p.querySelector('[data-pk=loc]').value, date:p.querySelector('[data-pk=date]').value })) };
+  try{ localStorage.setItem('jointDraft',JSON.stringify(data)); alert('임시저장 완료.'); }catch(e){ alert('저장 실패: '+e.message); }
+}
+function loadDraft(){
+  let d; try{ d=JSON.parse(localStorage.getItem('jointDraft')); }catch(e){ return false; }
+  if(!d) return false;
+  buildSites(); if(d.site) document.getElementById('site').value=d.site;
+  day.value=d.day||''; document.getElementById('place').value=d.place||''; document.getElementById('inspector').value=d.inspector||'';
+  buildChecks();
+  if(d.checks) Object.entries(d.checks).forEach(([k,v])=>{ const s=document.querySelector(`.seg[data-k="${k}"]`); if(s){ s.querySelector('.y').classList.toggle('on',v==='y'); s.querySelector('.n').classList.toggle('on',v==='n'); }});
+  if(d.bigo) Object.entries(d.bigo).forEach(([k,v])=>{ const el=document.querySelector(`[data-b="${k}"]`); if(el) el.value=v; });
+  if(d.fields) allC().forEach(el=>{ if(d.fields[el.dataset.c]!=null) el.value=d.fields[el.dataset.c]; });
+  buildRows(Math.max((d.rows||[]).length,ROWS_DEFAULT));
+  const trs=document.querySelectorAll('#rows tr');
+  (d.rows||[]).forEach((rd,i)=>{ const tr=trs[i]; if(!tr)return;
+    if(rd.gb) tr.querySelector('[data-k=gb]').value=rd.gb; tr.querySelector('[data-k=job]').value=rd.job||''; tr.querySelector('[data-k=nm]').value=rd.nm||'';
+    if(rd.sig){ const img=new Image(), cnv=tr.querySelector('.sigcell canvas'), r=tr.querySelector('.sigcell').getBoundingClientRect();
+      img.onload=()=>{ cnv.width=r.width*DPR; cnv.height=44*DPR; cnv.getContext('2d').drawImage(img,0,0,cnv.width,cnv.height); };
+      img.src=rd.sig; tr.querySelector('.sigcell .ph').style.display='none'; }
+  });
+  const ph=(d.photos&&d.photos.length)?d.photos:null; buildPhotos(ph?ph.length:PHOTO_DEFAULT);
+  if(ph){ const slots=document.querySelectorAll('#photogrid .pslot'); ph.forEach((p,i)=>{ const s=slots[i]; if(!s)return;
+    if(p.content!=null) s.querySelector('[data-pk=content]').value=p.content; if(p.loc!=null) s.querySelector('[data-pk=loc]').value=p.loc; if(p.date!=null) s.querySelector('[data-pk=date]').value=p.date;
+    if(p.img) setPhoto(s,p.img); }); }
+  return true;
+}
+buildSites();
+if(!loadDraft()){ buildChecks(); buildRows(ROWS_DEFAULT); buildPhotos(PHOTO_DEFAULT); setToday(); }
+</script>
+</body>
+</html>

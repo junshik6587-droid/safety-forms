@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>안전보건협의체 회의록</title>
+<title>노사협의체 회의록</title>
 <style>
   :root{ --line:#333; --hd:#1f4e79; --hdbg:#dbe5f1; --accent:#1f6feb; --ok:#127c2b; }
   *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -36,7 +36,6 @@
   .sigcell canvas{ display:block; width:100%; height:44px; }
   .sigcell .ph{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:12px; pointer-events:none; }
   .mini{ border:1px solid #fff; background:rgba(255,255,255,.2); color:#fff; font-size:11px; font-weight:700; border-radius:5px; padding:2px 8px; cursor:pointer; font-family:inherit; }
-  /* 사진대지 (노사협의체 원본 양식: 큰 사진 + 내용/위치/일자) */
   .photopage{ margin-top:16px; }
   .phhead{ background:var(--hd); color:#fff; font-weight:700; padding:8px 12px; border-radius:6px 6px 0 0; display:flex; justify-content:space-between; align-items:center; letter-spacing:2px; }
   .phnote{ font-size:12px; color:#8a929c; padding:6px 2px; }
@@ -82,14 +81,11 @@
 <body>
 <div class="wrap">
  <div class="paper">
-  <h1 style="text-align:center;letter-spacing:1.5px">안전보건협의체 회의록</h1>
+  <h1>노사협의체 회의록</h1>
 
   <div class="block">
     <div class="brow"><div class="bl">현장명</div><div class="bc"><select id="site" class="sitesel"></select></div></div>
-    <div class="brow">
-      <div class="bl">회의일시</div>
-      <div class="bc"><input type="date" id="day"> <input type="time" id="time"></div>
-    </div>
+    <div class="brow"><div class="bl">회의일시</div><div class="bc"><input type="date" id="day"> <input type="time" id="time"></div></div>
     <div class="brow"><div class="bl">회의장소</div><div class="bc"><input type="text" class="grow" id="place" placeholder="현장 회의실"></div></div>
     <div class="brow"><div class="bl">회의구분</div><div class="bc" id="kind">
       <div class="chk on" data-v="정기"><span class="b">✓</span>정기</div>
@@ -99,7 +95,7 @@
 
   <div class="sec"><div class="h">협의사항</div><textarea data-c="agenda"></textarea></div>
   <div class="sec"><div class="h">의결사항</div><textarea data-c="decide"></textarea></div>
-  <div class="sec"><div class="h">근로자 의견청취</div><textarea data-c="opinion"></textarea></div>
+  <div class="sec"><div class="h">기타사항</div><textarea data-c="etc"></textarea></div>
   <div class="sec"><div class="h">첨부문서</div><textarea data-c="attach" style="min-height:40px"></textarea></div>
 
   <div style="font-weight:700;color:var(--hd);margin:6px 0">참석자 명단 · 서명</div>
@@ -152,8 +148,8 @@ function makeRow(n){
   const tr=document.createElement('tr');
   tr.innerHTML=`
     <td class="colno">${n}</td>
-    <td class="cell-in colgb"><select data-k="gb"><option>도급인</option><option>관계수급인</option></select></td>
-    <td class="cell-in colpos"><select data-k="pos"><option>위원</option><option>대표</option><option>간사</option></select></td>
+    <td class="cell-in colgb"><select data-k="gb"><option>사용자위원</option><option>근로자위원</option></select></td>
+    <td class="cell-in colpos"><select data-k="pos"><option>위원</option><option>대표</option></select></td>
     <td class="cell-in colnm"><input type="text" data-k="nm"></td>
     <td class="sigcell colsig"><canvas></canvas><div class="ph">여기를 눌러 서명</div></td>`;
   tr.querySelector('.sigcell').addEventListener('click',function(){ openModal(this); });
@@ -181,7 +177,7 @@ function confirmSig(){ if(!hasInk){ closeModal(); return; } const cell=curIndex,
   cnv.width=r.width*DPR; cnv.height=44*DPR; cnv.getContext('2d').drawImage(padBig,0,0,padBig.width,padBig.height,0,0,cnv.width,cnv.height);
   cell.querySelector('.ph').style.display='none'; closeModal(); }
 
-/* 사진대지 (노사협의체 원본 양식) */
+/* 사진대지 */
 const PHOTO_DEFAULT = 2;
 const PHOTO_MAXW = 1000;
 function readScaled(file, cb){
@@ -201,7 +197,7 @@ function makePhotoSlot(){
   d.innerHTML=`<div class="frame"><div class="add">＋ 사진 촬영 / 선택</div><img alt=""><button type="button" class="del" title="삭제">×</button>
       <input type="file" accept="image/*" capture="environment" style="display:none"></div>
     <table class="pmeta">
-      <tr><td class="pl">내 용</td><td colspan="3"><input type="text" data-pk="content" placeholder="작업 · 점검 내용"></td></tr>
+      <tr><td class="pl">내 용</td><td colspan="3"><input type="text" data-pk="content" placeholder="회의 · 활동 내용"></td></tr>
       <tr><td class="pl">위 치</td><td><input type="text" data-pk="loc" placeholder="위치"></td><td class="pl">일 자</td><td class="dtc"><input type="date" data-pk="date"></td></tr>
     </table>`;
   const frame=d.querySelector('.frame'), inp=d.querySelector('input[type=file]'), del=d.querySelector('.del');
@@ -213,19 +209,17 @@ function makePhotoSlot(){
 function addPhoto(){ document.getElementById('photogrid').appendChild(makePhotoSlot()); }
 function buildPhotos(k){ const g=document.getElementById('photogrid'); g.innerHTML=''; for(let i=0;i<k;i++) g.appendChild(makePhotoSlot()); }
 
-/* 인쇄 시: 사진이 하나도 없으면 사진대지 페이지 숨김 */
 function updatePhotoPrint(){
   const any=document.querySelector('#photogrid .pslot.has');
   document.querySelector('.photopage').classList.toggle('nophoto', !any);
 }
 window.addEventListener('beforeprint', updatePhotoPrint);
-
-function setPrintTitle(){ document.title=('안전보건협의체_회의록_'+((document.getElementById('day')||{}).value||new Date().toISOString().slice(0,10))).replace(/[\\/:*?"<>|]/g,'_'); }
+function setPrintTitle(){ document.title=('노사협의체_회의록_'+((document.getElementById('day')||{}).value||new Date().toISOString().slice(0,10))).replace(/[\\/:*?"<>|]/g,'_'); }
 window.addEventListener('beforeprint', setPrintTitle);
 function printDoc(){ updatePhotoPrint(); setPrintTitle(); window.print(); }
 function setToday(){ document.getElementById('day').value=new Date().toISOString().slice(0,10); }
 function allC(){ return [...document.querySelectorAll('[data-c]')]; }
-function clearAll(){ if(!confirm('입력한 내용과 서명을 모두 지울까요?'))return; try{localStorage.removeItem('cmtDraft');}catch(e){}
+function clearAll(){ if(!confirm('입력한 내용과 서명을 모두 지울까요?'))return; try{localStorage.removeItem('nosaDraft');}catch(e){}
   buildSites(); buildRows(ROWS_DEFAULT); buildPhotos(PHOTO_DEFAULT); setToday(); document.getElementById('time').value=''; document.getElementById('place').value=''; allC().forEach(el=>el.value='');
   document.querySelectorAll('#kind .chk').forEach((c,i)=>{ const on=i===0; c.classList.toggle('on',on); c.querySelector('.b').textContent=on?'✓':''; }); }
 function saveDraft(){
@@ -238,14 +232,12 @@ function saveDraft(){
     })),
     photos:[...document.querySelectorAll('#photogrid .pslot')].map(p=>({
       img:p.classList.contains('has')?p.querySelector('img').src:'',
-      content:p.querySelector('[data-pk=content]').value,
-      loc:p.querySelector('[data-pk=loc]').value,
-      date:p.querySelector('[data-pk=date]').value
+      content:p.querySelector('[data-pk=content]').value, loc:p.querySelector('[data-pk=loc]').value, date:p.querySelector('[data-pk=date]').value
     })) };
-  try{ localStorage.setItem('cmtDraft',JSON.stringify(data)); alert('임시저장 완료.'); }catch(e){ alert('저장 실패: '+e.message); }
+  try{ localStorage.setItem('nosaDraft',JSON.stringify(data)); alert('임시저장 완료.'); }catch(e){ alert('저장 실패: '+e.message); }
 }
 function loadDraft(){
-  let d; try{ d=JSON.parse(localStorage.getItem('cmtDraft')); }catch(e){ return false; }
+  let d; try{ d=JSON.parse(localStorage.getItem('nosaDraft')); }catch(e){ return false; }
   if(!d || !Array.isArray(d.rows)) return false;
   buildSites(); if(d.site) document.getElementById('site').value=d.site;
   day.value=d.day||''; document.getElementById('time').value=d.time||''; document.getElementById('place').value=d.place||'';
@@ -254,7 +246,7 @@ function loadDraft(){
   buildRows(Math.max(d.rows.length,ROWS_DEFAULT));
   const trs=document.querySelectorAll('#rows tr');
   d.rows.forEach((rd,i)=>{ const tr=trs[i]; if(!tr)return;
-    if(rd.gb) tr.querySelector('[data-k=gb]').value=rd.gb; tr.querySelector('[data-k=pos]').value=rd.pos||''; tr.querySelector('[data-k=nm]').value=rd.nm||'';
+    if(rd.gb) tr.querySelector('[data-k=gb]').value=rd.gb; if(rd.pos) tr.querySelector('[data-k=pos]').value=rd.pos; tr.querySelector('[data-k=nm]').value=rd.nm||'';
     if(rd.sig){ const img=new Image(), cnv=tr.querySelector('.sigcell canvas'), r=tr.querySelector('.sigcell').getBoundingClientRect();
       img.onload=()=>{ cnv.width=r.width*DPR; cnv.height=44*DPR; cnv.getContext('2d').drawImage(img,0,0,cnv.width,cnv.height); };
       img.src=rd.sig; tr.querySelector('.sigcell .ph').style.display='none'; }

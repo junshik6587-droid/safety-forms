@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>안전조회일지</title>
+<style>
+  :root{ --line:#333; --hd:#1f4e79; --hdbg:#dbe5f1; --accent:#1f6feb; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; font-family:"맑은 고딕","Malgun Gothic",AppleGothic,sans-serif; color:#111; background:#f2f4f7; }
+  .wrap{ max-width:1000px; margin:0 auto; padding:12px; }
+  .paper{ background:#fff; padding:18px 20px 26px; box-shadow:0 1px 6px rgba(0,0,0,.15); }
+  h1{ text-align:center; font-size:22px; margin:2px 0 12px; letter-spacing:3px; }
+  .block{ border:1.5px solid var(--line); margin-bottom:10px; }
+  .brow{ display:flex; border-bottom:1px solid var(--line); font-size:14px; } .brow:last-child{ border-bottom:none; }
+  .bl{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:8px 10px; min-width:110px; display:flex; align-items:center; }
+  .bc{ padding:6px 10px; flex:1; display:flex; align-items:center; flex-wrap:wrap; gap:6px 14px; }
+  .bc input[type=text],.bc input[type=date],.bc input[type=time]{ border:none; border-bottom:1px solid #999; font-size:14px; padding:3px 4px; font-family:inherit; }
+  .bc input.grow{ flex:1; min-width:150px; }
+  .sitesel{ font-size:14px; font-weight:700; padding:5px 8px; font-family:inherit; border:1.5px solid var(--accent); border-radius:5px; color:var(--hd); }
+  .sec{ border:1.5px solid var(--line); margin-bottom:10px; } .sec .h{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:6px 10px; font-size:13px; border-bottom:1px solid var(--line); }
+  .sec textarea{ width:100%; min-height:90px; border:none; font-size:14px; font-family:inherit; padding:8px 10px; resize:vertical; }
+  .subttl{ font-weight:700; color:var(--hd); margin:12px 0 6px; }
+  table{ width:100%; border-collapse:collapse; font-size:13px; }
+  th,td{ border:1px solid var(--line); padding:3px 5px; text-align:center; }
+  thead th{ background:var(--hdbg); color:var(--hd); font-size:12px; padding:6px 4px; }
+  td input{ width:100%; border:none; text-align:center; font-size:14px; font-family:inherit; padding:6px 2px; background:transparent; }
+  td input:focus{ outline:2px solid var(--accent); outline-offset:-2px; }
+  .mini{ border:1px solid #fff; background:rgba(255,255,255,.2); color:#fff; font-size:11px; font-weight:700; border-radius:5px; padding:2px 8px; cursor:pointer; font-family:inherit; }
+  .photopage{ margin-top:16px; }
+  .phhead{ background:var(--hd); color:#fff; font-weight:700; padding:8px 12px; border-radius:6px 6px 0 0; display:flex; justify-content:space-between; align-items:center; letter-spacing:2px; }
+  .phnote{ font-size:12px; color:#8a929c; padding:6px 2px; }
+  .photogrid{ padding:10px; border:1.5px solid var(--line); border-top:none; }
+  .pslot{ border:1.5px solid var(--line); margin-bottom:12px; } .pslot:last-child{ margin-bottom:0; }
+  .pslot .frame{ position:relative; width:100%; aspect-ratio:16/10; background:#f4f6f8; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; }
+  .pslot .frame img{ width:100%; height:100%; object-fit:contain; display:none; }
+  .pslot .frame .add{ color:#8a929c; font-size:14px; font-weight:700; text-align:center; padding:8px; }
+  .pslot .del{ position:absolute; top:6px; right:6px; background:rgba(0,0,0,.55); color:#fff; border:none; border-radius:50%; width:28px; height:28px; font-size:16px; line-height:1; cursor:pointer; display:none; }
+  .pslot.has .del{ display:block; }
+  table.pmeta{ width:100%; border-collapse:collapse; border-top:1.5px solid var(--line); }
+  table.pmeta td{ border:1px solid var(--line); padding:0; }
+  table.pmeta td.pl{ background:var(--hdbg); color:var(--hd); font-weight:700; text-align:center; padding:7px 6px; width:62px; white-space:nowrap; }
+  table.pmeta td.dtc{ width:150px; } table.pmeta input{ width:100%; border:none; font-family:inherit; font-size:13px; padding:7px 8px; background:transparent; }
+  .controls{ position:sticky; bottom:0; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:12px; background:rgba(242,244,247,.95); margin-top:14px; }
+  .btn{ border:none; border-radius:8px; padding:12px 18px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; }
+  .btn.p{ background:var(--accent); color:#fff; } .btn.g{ background:#5b6470; color:#fff; } .btn.d{ background:#fff; color:#333; border:1.5px solid #bbb; }
+  @media print{
+    body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:0; }
+    .controls,.mini,.pslot .del,.pslot .add,.phnote{ display:none !important; }
+    .photopage.nophoto{ display:none !important; } .photopage:not(.nophoto){ break-before:page; page-break-before:always; }
+    .phhead{ background:var(--hdbg) !important; color:var(--hd) !important; border:1.5px solid var(--line); border-bottom:none; border-radius:0; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .pslot{ break-inside:avoid; } .pslot .frame{ background:#fff; aspect-ratio:auto; height:300px; }
+    thead th,.bl,.sec .h,td.pl{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    @page{ size:A4 portrait; margin:9mm; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="paper">
+  <h1>안 전 조 회 일 지</h1>
+  <div class="block">
+    <div class="brow"><div class="bl">현장명</div><div class="bc"><select id="site" class="sitesel"></select></div></div>
+    <div class="brow"><div class="bl">일자</div><div class="bc"><input type="date" id="day"> &nbsp;구분 <input type="text" data-c="gubun" value="작업시작 전 안전교육" style="min-width:170px"></div></div>
+    <div class="brow"><div class="bl">교육담당자</div><div class="bc"><input type="text" data-c="teacher"> &nbsp;교육시간 <input type="text" data-c="time" placeholder="예) 08:00~08:20"></div></div>
+    <div class="brow"><div class="bl">참석 인원</div><div class="bc">현장소장 <input type="text" data-c="p_mgr" style="width:54px">명 &nbsp; 관리감독자 <input type="text" data-c="p_sv" style="width:54px">명 &nbsp; 근로자 <input type="text" data-c="p_wk" style="width:54px">명</div></div>
+  </div>
+
+  <div class="sec"><div class="h">교육(조회) 실시 내용</div><textarea data-c="content"></textarea></div>
+
+  <div class="subttl">안전조회 참가 현황</div>
+  <table id="tbl">
+    <thead><tr><th style="width:36px">No</th><th>업체명</th><th>공종</th><th style="width:80px">출력인원</th><th style="width:80px">참석인원</th><th style="width:80px">참석율(%)</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+  <div class="photopage">
+    <div class="phhead">안전조회 실시 사진 <button type="button" class="mini" onclick="addPhoto()">＋ 사진 추가</button></div>
+    <div class="phnote">※ 사진을 넣지 않으면 인쇄·PDF에서 사진 페이지는 출력되지 않습니다.</div>
+    <div class="photogrid" id="photogrid"></div>
+  </div>
+ </div>
+</div>
+
+<div class="controls">
+  <button class="btn p" onclick="printDoc()">📄 PDF로 저장 / 인쇄</button>
+  <button class="btn d" onclick="addRow()">＋ 업체 추가</button>
+  <button class="btn d" onclick="saveDraft()">💾 임시저장</button>
+  <button class="btn g" onclick="clearAll()">전체 초기화</button>
+  <a class="btn d" href="../index.html" style="text-decoration:none">← 메인</a>
+</div>
+
+<script src="../sites.js"></script>
+<script>
+const ROWS_DEFAULT=6, DPR=Math.max(window.devicePixelRatio||1,2);
+const DEFAULT_SITES=["아르시엘 방배 732 공동주택 신축공사","이태원동 106-2 단독주택 신축현장","보라동 20-1 단독주택 신축현장","평창동 496-4 단독주택"];
+function buildSites(){ const sel=document.getElementById('site'); sel.innerHTML='';
+  ((window.SITES&&window.SITES.length)?window.SITES:DEFAULT_SITES).forEach(s=> sel.appendChild(new Option(s,s))); }
+function makeRow(n){ const tr=document.createElement('tr');
+  tr.innerHTML=`<td>${n}</td><td><input data-k="co"></td><td><input data-k="job"></td><td><input data-k="out"></td><td><input data-k="att"></td><td><input data-k="rate"></td>`;
+  return tr; }
+function addRow(){ const b=document.getElementById('rows'); b.appendChild(makeRow(b.children.length+1)); }
+function buildRows(k){ const b=document.getElementById('rows'); b.innerHTML=''; for(let i=1;i<=k;i++) b.appendChild(makeRow(i)); }
+
+const PHOTO_DEFAULT=2, PHOTO_MAXW=1000;
+function readScaled(file,cb){ const r=new FileReader();
+  r.onload=()=>{ const im=new Image(); im.onload=()=>{ let w=im.width,h=im.height; if(w>PHOTO_MAXW){h=Math.round(h*PHOTO_MAXW/w);w=PHOTO_MAXW;}
+    const c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(im,0,0,w,h); cb(c.toDataURL('image/jpeg',0.82)); }; im.src=r.result; };
+  r.readAsDataURL(file); }
+function setPhoto(s,u){ const img=s.querySelector('img'); img.src=u; img.style.display='block'; s.querySelector('.add').style.display='none'; s.classList.add('has'); }
+function clearPhoto(s){ const img=s.querySelector('img'); img.src=''; img.style.display='none'; s.querySelector('.add').style.display=''; s.classList.remove('has'); s.querySelector('input[type=file]').value=''; }
+function makePhotoSlot(){ const d=document.createElement('div'); d.className='pslot';
+  d.innerHTML=`<div class="frame"><div class="add">＋ 사진 촬영 / 선택</div><img alt=""><button type="button" class="del" title="삭제">×</button>
+      <input type="file" accept="image/*" capture="environment" style="display:none"></div>
+    <table class="pmeta"><tr><td class="pl">내 용</td><td colspan="3"><input type="text" data-pk="content" placeholder="안전조회 내용"></td></tr>
+      <tr><td class="pl">위 치</td><td><input type="text" data-pk="loc" placeholder="위치"></td><td class="pl">일 자</td><td class="dtc"><input type="date" data-pk="date"></td></tr></table>`;
+  const frame=d.querySelector('.frame'), inp=d.querySelector('input[type=file]'), del=d.querySelector('.del');
+  frame.addEventListener('click',e=>{ if(e.target===del)return; inp.click(); });
+  inp.addEventListener('change',()=>{ const f=inp.files[0]; if(f) readScaled(f,u=>setPhoto(d,u)); });
+  del.addEventListener('click',()=>clearPhoto(d)); return d; }
+function addPhoto(){ document.getElementById('photogrid').appendChild(makePhotoSlot()); }
+function buildPhotos(k){ const g=document.getElementById('photogrid'); g.innerHTML=''; for(let i=0;i<k;i++) g.appendChild(makePhotoSlot()); }
+function updatePhotoPrint(){ const any=document.querySelector('#photogrid .pslot.has'); document.querySelector('.photopage').classList.toggle('nophoto',!any); }
+window.addEventListener('beforeprint', updatePhotoPrint);
+
+function setPrintTitle(){ document.title=('안전조회일지_'+((document.getElementById('day')||{}).value||new Date().toISOString().slice(0,10))).replace(/[\\/:*?"<>|]/g,'_'); }
+window.addEventListener('beforeprint', setPrintTitle);
+function printDoc(){ updatePhotoPrint(); setPrintTitle(); window.print(); }
+function setToday(){ document.getElementById('day').value=new Date().toISOString().slice(0,10); }
+function allC(){ return [...document.querySelectorAll('[data-c]')]; }
+function clearAll(){ if(!confirm('입력한 내용을 모두 지울까요?'))return; try{localStorage.removeItem('meetDraft');}catch(e){}
+  buildSites(); buildRows(ROWS_DEFAULT); buildPhotos(PHOTO_DEFAULT); setToday(); allC().forEach(el=>{ if(el.dataset.c!=='gubun') el.value=''; }); }
+function saveDraft(){
+  const data={ site:document.getElementById('site').value, day:day.value,
+    fields:Object.fromEntries(allC().map(el=>[el.dataset.c,el.value])),
+    rows:[...document.querySelectorAll('#rows tr')].map(tr=>({ co:tr.querySelector('[data-k=co]').value, job:tr.querySelector('[data-k=job]').value, out:tr.querySelector('[data-k=out]').value, att:tr.querySelector('[data-k=att]').value, rate:tr.querySelector('[data-k=rate]').value })),
+    photos:[...document.querySelectorAll('#photogrid .pslot')].map(p=>({ img:p.classList.contains('has')?p.querySelector('img').src:'', content:p.querySelector('[data-pk=content]').value, loc:p.querySelector('[data-pk=loc]').value, date:p.querySelector('[data-pk=date]').value })) };
+  try{ localStorage.setItem('meetDraft',JSON.stringify(data)); alert('임시저장 완료.'); }catch(e){ alert('저장 실패: '+e.message); }
+}
+function loadDraft(){
+  let d; try{ d=JSON.parse(localStorage.getItem('meetDraft')); }catch(e){ return false; }
+  if(!d) return false;
+  buildSites(); if(d.site) document.getElementById('site').value=d.site; day.value=d.day||'';
+  if(d.fields) allC().forEach(el=>{ if(d.fields[el.dataset.c]!=null) el.value=d.fields[el.dataset.c]; });
+  buildRows(Math.max((d.rows||[]).length,ROWS_DEFAULT));
+  const trs=document.querySelectorAll('#rows tr');
+  (d.rows||[]).forEach((rd,i)=>{ const tr=trs[i]; if(!tr)return; tr.querySelector('[data-k=co]').value=rd.co||''; tr.querySelector('[data-k=job]').value=rd.job||''; tr.querySelector('[data-k=out]').value=rd.out||''; tr.querySelector('[data-k=att]').value=rd.att||''; tr.querySelector('[data-k=rate]').value=rd.rate||''; });
+  const ph=(d.photos&&d.photos.length)?d.photos:null; buildPhotos(ph?ph.length:PHOTO_DEFAULT);
+  if(ph){ const slots=document.querySelectorAll('#photogrid .pslot'); ph.forEach((p,i)=>{ const s=slots[i]; if(!s)return; if(p.content!=null) s.querySelector('[data-pk=content]').value=p.content; if(p.loc!=null) s.querySelector('[data-pk=loc]').value=p.loc; if(p.date!=null) s.querySelector('[data-pk=date]').value=p.date; if(p.img) setPhoto(s,p.img); }); }
+  return true;
+}
+buildSites();
+if(!loadDraft()){ buildRows(ROWS_DEFAULT); buildPhotos(PHOTO_DEFAULT); setToday(); }
+</script>
+</body>
+</html>
