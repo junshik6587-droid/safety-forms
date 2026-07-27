@@ -59,7 +59,7 @@
   <h1>개인보호구 지급대장</h1>
   <div class="meta">
     <div><label>현장명</label><select id="site" class="sitesel"></select></div>
-    <div><label>작성일자</label><input type="date" id="day" style="border:none;border-bottom:1px solid #999;font-family:inherit;font-size:14px;padding:3px 4px"></div>
+    <input type="hidden" id="day">
   </div>
   <div class="pledge">
     1. 본인은 금일수령한 보호구를 안전규칙 제32조2항(보호구 착용준수)에 의거 <b>착용의무를 성실히 이행</b>하겠으며, 보호구 미착용으로 인한 귀사의 제반조치 사항에 따르겠음.<br><br>
@@ -130,7 +130,6 @@ function makeRow(n){
     <td class="cell-in colnm"><input type="text" data-k="nm"></td>
     ${ticks}
     <td class="sigcell colsig"><canvas></canvas><div class="ph">여기를 눌러 서명</div></td>`;
-  tr.querySelector('[data-k=dt]').value=new Date().toISOString().slice(0,10);
   tr.querySelectorAll('.tick').forEach(t=> t.addEventListener('click',()=>{ t.classList.toggle('on'); t.textContent=t.classList.contains('on')?'✓':''; }));
   tr.querySelector('.sigcell').addEventListener('click',function(){ openModal(this); });
   return tr;

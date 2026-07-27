@@ -104,12 +104,12 @@
     </thead>
     <tbody>
       <tr><td class="rowlabel">교육 대상자수</td>
-        <td><input type="text" data-c="tot_gye"></td><td><input type="text" data-c="tot_m"></td><td><input type="text" data-c="tot_f"></td>
+        <td><input type="text" data-c="tot_gye" readonly style="background:#eef1f5;font-weight:700"></td><td><input type="text" data-c="tot_m" inputmode="numeric" oninput="sumEdu('tot')"></td><td><input type="text" data-c="tot_f" inputmode="numeric" oninput="sumEdu('tot')"></td>
         <td rowspan="3"><textarea data-c="reason" style="width:100%;border:none;font-family:inherit;font-size:13px;min-height:66px;resize:vertical"></textarea></td></tr>
       <tr><td class="rowlabel">교육 실시자수</td>
-        <td><input type="text" data-c="do_gye"></td><td><input type="text" data-c="do_m"></td><td><input type="text" data-c="do_f"></td></tr>
+        <td><input type="text" data-c="do_gye" readonly style="background:#eef1f5;font-weight:700"></td><td><input type="text" data-c="do_m" inputmode="numeric" oninput="sumEdu('do')"></td><td><input type="text" data-c="do_f" inputmode="numeric" oninput="sumEdu('do')"></td></tr>
       <tr><td class="rowlabel">교육 미실시자수</td>
-        <td><input type="text" data-c="no_gye"></td><td><input type="text" data-c="no_m"></td><td><input type="text" data-c="no_f"></td></tr>
+        <td><input type="text" data-c="no_gye" readonly style="background:#eef1f5;font-weight:700"></td><td><input type="text" data-c="no_m" inputmode="numeric" oninput="sumEdu('no')"></td><td><input type="text" data-c="no_f" inputmode="numeric" oninput="sumEdu('no')"></td></tr>
     </tbody>
   </table>
 
@@ -382,6 +382,8 @@ window.addEventListener('beforeprint', setPrintTitle);
 function printDoc(){ setPrintTitle(); window.print(); }
 function setToday(){ document.getElementById('day').value=new Date().toISOString().slice(0,10); }
 function allInputs(){ return [...document.querySelectorAll('[data-c]')]; }
+function sumEdu(p){ const m=parseInt((document.querySelector('[data-c='+p+'_m]')||{}).value)||0, f=parseInt((document.querySelector('[data-c='+p+'_f]')||{}).value)||0; const g=document.querySelector('[data-c='+p+'_gye]'); if(g) g.value=(m+f)?(m+f):''; }
+function sumAllEdu(){ ['tot','do','no'].forEach(sumEdu); }
 
 function clearAll(){
   if(!confirm('입력한 내용과 서명을 모두 지울까요?')) return;
@@ -433,6 +435,7 @@ function loadDraft(){
 
 /* init */
 if(!loadDraft()){ buildSites(); buildTarget(); buildTimes(); renderSubjects(); buildRows(ROWS_DEFAULT); setToday(); }
+sumAllEdu();
 </script>
 </body>
 </html>
