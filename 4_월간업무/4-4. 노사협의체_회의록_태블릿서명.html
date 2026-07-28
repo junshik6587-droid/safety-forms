@@ -35,6 +35,13 @@
   .sigcell{ position:relative; height:44px; padding:0; cursor:pointer; }
   .sigcell canvas{ display:block; width:100%; height:44px; }
   .sigcell .ph{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:12px; pointer-events:none; }
+  .nmcell{ position:relative; }
+  .nmcell canvas.nmink{ position:absolute; inset:0; width:100%; height:44px; display:none; pointer-events:none; }
+  .nmcell.inked canvas.nmink{ display:block; }
+  .nmcell.inked input{ visibility:hidden; }
+  .nmcell .penbtn{ position:absolute; top:3px; right:3px; width:22px; height:22px; border:none; background:#eef3fb; color:var(--accent); border-radius:5px; font-size:12px; font-weight:800; cursor:pointer; z-index:2; padding:0; }
+  .nmcell .penbtn:active{ background:var(--accent); color:#fff; }
+  @media print{ .nmcell .penbtn{ display:none !important; } }
   .mini{ border:1px solid #fff; background:rgba(255,255,255,.2); color:#fff; font-size:11px; font-weight:700; border-radius:5px; padding:2px 8px; cursor:pointer; font-family:inherit; }
   .photopage{ margin-top:16px; }
   .phhead{ background:var(--hd); color:#fff; font-weight:700; padding:8px 12px; border-radius:6px 6px 0 0; display:flex; justify-content:space-between; align-items:center; letter-spacing:2px; }
@@ -53,7 +60,7 @@
   table.pmeta td.dtc{ width:150px; }
   table.pmeta input{ width:100%; border:none; font-family:inherit; font-size:13px; padding:7px 8px; background:transparent; }
   table.pmeta input:focus{ outline:2px solid var(--accent); outline-offset:-2px; }
-  .controls{ position:sticky; bottom:0; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:12px; background:rgba(242,244,247,.95); margin-top:14px; }
+  .controls{ position:sticky; bottom:0; z-index:20; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:12px; background:rgba(242,244,247,.95); margin-top:14px; }
   .btn{ border:none; border-radius:8px; padding:12px 18px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; }
   .btn.p{ background:var(--accent); color:#fff; } .btn.g{ background:#5b6470; color:#fff; } .btn.d{ background:#fff; color:#333; border:1.5px solid #bbb; }
   .modal{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:50; }
@@ -150,9 +157,10 @@ function makeRow(n){
     <td class="colno">${n}</td>
     <td class="cell-in colgb"><select data-k="gb"><option>사용자위원</option><option>근로자위원</option></select></td>
     <td class="cell-in colpos"><select data-k="pos"><option>위원</option><option>대표</option></select></td>
-    <td class="cell-in colnm"><input type="text" data-k="nm"></td>
+    <td class="cell-in colnm nmcell"><input type="text" data-k="nm"><canvas class="nmink"></canvas><button type="button" class="penbtn" title="성명 손글씨로 쓰기">✍</button></td>
     <td class="sigcell colsig"><canvas></canvas><div class="ph">여기를 눌러 서명</div></td>`;
-  tr.querySelector('.sigcell').addEventListener('click',function(){ openModal(this); });
+  tr.querySelector('.sigcell').addEventListener('click',function(){ openSig(this); });
+  tr.querySelector('.penbtn').addEventListener('click',function(e){ e.stopPropagation(); openNm(tr.querySelector('.nmcell')); });
   return tr;
 }
 function addRow(){ const b=document.getElementById('rows'); b.appendChild(makeRow(b.children.length+1)); }
@@ -169,13 +177,18 @@ function moveB(e){ if(!drawing)return; e.preventDefault(); const p=posBig(e); bc
 function endB(e){ if(drawing){ drawing=false; try{ padBig.releasePointerCapture(e.pointerId);}catch(_){} } }
 padBig.addEventListener('pointerdown',startB); padBig.addEventListener('pointermove',moveB);
 padBig.addEventListener('pointerup',endB); padBig.addEventListener('pointercancel',endB);
-function openModal(cell){ curIndex=cell; const tr=cell.closest('tr'); const nm=tr.querySelector('[data-k=nm]').value||tr.children[0].textContent;
+let curTarget=null;
+function openSig(cell){ const tr=cell.closest('tr'); const nm=tr.querySelector('[data-k=nm]').value||tr.children[0].textContent;
+  curTarget={ cnv:cell.querySelector('canvas'), box:cell, done:()=>{ cell.querySelector('.ph').style.display='none'; }, clear:()=>{ cell.querySelector('.ph').style.display=''; } };
   document.getElementById('mTitle').textContent=nm?nm+' 님 서명':'서명'; modal.classList.add('show'); requestAnimationFrame(sizeBig); }
+function openNm(cell){ curTarget={ cnv:cell.querySelector('.nmink'), box:cell, done:()=>cell.classList.add('inked'), clear:()=>cell.classList.remove('inked') };
+  document.getElementById('mTitle').textContent='성명 (손글씨)'; modal.classList.add('show'); requestAnimationFrame(sizeBig); }
 function closeModal(){ modal.classList.remove('show'); }
 function undoBig(){ bctx.save(); bctx.setTransform(1,0,0,1,0,0); bctx.clearRect(0,0,padBig.width,padBig.height); bctx.restore(); hasInk=false; }
-function confirmSig(){ if(!hasInk){ closeModal(); return; } const cell=curIndex, cnv=cell.querySelector('canvas'), r=cell.getBoundingClientRect();
-  cnv.width=r.width*DPR; cnv.height=44*DPR; cnv.getContext('2d').drawImage(padBig,0,0,padBig.width,padBig.height,0,0,cnv.width,cnv.height);
-  cell.querySelector('.ph').style.display='none'; closeModal(); }
+function confirmSig(){ const t=curTarget; if(!t){ closeModal(); return; }
+  if(!hasInk){ const cx=t.cnv.getContext('2d'); cx.clearRect(0,0,t.cnv.width,t.cnv.height); t.clear(); closeModal(); return; }
+  const cnv=t.cnv, r=t.box.getBoundingClientRect(); cnv.width=r.width*DPR; cnv.height=r.height*DPR;
+  cnv.getContext('2d').drawImage(padBig,0,0,padBig.width,padBig.height,0,0,cnv.width,cnv.height); t.done(); closeModal(); }
 
 /* 사진대지 */
 const PHOTO_DEFAULT = 2;
@@ -228,6 +241,7 @@ function saveDraft(){
     fields:Object.fromEntries(allC().map(el=>[el.dataset.c, el.value])),
     rows:[...document.querySelectorAll('#rows tr')].map(tr=>({
       gb:tr.querySelector('[data-k=gb]').value, pos:tr.querySelector('[data-k=pos]').value, nm:tr.querySelector('[data-k=nm]').value,
+      nmSig:tr.querySelector('.nmcell').classList.contains('inked')?tr.querySelector('.nmink').toDataURL('image/png'):'',
       sig:(tr.querySelector('.sigcell .ph').style.display==='none')?tr.querySelector('.sigcell canvas').toDataURL('image/png'):''
     })),
     photos:[...document.querySelectorAll('#photogrid .pslot')].map(p=>({
@@ -247,6 +261,8 @@ function loadDraft(){
   const trs=document.querySelectorAll('#rows tr');
   d.rows.forEach((rd,i)=>{ const tr=trs[i]; if(!tr)return;
     if(rd.gb) tr.querySelector('[data-k=gb]').value=rd.gb; if(rd.pos) tr.querySelector('[data-k=pos]').value=rd.pos; tr.querySelector('[data-k=nm]').value=rd.nm||'';
+    if(rd.nmSig){ const cell=tr.querySelector('.nmcell'), img=new Image(), cnv=tr.querySelector('.nmink'), r=cell.getBoundingClientRect();
+      img.onload=()=>{ cnv.width=r.width*DPR; cnv.height=44*DPR; cnv.getContext('2d').drawImage(img,0,0,cnv.width,cnv.height); }; img.src=rd.nmSig; cell.classList.add('inked'); }
     if(rd.sig){ const img=new Image(), cnv=tr.querySelector('.sigcell canvas'), r=tr.querySelector('.sigcell').getBoundingClientRect();
       img.onload=()=>{ cnv.width=r.width*DPR; cnv.height=44*DPR; cnv.getContext('2d').drawImage(img,0,0,cnv.width,cnv.height); };
       img.src=rd.sig; tr.querySelector('.sigcell .ph').style.display='none'; }
