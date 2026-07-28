@@ -41,7 +41,8 @@
   .emer h1{ margin-top:28px; margin-bottom:56px; }
   .emer .vline{ height:30px; }
   .emer .center{ margin:6px 0; }
-  .ebox{ border:2px solid var(--line); border-radius:6px; padding:15px 16px; }
+  .emer .hbar{ margin:0; }
+  .ebox{ border:2px solid var(--line); border-radius:6px; padding:15px 16px; min-width:0; overflow:hidden; }
   .ebox .et{ font-weight:700; color:var(--hd); text-align:center; font-size:16px; margin-bottom:9px; }
   .erow{ display:flex; align-items:center; gap:8px; margin:8px 0; font-size:15px; }
   .erow .k{ width:46px; flex:0 0 auto; color:#555; font-weight:700; text-align:justify; text-align-last:justify; }
@@ -60,7 +61,7 @@
   @media print{
     body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:8mm 6mm; }
     .selbar,.controls{ display:none !important; }
-    thead th,td.lbl,.node,.ebox{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    thead th,td.lbl,.node,.ebox,.hbar,.vline{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
     #d-emer.on, #d-disaster.on{ min-height:245mm; justify-content:center; }
     @page{ size:A4 portrait; margin:8mm; }
   }
@@ -163,15 +164,19 @@
         <div class="erow"><span class="k">전화</span><input type="tel" data-k="e_sup_t"></div>
         <div class="erow"><span class="k">팩스</span><input type="tel" data-k="e_sup_f"></div></div>
     </div>
+    <div class="hbar"></div>
     <div class="vline"></div>
     <div class="center"><div class="ebox" style="min-width:280px"><div class="et">현장사무실 · 현장소장</div>
-      <div class="erow"><span class="k">소장</span><input type="text" data-k="e_site_name"></div>
-      <div class="erow"><span class="k">전화</span><input type="tel" data-k="e_site_t"></div></div></div>
+      <div class="erow"><span class="k">전화</span><input type="tel" data-k="e_site_name"></div>
+      <div class="erow"><span class="k">H.P</span><input type="tel" data-k="e_site_t"></div></div></div>
+    <div class="vline"></div>
+    <div class="hbar"></div>
 
     <div class="egrid">
       <div class="ebox"><div class="et">노 동 부</div><div class="erow"><span class="k">전화</span><input type="tel" data-k="e_labor"></div></div>
       <div class="ebox"><div class="et">시 청</div><div class="erow"><span class="k">전화</span><input type="tel" data-k="e_city"></div></div>
       <div class="ebox"><div class="et">안전보건공단</div><div class="erow"><span class="k">전화</span><input type="tel" data-k="e_kosha"></div></div>
+      <div class="ebox"><div class="et">구 청</div><div class="erow"><span class="k">전화</span><input type="tel" data-k="e_gu"></div></div>
       <div class="ebox"><div class="et">경 찰 서</div><div class="erow"><span class="k">전화</span><input type="tel" data-k="e_police"></div></div>
       <div class="ebox"><div class="et">근로복지공단</div><div class="erow"><span class="k">전화</span><input type="tel" data-k="e_welfare"></div></div>
       <div class="ebox"><div class="et">소 방 서</div><div class="erow"><span class="k">전화</span><input type="tel" data-k="e_fire"></div></div>
