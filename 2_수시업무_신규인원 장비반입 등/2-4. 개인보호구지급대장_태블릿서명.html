@@ -64,6 +64,7 @@
 <div class="wrap">
  <div class="paper">
   <h1>개인보호구 지급대장</h1>
+  <div style="font-weight:700;color:#1f4e79;font-size:13px;letter-spacing:.5px;margin:-4px 0 8px">(주)디아키즈건설</div>
   <div class="meta">
     <div><label>현장명</label><select id="site" class="sitesel"></select></div>
     <input type="hidden" id="day">
@@ -149,7 +150,7 @@ function buildRows(k){ const b=document.getElementById('rows'); b.innerHTML=''; 
 const modal=document.getElementById('modal'), padBig=document.getElementById('padBig'), bctx=padBig.getContext('2d');
 let drawing=false, hasInk=false, last=null;
 function sizeBig(){ const r=padBig.getBoundingClientRect(); padBig.width=r.width*DPR; padBig.height=r.height*DPR;
-  bctx.setTransform(1,0,0,1,0,0); bctx.scale(DPR,DPR); bctx.lineWidth=2.6; bctx.lineCap='round'; bctx.lineJoin='round'; bctx.strokeStyle='#000000'; hasInk=false; }
+  bctx.setTransform(1,0,0,1,0,0); bctx.scale(DPR,DPR); bctx.lineWidth=6.4; bctx.lineCap='round'; bctx.lineJoin='round'; bctx.strokeStyle='#000000'; hasInk=false; }
 function posBig(e){ const r=padBig.getBoundingClientRect(); return {x:e.clientX-r.left,y:e.clientY-r.top}; }
 function startB(e){ e.preventDefault(); drawing=true; last=posBig(e); try{ padBig.setPointerCapture(e.pointerId);}catch(_){}
   bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(last.x+0.1,last.y+0.1); bctx.stroke(); hasInk=true; }
@@ -171,7 +172,7 @@ function confirmSig(){ const t=curTarget; if(!t){ closeModal(); return; }
   cnv.getContext('2d').drawImage(padBig,0,0,padBig.width,padBig.height,0,0,cnv.width,cnv.height); t.done(); closeModal(); }
 
 /* actions */
-function setPrintTitle(){ document.title=('개인보호구_지급대장_'+((document.getElementById('day')||{}).value||new Date().toISOString().slice(0,10))).replace(/[\\/:*?"<>|]/g,'_'); }
+function setPrintTitle(){ document.title=(((document.getElementById('site')&&document.getElementById('site').value)?document.getElementById('site').value+'_':'')+'개인보호구_지급대장_'+((document.getElementById('day')||{}).value||new Date().toISOString().slice(0,10))).replace(/[\\/:*?"<>|]/g,'_'); }
 window.addEventListener('beforeprint', setPrintTitle);
 function printDoc(){ setPrintTitle(); window.print(); }
 function setToday(){ document.getElementById('day').value=new Date().toISOString().slice(0,10); }

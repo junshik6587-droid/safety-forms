@@ -1,5 +1,5 @@
 /* 현장 안전관리 서식 - Service Worker */
-const CACHE = 'safety-forms-v2';
+const CACHE = 'safety-forms-v3';
 const SHELL = [
   './index.html',
   './manifest.webmanifest',

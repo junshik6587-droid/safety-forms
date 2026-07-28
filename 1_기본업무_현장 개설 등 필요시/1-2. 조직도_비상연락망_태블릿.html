@@ -17,14 +17,17 @@
   h1{ text-align:center; font-size:24px; margin:4px 0 22px; letter-spacing:5px; font-weight:800; }
   .doc{ display:none; } .doc.on{ display:block; }
   /* 조직도 공통 박스 */
-  .node{ border:2px solid var(--line); border-radius:6px; padding:8px 10px; text-align:center; background:#fff; min-width:120px; }
-  .node .role{ font-weight:700; font-size:14px; }
-  .node input{ width:100%; border:none; border-top:1px dashed #bbb; margin-top:5px; text-align:center; font-size:14px; font-family:inherit; padding:3px 2px; }
+  .node{ border:2px solid var(--line); border-radius:6px; padding:12px 12px; text-align:center; background:#fff; min-width:120px; }
+  .node .role{ font-weight:700; font-size:15px; }
+  .node input{ width:100%; border:none; border-top:1px dashed #bbb; margin-top:7px; text-align:center; font-size:15px; font-family:inherit; padding:5px 2px; }
   .node input:focus{ outline:2px solid var(--accent); outline-offset:-2px; }
   .center{ display:flex; justify-content:center; }
-  .vline{ width:2px; height:18px; background:var(--line); margin:0 auto; }
-  .row4{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
-  .row-safety{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; align-items:start; }
+  .vline{ width:2px; height:24px; background:var(--line); margin:0 auto; }
+  .row4{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  .row-safety{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; align-items:start; }
+  .updbar{ display:flex; justify-content:flex-end; align-items:center; gap:6px; margin:-10px 0 14px; font-size:14px; font-weight:700; color:var(--hd); }
+  .updbar input{ border:none; border-bottom:1.2px solid #999; font-family:inherit; font-size:15px; padding:3px 6px; color:#111; }
+  .updbar input:focus{ outline:none; border-bottom-color:var(--accent); }
   .hbar{ height:2px; background:var(--line); margin:0 8%; }
   table{ width:100%; border-collapse:collapse; font-size:13px; margin-top:16px; }
   th,td{ border:1px solid var(--line); padding:6px 8px; text-align:center; vertical-align:middle; }
@@ -35,15 +38,22 @@
   td.left{ text-align:left; }
   .note{ font-size:12px; color:#444; margin-top:12px; line-height:1.6; }
   /* 비상연락망 */
-  .emer{ }
-  .ebox{ border:2px solid var(--line); border-radius:6px; padding:8px 10px; }
-  .ebox .et{ font-weight:700; color:var(--hd); text-align:center; font-size:14px; margin-bottom:4px; }
-  .erow{ display:flex; align-items:center; gap:6px; margin:3px 0; font-size:13px; }
-  .erow .k{ width:42px; flex:0 0 auto; color:#555; font-weight:700; text-align:justify; text-align-last:justify; }
-  .erow input{ flex:1; min-width:0; border:none; border-bottom:1px solid #aaa; font-size:14px; font-family:inherit; padding:3px 4px; }
+  .emer h1{ margin-top:28px; margin-bottom:56px; }
+  .emer .vline{ height:30px; }
+  .emer .center{ margin:6px 0; }
+  .ebox{ border:2px solid var(--line); border-radius:6px; padding:15px 16px; }
+  .ebox .et{ font-weight:700; color:var(--hd); text-align:center; font-size:16px; margin-bottom:9px; }
+  .erow{ display:flex; align-items:center; gap:8px; margin:8px 0; font-size:15px; }
+  .erow .k{ width:46px; flex:0 0 auto; color:#555; font-weight:700; text-align:justify; text-align-last:justify; }
+  .erow input{ flex:1; min-width:0; border:none; border-bottom:1px solid #aaa; font-size:16px; font-family:inherit; padding:6px 4px; }
   .erow input:focus{ outline:none; border-bottom-color:var(--accent); }
-  .egrid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
-  .ehead{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; align-items:start; margin-bottom:6px; }
+  .egrid{ display:grid; grid-template-columns:1fr 1fr; gap:20px 22px; margin-top:26px; }
+  .ehead{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:22px; align-items:start; margin-bottom:26px; }
+  /* 세로 중앙 배치 (비상연락망·재난 조직도) */
+  #d-emer.on, #d-disaster.on{ display:flex; flex-direction:column; justify-content:center; min-height:80vh; }
+  /* 재난 조직도 셀 높이 통일 */
+  #d-disaster .node{ min-height:118px; display:flex; flex-direction:column; justify-content:center; }
+  #d-disaster table{ margin-top:40px; }
   .controls{ position:sticky; bottom:0; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:12px; background:rgba(242,244,247,.95); margin-top:14px; }
   .btn{ border:none; border-radius:8px; padding:12px 18px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; }
   .btn.p{ background:var(--accent); color:#fff; } .btn.g{ background:#5b6470; color:#fff; } .btn.d{ background:#fff; color:#333; border:1.5px solid #bbb; }
@@ -51,6 +61,7 @@
     body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:8mm 6mm; }
     .selbar,.controls{ display:none !important; }
     thead th,td.lbl,.node,.ebox{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    #d-emer.on, #d-disaster.on{ min-height:245mm; justify-content:center; }
     @page{ size:A4 portrait; margin:8mm; }
   }
 </style>
@@ -68,10 +79,12 @@
  </div>
 
  <div class="paper">
+  <div style="font-weight:700;color:#1f4e79;font-size:13px;letter-spacing:.5px;margin:0 0 8px">(주)디아키즈건설</div>
 
   <!-- ============ 안전보건관리조직도 ============ -->
   <div class="doc on" id="d-safety">
     <h1>안전보건관리조직도</h1>
+    <div class="updbar">업데이트: <input type="date" data-k="s_update"></div>
     <div class="center"><div class="node"><div class="role">안전보건총괄책임자</div><input type="text" data-k="s_chief"></div></div>
     <div class="vline"></div>
     <div class="center"><div class="node"><div class="role">현장소장</div><input type="text" data-k="s_manager"></div></div>
@@ -89,6 +102,18 @@
       <div class="node"><div class="role">관리감독자</div><input type="text" data-k="s_a3"></div>
       <div class="node"><div class="role">관리감독자</div><input type="text" data-k="s_a4"></div>
     </div>
+    <div class="row4" style="margin-top:14px">
+      <div class="node"><div class="role">관리감독자</div><input type="text" data-k="s_a5"></div>
+      <div class="node"><div class="role">관리감독자</div><input type="text" data-k="s_a6"></div>
+      <div class="node"><div class="role">관리감독자</div><input type="text" data-k="s_a7"></div>
+      <div class="node"><div class="role">관리감독자</div><input type="text" data-k="s_a8"></div>
+    </div>
+    <div class="row4" style="margin-top:14px">
+      <div class="node"><div class="role">관리감독자</div><input type="text" data-k="s_a9"></div>
+      <div class="node"><div class="role">관리감독자</div><input type="text" data-k="s_a10"></div>
+      <div class="node"><div class="role">관리감독자</div><input type="text" data-k="s_a11"></div>
+      <div class="node"><div class="role">관리감독자</div><input type="text" data-k="s_a12"></div>
+    </div>
     <div class="vline"></div>
     <div class="center"><div class="node" style="min-width:220px"><div class="role">협력업체 관리감독자</div><input type="text" data-k="s_partsv"></div></div>
     <div class="vline"></div>
@@ -99,6 +124,7 @@
   <!-- ============ 재난(수방/방화)관리 조직도 ============ -->
   <div class="doc" id="d-disaster">
     <h1>재난(수방·방화)관리 조직도</h1>
+    <div class="updbar">업데이트: <input type="date" data-k="d_update"></div>
     <div class="center"><div class="node"><div class="role">재난복구대장 (현장소장)</div><input type="text" data-k="d_chief"></div></div>
     <div class="vline"></div>
     <div class="hbar"></div>

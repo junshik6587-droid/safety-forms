@@ -35,6 +35,17 @@
   table.risk thead th{ background:var(--hdbg); color:var(--hd); font-size:12px; text-align:center; padding:5px 3px; }
   td.no{ width:30px; text-align:center; }
   .colstep{ width:104px; } .coltyp{ width:64px; } .colrisk{ width:60px; } .colmgmt{ width:58px; } .colwho{ width:64px; } .coldt{ width:88px; } .colimp{ width:58px; }
+  .colchk{ width:38px; text-align:center; } .prtchk{ width:20px; height:20px; cursor:pointer; }
+  .hwcell{ position:relative; }
+  .hwcell canvas.hwink{ position:absolute; inset:0; width:100%; height:100%; display:none; pointer-events:none; }
+  .hwcell.inked canvas.hwink{ display:block; }
+  .hwcell.inked input{ visibility:hidden; }
+  .hwcell .penbtn{ position:absolute; top:1px; right:1px; width:16px; height:16px; border:none; background:#eef3fb; color:var(--accent); border-radius:3px; font-size:9px; font-weight:800; cursor:pointer; z-index:2; padding:0; line-height:1; }
+  .hwcell .penbtn:active{ background:var(--accent); color:#fff; }
+  .modal{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:50; } .modal.show{ display:flex; }
+  .msheet{ background:#fff; border-radius:14px; width:min(94vw,720px); padding:16px; } .msheet h3{ margin:0 0 4px; font-size:17px; text-align:center; } .msheet p{ margin:0 0 10px; text-align:center; color:#666; font-size:13px; }
+  .padwrap{ border:2px dashed #9aa4b0; border-radius:10px; background:#fff; } #padBig{ display:block; width:100%; height:300px; touch-action:none; border-radius:10px; }
+  .msheet .mrow{ display:flex; gap:10px; margin-top:12px; } .msheet .mrow .btn{ flex:1; }
   table.risk td textarea{ width:100%; border:none; font-family:inherit; font-size:12px; padding:4px; resize:vertical; min-height:44px; background:transparent; }
   table.risk td input{ width:100%; border:none; font-family:inherit; font-size:12px; padding:4px 2px; text-align:center; background:transparent; }
   table.risk td select{ width:100%; border:none; font-family:inherit; font-size:12px; text-align:center; padding:3px 0; }
@@ -43,13 +54,23 @@
   select.rk.b{ background:var(--rB); color:#111; font-weight:800; }
   select.rk.c{ background:var(--rC); color:#fff; font-weight:800; }
   .empty{ text-align:center; color:#888; padding:30px; font-size:14px; }
+  .tophead{ display:flex; justify-content:flex-end; margin:2px 0 10px; }
+  table.appr{ border-collapse:collapse; width:auto; }
+  table.appr td,table.appr th{ border:1px solid var(--line); text-align:center; font-size:12px; }
+  table.appr .lab{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:4px 5px; writing-mode:vertical-lr; letter-spacing:2px; width:26px; }
+  table.appr .who{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:3px 6px; width:96px; }
+  .apprcell{ position:relative; width:96px; height:52px; padding:0; cursor:pointer; }
+  .apprcell canvas{ display:block; width:100%; height:52px; }
+  .apprcell .ph{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#bbb; font-size:11px; pointer-events:none; }
   .controls{ position:sticky; bottom:0; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:12px; background:rgba(242,244,247,.95); margin-top:14px; }
   .btn{ border:none; border-radius:8px; padding:12px 18px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; }
   .btn.p{ background:var(--accent); color:#fff; } .btn.g{ background:#5b6470; color:#fff; } .btn.d{ background:#fff; color:#333; border:1.5px solid #bbb; }
   @media print{
     body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:0; }
-    .selbar,.controls{ display:none !important; } .scroll{ overflow:visible; } table.risk{ min-width:0; font-size:10px; }
-    thead th,.legend .a,.legend .b,.legend .c,select.rk.a,select.rk.b,select.rk.c{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .selbar,.controls,.modal{ display:none !important; } .scroll{ overflow:visible; } table.risk{ min-width:0; font-size:10px; }
+    thead th,.legend .a,.legend .b,.legend .c,select.rk.a,select.rk.b,select.rk.c,table.appr .lab,table.appr .who{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    tr.hideprint{ display:none !important; } .colchk{ display:none !important; } .hwcell .penbtn{ display:none !important; }
+    input.blankdt{ visibility:hidden !important; }
     @page{ size:A4 landscape; margin:7mm; }
   }
 </style>
@@ -65,6 +86,18 @@
 
  <div class="paper">
   <h1>위 험 성 평 가</h1>
+  <div class="tophead" style="justify-content:space-between;align-items:flex-end">
+    <span style="font-weight:700;color:#1f4e79;font-size:13px;letter-spacing:.5px">(주)디아키즈건설</span>
+    <table class="appr">
+      <tr><td class="lab" rowspan="2">결 재</td><td class="who">담당자</td><td class="who">근로자대표</td><td class="who">안전관리자</td><td class="who">현장소장</td></tr>
+      <tr>
+        <td class="apprcell" data-appr="담당자" onclick="openAppr(this)"><canvas></canvas><div class="ph">서명</div></td>
+        <td class="apprcell" data-appr="근로자대표" onclick="openAppr(this)"><canvas></canvas><div class="ph">서명</div></td>
+        <td class="apprcell" data-appr="안전관리자" onclick="openAppr(this)"><canvas></canvas><div class="ph">서명</div></td>
+        <td class="apprcell" data-appr="현장소장" onclick="openAppr(this)"><canvas></canvas><div class="ph">서명</div></td>
+      </tr>
+    </table>
+  </div>
   <div class="meta">
     <div><label>현장명</label><select id="site" class="sitesel"></select></div>
     <div><label>평가구분</label><select id="kind" class="kindsel"><option>최초</option><option>수시</option><option>월간</option></select></div>
@@ -87,7 +120,7 @@
   <table class="risk" id="tbl">
     <thead>
       <tr>
-        <th class="no">No</th>
+        <th class="colchk">인쇄</th>
         <th class="colstep">작업단계</th>
         <th>위험요인 (~에 의한 ~위험)</th>
         <th class="coltyp">재해형태</th>
@@ -108,15 +141,57 @@
 <div class="controls">
   <button class="btn p" onclick="printDoc()">📄 PDF로 저장 / 인쇄</button>
   <button class="btn d" onclick="addRow()">＋ 행 추가</button>
+  <button class="btn d" onclick="toggleAllChk()">☑ 인쇄 전체선택/해제</button>
   <button class="btn d" onclick="saveDraft()">💾 임시저장</button>
   <button class="btn g" onclick="clearAll()">전체 초기화</button>
   <a class="btn d" href="../index.html" style="text-decoration:none">← 메인</a>
+</div>
+
+<div class="modal" id="modal">
+  <div class="msheet"><h3 id="mTitle">담당자 서명</h3><p>아래 칸에 손가락 또는 스타일러스로 서명하세요</p>
+    <div class="padwrap"><canvas id="padBig"></canvas></div>
+    <div class="mrow"><button class="btn d" onclick="undoBig()">↩ 지우기</button><button class="btn g" onclick="closeModal()">취소</button><button class="btn p" onclick="confirmSig()">✔ 서명 완료</button></div>
+  </div>
 </div>
 
 <script src="../sites.js"></script>
 <script src="riskdata.js"></script>
 <script>
 const DEFAULT_SITES=["아르시엘 방배 732 공동주택 신축공사","이태원동 106-2 단독주택 신축현장","보라동 20-1 단독주택 신축현장","평창동 496-4 단독주택"];
+const DPR=Math.max(window.devicePixelRatio||1,2);
+/* ---- 담당자 손글씨 서명 ---- */
+const modal=document.getElementById('modal'), padBig=document.getElementById('padBig'), bctx=padBig.getContext('2d');
+let drawing=false, hasInk=false, last=null, curCell=null, curAppr=false;
+function sizeBig(){ const r=padBig.getBoundingClientRect(); padBig.width=r.width*DPR; padBig.height=r.height*DPR;
+  bctx.setTransform(1,0,0,1,0,0); bctx.scale(DPR,DPR); bctx.lineWidth=6.4; bctx.lineCap='round'; bctx.lineJoin='round'; bctx.strokeStyle='#000000'; hasInk=false; }
+function posBig(e){ const r=padBig.getBoundingClientRect(); return {x:e.clientX-r.left,y:e.clientY-r.top}; }
+padBig.addEventListener('pointerdown',e=>{ e.preventDefault(); drawing=true; last=posBig(e); try{padBig.setPointerCapture(e.pointerId);}catch(_){}; bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(last.x+0.1,last.y+0.1); bctx.stroke(); hasInk=true; });
+padBig.addEventListener('pointermove',e=>{ if(!drawing)return; e.preventDefault(); const p=posBig(e); bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(p.x,p.y); bctx.stroke(); last=p; hasInk=true; });
+padBig.addEventListener('pointerup',()=>drawing=false); padBig.addEventListener('pointercancel',()=>drawing=false);
+function openHW(cell){ curCell=cell; curAppr=false; modal.classList.add('show'); requestAnimationFrame(sizeBig); }
+function openAppr(cell){ curCell=cell; curAppr=true; modal.classList.add('show'); requestAnimationFrame(sizeBig); }
+function closeModal(){ modal.classList.remove('show'); }
+function undoBig(){ bctx.save(); bctx.setTransform(1,0,0,1,0,0); bctx.clearRect(0,0,padBig.width,padBig.height); bctx.restore(); hasInk=false; }
+function confirmSig(){ const cell=curCell; if(!cell){ closeModal(); return; }
+  if(curAppr){
+    if(!hasInk){ const cn=cell.querySelector('canvas'); cn.getContext('2d').clearRect(0,0,cn.width,cn.height); cell.querySelector('.ph').style.display=''; closeModal(); return; }
+    const cn=cell.querySelector('canvas'), r=cell.getBoundingClientRect(); cn.width=r.width*DPR; cn.height=r.height*DPR;
+    cn.getContext('2d').drawImage(padBig,0,0,padBig.width,padBig.height,0,0,cn.width,cn.height); cell.querySelector('.ph').style.display='none'; closeModal(); return;
+  }
+  if(!hasInk){ const cn=cell.querySelector('.hwink'); cn.getContext('2d').clearRect(0,0,cn.width,cn.height); cell.classList.remove('inked'); closeModal(); return; }
+  const cnv=cell.querySelector('.hwink'), r=cell.getBoundingClientRect(); cnv.width=r.width*DPR; cnv.height=r.height*DPR;
+  cnv.getContext('2d').drawImage(padBig,0,0,padBig.width,padBig.height,0,0,cnv.width,cnv.height); cell.classList.add('inked'); closeModal(); }
+/* ---- 인쇄 항목 선택 ---- */
+function applyPrintFilter(){
+  const rows=[...document.querySelectorAll('#rows tr')].filter(tr=>tr.querySelector('.prtchk'));
+  const anyChecked=rows.some(tr=>tr.querySelector('.prtchk').checked);
+  rows.forEach(tr=>{ tr.classList.toggle('hideprint', anyChecked && !tr.querySelector('.prtchk').checked); });
+  document.querySelectorAll('#rows input[data-k=dt]').forEach(inp=>{ inp.classList.toggle('blankdt', !inp.value); });
+}
+function clearPrintFilter(){ document.querySelectorAll('#rows tr.hideprint').forEach(tr=>tr.classList.remove('hideprint')); document.querySelectorAll('#rows input.blankdt').forEach(i=>i.classList.remove('blankdt')); }
+window.addEventListener('beforeprint', applyPrintFilter);
+window.addEventListener('afterprint', clearPrintFilter);
+function toggleAllChk(){ const cbs=[...document.querySelectorAll('#rows .prtchk')]; if(!cbs.length) return; const allOn=cbs.every(c=>c.checked); cbs.forEach(c=>c.checked=!allOn); }
 function buildSites(){ const sel=document.getElementById('site'); sel.innerHTML='';
   ((window.SITES&&window.SITES.length)?window.SITES:DEFAULT_SITES).forEach(s=> sel.appendChild(new Option(s,s))); }
 function buildGong(){ const sel=document.getElementById('gong'); sel.innerHTML='';
@@ -134,22 +209,31 @@ function mgmtSelect(v){
 }
 function esc(s){ return (s||'').replace(/"/g,'&quot;'); }
 function makeRow(n, r){
-  r=r||{loc:'',step:'',haz:'',typ:'',risk:'',mgmt:'',mea:'',who:'',dt:'',imp:''};
+  r=r||{loc:'',step:'',haz:'',typ:'',risk:'',mgmt:'',mea:'',who:'',dt:'',imp:'',chk:false,whoSig:''};
   const step=(r.loc&&r.step&&r.loc!==r.step)?(r.loc+' / '+r.step):(r.step||r.loc||'');
   const tr=document.createElement('tr');
-  tr.innerHTML=`<td class="no">${n}</td>
+  tr.innerHTML=`<td class="colchk"><input type="checkbox" class="prtchk"${r.chk?' checked':''}></td>
     <td class="colstep"><textarea data-k="step">${step}</textarea></td>
     <td><textarea data-k="haz">${r.haz||''}</textarea></td>
     <td class="coltyp"><input type="text" data-k="typ" value="${esc(r.typ)}"></td>
     <td class="colrisk">${rkSelect('risk', r.risk||'')}</td>
     <td class="colmgmt">${mgmtSelect(r.mgmt||'')}</td>
     <td><textarea data-k="mea">${r.mea||''}</textarea></td>
-    <td class="colwho"><input type="text" data-k="who" value="${esc(r.who)}"></td>
-    <td class="coldt"><input type="text" data-k="dt" value="${esc(r.dt)}" placeholder="  .  .  "></td>
+    <td class="colwho hwcell" data-sig="${esc(r.whoSig)}"><input type="text" data-k="who" value="${esc(r.who)}"><canvas class="hwink"></canvas><button type="button" class="penbtn" title="손글씨">✍</button></td>
+    <td class="coldt"><input type="date" data-k="dt" value="${esc(r.dt)}"></td>
     <td class="colimp">${rkSelect('imp', r.imp||'')}</td>`;
+  tr.querySelector('.penbtn').addEventListener('click',e=>{ e.stopPropagation(); openHW(tr.querySelector('.hwcell')); });
   return tr;
 }
-function afterRender(){ document.querySelectorAll('#rows select.rk').forEach(colorRisk); }
+function afterRender(){
+  document.querySelectorAll('#rows select.rk').forEach(colorRisk);
+  document.querySelectorAll('#rows .hwcell[data-sig]').forEach(cell=>{
+    const sig=cell.getAttribute('data-sig'); cell.removeAttribute('data-sig');
+    if(sig){ const cnv=cell.querySelector('.hwink'), img=new Image();
+      img.onload=()=>{ const r=cell.getBoundingClientRect(); cnv.width=r.width*DPR; cnv.height=r.height*DPR; cnv.getContext('2d').drawImage(img,0,0,cnv.width,cnv.height); };
+      img.src=sig; cell.classList.add('inked'); }
+  });
+}
 function renderRows(list){
   const b=document.getElementById('rows'); b.innerHTML='';
   if(!list||!list.length){ b.innerHTML='<tr><td colspan="10" class="empty">상단에서 공종을 선택하고 "공종 불러오기"를 누르세요.</td></tr>'; return; }
@@ -169,18 +253,24 @@ function collectRows(){
     step:tr.querySelector('[data-k=step]').value, haz:tr.querySelector('[data-k=haz]').value,
     typ:tr.querySelector('[data-k=typ]').value, risk:tr.querySelector('[data-k=risk]').value,
     mgmt:tr.querySelector('[data-k=mgmt]').value, mea:tr.querySelector('[data-k=mea]').value,
-    who:tr.querySelector('[data-k=who]').value, dt:tr.querySelector('[data-k=dt]').value, imp:tr.querySelector('[data-k=imp]').value
+    who:tr.querySelector('[data-k=who]').value, dt:tr.querySelector('[data-k=dt]').value, imp:tr.querySelector('[data-k=imp]').value,
+    chk:tr.querySelector('.prtchk')?tr.querySelector('.prtchk').checked:false,
+    whoSig:(tr.querySelector('.hwcell')&&tr.querySelector('.hwcell').classList.contains('inked'))?tr.querySelector('.hwink').toDataURL('image/png'):''
   }));
 }
-function setPrintTitle(){ document.title=('위험성평가_'+(document.getElementById('workname').value||'')+'_'+((document.getElementById('day')||{}).value||new Date().toISOString().slice(0,10))).replace(/[\\/:*?"<>|]/g,'_'); }
+function setPrintTitle(){ document.title=(((document.getElementById('site')&&document.getElementById('site').value)?document.getElementById('site').value+'_':'')+'위험성평가_'+(document.getElementById('workname').value||'')+'_'+((document.getElementById('day')||{}).value||new Date().toISOString().slice(0,10))).replace(/[\\/:*?"<>|]/g,'_'); }
 window.addEventListener('beforeprint', setPrintTitle);
 function printDoc(){ setPrintTitle(); window.print(); }
 function setToday(){ document.getElementById('day').value=new Date().toISOString().slice(0,10); }
 function metaObj(){ return {site:site.value,kind:document.getElementById('kind').value,workname:document.getElementById('workname').value,company:document.getElementById('company').value,writer:document.getElementById('writer').value,day:document.getElementById('day').value}; }
+function apprData(){ return Object.fromEntries([...document.querySelectorAll('.apprcell')].map(c=>[c.dataset.appr,(c.querySelector('.ph').style.display==='none')?c.querySelector('canvas').toDataURL('image/png'):''])); }
+function restoreAppr(a){ if(!a)return; Object.entries(a).forEach(([who,img])=>{ if(!img)return; const cell=document.querySelector('.apprcell[data-appr="'+who+'"]'); if(!cell)return; const cn=cell.querySelector('canvas'), im=new Image();
+  im.onload=()=>{ const r=cell.getBoundingClientRect(); cn.width=r.width*DPR; cn.height=52*DPR; cn.getContext('2d').drawImage(im,0,0,cn.width,cn.height); }; im.src=img; cell.querySelector('.ph').style.display='none'; }); }
 function clearAll(){ if(!confirm('입력한 내용을 모두 지울까요?'))return; try{localStorage.removeItem('riskDraft');}catch(e){}
-  buildSites(); document.getElementById('company').value=''; document.getElementById('writer').value=''; document.getElementById('workname').value=''; setToday(); renderRows([]); }
+  buildSites(); document.getElementById('company').value=''; document.getElementById('writer').value=''; document.getElementById('workname').value=''; setToday(); renderRows([]);
+  document.querySelectorAll('.apprcell').forEach(c=>{ const cn=c.querySelector('canvas'); cn.getContext('2d').clearRect(0,0,cn.width,cn.height); c.querySelector('.ph').style.display=''; }); }
 function saveDraft(){
-  const data={ meta:metaObj(), gong:document.getElementById('gong').value, rows:collectRows() };
+  const data={ meta:metaObj(), gong:document.getElementById('gong').value, rows:collectRows(), appr:apprData() };
   try{ localStorage.setItem('riskDraft',JSON.stringify(data)); alert('임시저장 완료.'); }catch(e){ alert('저장 실패: '+e.message); }
 }
 function loadDraft(){
@@ -193,6 +283,7 @@ function loadDraft(){
   document.getElementById('company').value=m.company||''; document.getElementById('writer').value=m.writer||'';
   document.getElementById('workname').value=m.workname||''; document.getElementById('day').value=m.day||new Date().toISOString().slice(0,10);
   renderRows(d.rows||[]);
+  restoreAppr(d.appr);
   return true;
 }
 buildSites(); buildGong();

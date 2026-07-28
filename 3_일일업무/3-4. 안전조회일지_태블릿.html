@@ -59,6 +59,7 @@
 <div class="wrap">
  <div class="paper">
   <h1>안 전 조 회 일 지</h1>
+  <div style="font-weight:700;color:#1f4e79;font-size:13px;letter-spacing:.5px;margin:-4px 0 8px">(주)디아키즈건설</div>
   <div class="block">
     <div class="brow"><div class="bl">현장명</div><div class="bc"><select id="site" class="sitesel"></select></div></div>
     <div class="brow"><div class="bl">일자</div><div class="bc"><input type="date" id="day"> &nbsp;구분 <input type="text" data-c="gubun" value="작업시작 전 안전교육" style="min-width:170px"></div></div>
@@ -123,7 +124,7 @@ function buildPhotos(k){ const g=document.getElementById('photogrid'); g.innerHT
 function updatePhotoPrint(){ const any=document.querySelector('#photogrid .pslot.has'); document.querySelector('.photopage').classList.toggle('nophoto',!any); }
 window.addEventListener('beforeprint', updatePhotoPrint);
 
-function setPrintTitle(){ document.title=('안전조회일지_'+((document.getElementById('day')||{}).value||new Date().toISOString().slice(0,10))).replace(/[\\/:*?"<>|]/g,'_'); }
+function setPrintTitle(){ document.title=(((document.getElementById('site')&&document.getElementById('site').value)?document.getElementById('site').value+'_':'')+'안전조회일지_'+((document.getElementById('day')||{}).value||new Date().toISOString().slice(0,10))).replace(/[\\/:*?"<>|]/g,'_'); }
 window.addEventListener('beforeprint', setPrintTitle);
 function printDoc(){ updatePhotoPrint(); setPrintTitle(); window.print(); }
 function setToday(){ document.getElementById('day').value=new Date().toISOString().slice(0,10); }

@@ -72,7 +72,10 @@
 <div class="wrap">
  <div class="paper" id="paper">
   <h1>TBM 위험성평가 서명 · 안전조치 이행 서약서</h1>
-  <div class="sub">일반 TBM일지 (3-2-1) · 작업 전 안전점검 참석부</div>
+  <div style="display:flex;align-items:center;gap:14px;margin:-4px 0 10px">
+    <span style="font-weight:700;color:#1f4e79;font-size:13px;white-space:nowrap">(주)디아키즈건설</span>
+    <div class="sub" style="margin:0;flex:1">일반 TBM일지 (3-2-1) · 작업 전 안전점검 참석부</div>
+  </div>
 
   <div class="meta">
     <div><label>현장명</label><select id="site" class="sitesel"></select></div>
@@ -207,7 +210,7 @@ function sizeBig(){
   padBig.width=r.width*DPR; padBig.height=r.height*DPR;
   bctx.setTransform(1,0,0,1,0,0);
   bctx.scale(DPR,DPR);
-  bctx.lineWidth=2.6; bctx.lineCap='round'; bctx.lineJoin='round'; bctx.strokeStyle='#000000';
+  bctx.lineWidth=6.4; bctx.lineCap='round'; bctx.lineJoin='round'; bctx.strokeStyle='#000000';
   hasInk=false;
 }
 function posBig(e){
@@ -252,7 +255,7 @@ function confirmSig(){
 }
 
 /* ---------- actions ---------- */
-function setPrintTitle(){ document.title=('TBM일지_'+((document.getElementById('day')||{}).value||new Date().toISOString().slice(0,10))).replace(/[\\/:*?"<>|]/g,'_'); }
+function setPrintTitle(){ document.title=(((document.getElementById('site')&&document.getElementById('site').value)?document.getElementById('site').value+'_':'')+'TBM일지_'+((document.getElementById('day')||{}).value||new Date().toISOString().slice(0,10))).replace(/[\\/:*?"<>|]/g,'_'); }
 window.addEventListener('beforeprint', setPrintTitle);
 function printDoc(){ setPrintTitle(); window.print(); }
 function clearAll(){

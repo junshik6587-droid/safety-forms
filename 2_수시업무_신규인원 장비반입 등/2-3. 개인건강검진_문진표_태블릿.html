@@ -68,6 +68,7 @@
 <div class="wrap">
  <div class="paper">
   <h1>신규채용 건강 문진표</h1>
+  <div style="font-weight:700;color:#1f4e79;font-size:13px;letter-spacing:.5px;margin:-4px 0 8px">(주)디아키즈건설</div>
 
   <table>
     <tr><td class="lbl">성명</td><td><span class="hwwrap"><input data-k="name"><canvas class="hwink"></canvas><button type="button" class="penbtn" title="손글씨">✍</button></span></td><td class="lbl">성별</td><td style="width:80px"><select data-k="sex"><option>남</option><option>여</option></select></td><td class="lbl">생년월일</td><td><input type="date" data-k="birth"></td></tr>
@@ -179,7 +180,7 @@ let drawing=false, hasInk=false, last=null, curTarget=null;
 document.getElementById('sig').addEventListener('click',openSigBox);
 document.querySelectorAll('.hwwrap .penbtn').forEach(b=>b.addEventListener('click',()=>openHW(b.closest('.hwwrap'))));
 function sizeBig(){ const r=padBig.getBoundingClientRect(); padBig.width=r.width*DPR; padBig.height=r.height*DPR;
-  bctx.setTransform(1,0,0,1,0,0); bctx.scale(DPR,DPR); bctx.lineWidth=2.6; bctx.lineCap='round'; bctx.lineJoin='round'; bctx.strokeStyle='#000000'; hasInk=false; }
+  bctx.setTransform(1,0,0,1,0,0); bctx.scale(DPR,DPR); bctx.lineWidth=6.4; bctx.lineCap='round'; bctx.lineJoin='round'; bctx.strokeStyle='#000000'; hasInk=false; }
 function posBig(e){ const r=padBig.getBoundingClientRect(); return {x:e.clientX-r.left,y:e.clientY-r.top}; }
 padBig.addEventListener('pointerdown',e=>{ e.preventDefault(); drawing=true; last=posBig(e); try{padBig.setPointerCapture(e.pointerId);}catch(_){}; bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(last.x+0.1,last.y+0.1); bctx.stroke(); hasInk=true; });
 padBig.addEventListener('pointermove',e=>{ if(!drawing)return; e.preventDefault(); const p=posBig(e); bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(p.x,p.y); bctx.stroke(); last=p; hasInk=true; });

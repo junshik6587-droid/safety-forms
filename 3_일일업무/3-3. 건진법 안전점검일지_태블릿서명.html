@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>공정별 자체 안전점검표 (건진법)</title>
+<style>
+  :root{ --line:#333; --hd:#1f4e79; --hdbg:#dbe5f1; --accent:#1f6feb; --ok:#127c2b; --no:#b02a2a; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; font-family:"맑은 고딕","Malgun Gothic",AppleGothic,sans-serif; color:#111; background:#f2f4f7; }
+  .wrap{ max-width:1000px; margin:0 auto; padding:12px; }
+  .paper{ background:#fff; padding:16px 18px 26px; box-shadow:0 1px 6px rgba(0,0,0,.15); }
+  h1{ text-align:center; font-size:20px; margin:2px 0 12px; letter-spacing:1.5px; }
+  /* 상단 결재/현장 */
+  .tophead{ display:flex; justify-content:flex-end; margin-bottom:8px; }
+  table.appr{ border-collapse:collapse; }
+  table.appr td,table.appr th{ border:1px solid var(--line); text-align:center; font-size:12px; }
+  table.appr .lab{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:4px 6px; writing-mode:vertical-lr; letter-spacing:2px; }
+  table.appr .who{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:3px 6px; width:96px; }
+  .signcell{ position:relative; width:96px; height:56px; padding:0; cursor:pointer; }
+  .signcell canvas{ display:block; width:100%; height:56px; }
+  .signcell .ph{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#bbb; font-size:11px; pointer-events:none; }
+  .inforow{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; border:1.5px solid var(--line); padding:8px 10px; margin-bottom:10px; font-size:14px; }
+  .inforow b{ color:var(--hd); }
+  .inforow select,.inforow input{ font-size:14px; font-family:inherit; padding:5px 8px; border:1px solid #bbb; border-radius:5px; }
+  .sitesel{ border:1.5px solid var(--accent); border-radius:5px; color:var(--hd); font-weight:700; }
+  /* 선택 패널 */
+  .selector{ border:1.5px solid var(--line); margin-bottom:12px; }
+  .selector .sh{ background:var(--hd); color:#fff; font-weight:700; padding:8px 10px; font-size:13px; display:flex; justify-content:space-between; align-items:center; }
+  .selbody{ padding:8px 10px; }
+  .grp{ margin-bottom:8px; }
+  .grp .gt{ font-weight:700; color:var(--hd); font-size:13px; margin:6px 0 4px; border-bottom:1px solid #e0e6ee; padding-bottom:2px; }
+  .chips{ display:flex; flex-wrap:wrap; gap:6px; }
+  .chip{ border:1.5px solid #c3ccd7; background:#f6f8fb; border-radius:16px; padding:5px 11px; font-size:12.5px; cursor:pointer; color:#33404f; user-select:none; }
+  .chip.on{ background:var(--accent); border-color:var(--accent); color:#fff; font-weight:700; }
+  .mini{ border:1px solid #fff; background:rgba(255,255,255,.2); color:#fff; font-size:11px; font-weight:700; border-radius:5px; padding:3px 9px; cursor:pointer; font-family:inherit; }
+  /* 점검표 */
+  .secblock{ border:1.5px solid var(--line); margin-bottom:12px; }
+  .secblock .st{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:7px 10px; font-size:13px; border-bottom:1px solid var(--line); }
+  table.chk{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  table.chk th,table.chk td{ border:1px solid var(--line); padding:5px 6px; vertical-align:middle; }
+  table.chk thead th{ background:#eef2f7; color:var(--hd); font-size:12px; text-align:center; }
+  table.chk td.no{ width:30px; text-align:center; color:#666; }
+  table.chk td.q{ text-align:left; line-height:1.35; }
+  table.chk td.yn{ width:44px; text-align:center; padding:2px; }
+  table.chk td.act{ width:26%; padding:2px; }
+  table.chk td.act input{ width:100%; border:none; font-size:12.5px; font-family:inherit; padding:5px 4px; background:transparent; }
+  .yn button{ width:100%; border:1px solid #ccc; background:#f4f6f8; font-size:12px; font-weight:700; padding:6px 0; cursor:pointer; font-family:inherit; color:#8a929c; border-radius:4px; }
+  .yn.y button.on{ background:var(--ok); color:#fff; border-color:var(--ok); }
+  .yn.n button.on{ background:var(--no); color:#fff; border-color:var(--no); }
+  #content .empty{ text-align:center; color:#8a929c; font-size:13px; padding:24px; border:1.5px dashed #c3ccd7; }
+  /* 공통 하단 */
+  .common{ border:1.5px solid var(--line); margin-top:14px; }
+  .common .ch{ background:var(--hd); color:#fff; font-weight:700; padding:7px 10px; font-size:13px; }
+  table.bot{ width:100%; border-collapse:collapse; }
+  table.bot td{ border:1px solid var(--line); vertical-align:top; }
+  table.bot td.bl{ background:var(--hdbg); color:var(--hd); font-weight:700; text-align:center; width:150px; font-size:13px; padding:8px 6px; }
+  table.bot textarea{ width:100%; min-height:70px; border:none; font-size:13px; font-family:inherit; padding:8px; resize:vertical; }
+  .controls{ position:sticky; bottom:0; z-index:20; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:12px; background:rgba(242,244,247,.95); margin-top:14px; }
+  .btn{ border:none; border-radius:8px; padding:12px 18px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; }
+  .btn.p{ background:var(--accent); color:#fff; } .btn.g{ background:#5b6470; color:#fff; } .btn.d{ background:#fff; color:#333; border:1.5px solid #bbb; }
+  .modal{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:50; } .modal.show{ display:flex; }
+  .msheet{ background:#fff; border-radius:14px; width:min(94vw,720px); padding:16px; } .msheet h3{ margin:0 0 4px; font-size:17px; text-align:center; } .msheet p{ margin:0 0 10px; text-align:center; color:#666; font-size:13px; }
+  .padwrap{ border:2px dashed #9aa4b0; border-radius:10px; background:#fff; } #padBig{ display:block; width:100%; height:300px; touch-action:none; border-radius:10px; }
+  .msheet .row{ display:flex; gap:10px; margin-top:12px; } .msheet .row .btn{ flex:1; }
+  @media print{
+    body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:0; }
+    .controls,.modal,.selector,.mini{ display:none !important; }
+    table.appr .lab,table.appr .who,.secblock .st,table.chk thead th,table.bot td.bl,.common .ch,.yn button.on{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .secblock,table.chk tr{ break-inside:avoid; }
+    @page{ size:A4 portrait; margin:8mm; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="paper">
+  <h1>공정별 자체 안전점검표</h1>
+
+  <div class="tophead" style="justify-content:space-between;align-items:flex-end">
+    <span style="font-weight:700;color:#1f4e79;font-size:13px;letter-spacing:.5px">(주)디아키즈건설</span>
+    <table class="appr">
+      <tr><td class="lab" rowspan="2">결<br>재</td><td class="who">담당자</td><td class="who">안전관리자</td><td class="who">현장소장</td></tr>
+      <tr>
+        <td class="signcell" data-appr="담당자"><canvas></canvas><div class="ph">서명</div></td>
+        <td class="signcell" data-appr="안전관리자"><canvas></canvas><div class="ph">서명</div></td>
+        <td class="signcell" data-appr="현장소장"><canvas></canvas><div class="ph">서명</div></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="inforow">
+    <b>현장명</b> <select id="site" class="sitesel"></select>
+    <b>날짜</b> <input type="date" id="day">
+  </div>
+
+  <div class="selector">
+    <div class="sh">점검 항목 선택 <button type="button" class="mini" onclick="clearSel()">선택 해제</button></div>
+    <div class="selbody" id="selbody"></div>
+  </div>
+
+  <div id="content"><div class="empty">위에서 점검할 항목을 선택하면 점검표가 여기에 표시됩니다.</div></div>
+
+  <div class="common">
+    <div class="ch">위험요소 및 조치 (공통)</div>
+    <table class="bot">
+      <tr><td class="bl">위험요소 및 지적사항</td><td><textarea data-c="risk"></textarea></td></tr>
+      <tr><td class="bl">시정조치 및 건의사항</td><td><textarea data-c="fix"></textarea></td></tr>
+      <tr><td class="bl">현장소장 지시사항</td><td><textarea data-c="order"></textarea></td></tr>
+    </table>
+  </div>
+ </div>
+</div>
+
+<div class="controls">
+  <button class="btn p" onclick="printDoc()">📄 PDF로 저장 / 인쇄</button>
+  <button class="btn d" onclick="saveDraft()">💾 임시저장</button>
+  <button class="btn g" onclick="clearAll()">전체 초기화</button>
+  <a class="btn d" href="../index.html" style="text-decoration:none">← 메인</a>
+</div>
+
+<div class="modal" id="modal">
+  <div class="msheet"><h3 id="mTitle">서명</h3><p>아래 칸에 손가락 또는 스타일러스로 서명하세요</p>
+    <div class="padwrap"><canvas id="padBig"></canvas></div>
+    <div class="row"><button class="btn d" onclick="undoBig()">↩ 지우기</button><button class="btn g" onclick="closeModal()">취소</button><button class="btn p" onclick="confirmSig()">✔ 서명 완료</button></div>
+  </div>
+</div>
+
+<script src="../sites.js"></script>
+<script src="./건진법점검_data.js"></script>
+<script>
+const DPR=Math.max(window.devicePixelRatio||1,2);
+const DEFAULT_SITES=["아르시엘 방배 732 공동주택 신축공사","이태원동 106-2 단독주택 신축현장","보라동 20-1 단독주택 신축현장","평창동 496-4 단독주택"];
+const SEC=(window.JIN||[]);
+function buildSites(){ const sel=document.getElementById('site'); sel.innerHTML='';
+  ((window.SITES&&window.SITES.length)?window.SITES:DEFAULT_SITES).forEach(s=> sel.appendChild(new Option(s,s))); }
+
+/* ---- 항목 선택 패널 ---- */
+function buildSelector(){
+  const majors=[]; SEC.forEach(s=>{ if(!majors.includes(s.major)) majors.push(s.major); });
+  const box=document.getElementById('selbody'); box.innerHTML='';
+  majors.forEach(mj=>{
+    const g=document.createElement('div'); g.className='grp';
+    const list=SEC.filter(s=>s.major===mj);
+    let chips='';
+    list.forEach(s=>{ const label=s.sub||s.major; chips+=`<div class="chip" data-key="${s.key}">${label}</div>`; });
+    g.innerHTML=`<div class="gt">${mj}</div><div class="chips">${chips}</div>`;
+    box.appendChild(g);
+  });
+  box.querySelectorAll('.chip').forEach(ch=> ch.addEventListener('click',()=>{ ch.classList.toggle('on'); renderContent(); }));
+}
+function selectedKeys(){ return [...document.querySelectorAll('#selbody .chip.on')].map(c=>c.dataset.key); }
+function clearSel(){ document.querySelectorAll('#selbody .chip.on').forEach(c=>c.classList.remove('on')); renderContent(); }
+
+/* ---- 상태 스냅샷/복원 (항목 토글 시 값 유지) ---- */
+let state={}; // key: sec_i -> {v:'y'/'n'/'', act:''}
+function snapshot(){
+  document.querySelectorAll('#content tr[data-row]').forEach(tr=>{
+    const id=tr.dataset.row;
+    const y=tr.querySelector('.yn.y button').classList.contains('on');
+    const n=tr.querySelector('.yn.n button').classList.contains('on');
+    state[id]={ v:y?'y':(n?'n':''), act:tr.querySelector('.act input').value };
+  });
+}
+function renderContent(){
+  snapshot();
+  const keys=selectedKeys();
+  const cont=document.getElementById('content'); cont.innerHTML='';
+  if(!keys.length){ cont.innerHTML='<div class="empty">위에서 점검할 항목을 선택하면 점검표가 여기에 표시됩니다.</div>'; return; }
+  SEC.forEach(sec=>{
+    if(!keys.includes(sec.key)) return;
+    const blk=document.createElement('div'); blk.className='secblock';
+    let rows='';
+    sec.items.forEach((it,i)=>{
+      const id=sec.key+'_'+i; const st=state[id]||{};
+      rows+=`<tr data-row="${id}"><td class="no">${i+1}</td><td class="q">${it}</td>
+        <td class="yn y"><button type="button" class="${st.v==='y'?'on':''}">양</button></td>
+        <td class="yn n"><button type="button" class="${st.v==='n'?'on':''}">불</button></td>
+        <td class="act"><input type="text" value="${(st.act||'').replace(/"/g,'&quot;')}" placeholder="조치사항"></td></tr>`;
+    });
+    blk.innerHTML=`<div class="st">${sec.name}</div>
+      <table class="chk"><thead><tr><th style="width:30px">No</th><th>안전점검 내용</th><th style="width:44px">양</th><th style="width:44px">불</th><th style="width:26%">조치사항</th></tr></thead><tbody>${rows}</tbody></table>`;
+    cont.appendChild(blk);
+  });
+  // wire toggles
+  cont.querySelectorAll('tr[data-row]').forEach(tr=>{
+    const yb=tr.querySelector('.yn.y button'), nb=tr.querySelector('.yn.n button');
+    yb.addEventListener('click',()=>{ const on=yb.classList.contains('on'); yb.classList.toggle('on',!on); if(!on) nb.classList.remove('on'); });
+    nb.addEventListener('click',()=>{ const on=nb.classList.contains('on'); nb.classList.toggle('on',!on); if(!on) yb.classList.remove('on'); });
+  });
+}
+
+/* ---- 결재 서명 ---- */
+const modal=document.getElementById('modal'), padBig=document.getElementById('padBig'), bctx=padBig.getContext('2d');
+let drawing=false, hasInk=false, last=null, curTarget=null;
+document.querySelectorAll('.signcell').forEach(c=> c.addEventListener('click',()=>openSig(c)));
+function sizeBig(){ const r=padBig.getBoundingClientRect(); padBig.width=r.width*DPR; padBig.height=r.height*DPR;
+  bctx.setTransform(1,0,0,1,0,0); bctx.scale(DPR,DPR); bctx.lineWidth=6.4; bctx.lineCap='round'; bctx.lineJoin='round'; bctx.strokeStyle='#000000'; hasInk=false; }
+function posBig(e){ const r=padBig.getBoundingClientRect(); return {x:e.clientX-r.left,y:e.clientY-r.top}; }
+padBig.addEventListener('pointerdown',e=>{ e.preventDefault(); drawing=true; last=posBig(e); try{padBig.setPointerCapture(e.pointerId);}catch(_){}; bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(last.x+0.1,last.y+0.1); bctx.stroke(); hasInk=true; });
+padBig.addEventListener('pointermove',e=>{ if(!drawing)return; e.preventDefault(); const p=posBig(e); bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(p.x,p.y); bctx.stroke(); last=p; hasInk=true; });
+padBig.addEventListener('pointerup',()=>drawing=false); padBig.addEventListener('pointercancel',()=>drawing=false);
+function openSig(cell){ curTarget=cell; document.getElementById('mTitle').textContent=(cell.dataset.appr||'')+' 서명'; modal.classList.add('show'); requestAnimationFrame(sizeBig); }
+function closeModal(){ modal.classList.remove('show'); }
+function undoBig(){ bctx.save(); bctx.setTransform(1,0,0,1,0,0); bctx.clearRect(0,0,padBig.width,padBig.height); bctx.restore(); hasInk=false; }
+function confirmSig(){ const cell=curTarget; if(!cell){ closeModal(); return; }
+  if(!hasInk){ const cn=cell.querySelector('canvas'); cn.getContext('2d').clearRect(0,0,cn.width,cn.height); cell.querySelector('.ph').style.display=''; closeModal(); return; }
+  const cnv=cell.querySelector('canvas'), r=cell.getBoundingClientRect(); cnv.width=r.width*DPR; cnv.height=56*DPR;
+  cnv.getContext('2d').drawImage(padBig,0,0,padBig.width,padBig.height,0,0,cnv.width,cnv.height); cell.querySelector('.ph').style.display='none'; closeModal(); }
+
+/* ---- actions ---- */
+function setToday(){ document.getElementById('day').value=new Date().toISOString().slice(0,10); }
+function allC(){ return [...document.querySelectorAll('[data-c]')]; }
+function setPrintTitle(){ document.title=(((document.getElementById('site')&&document.getElementById('site').value)?document.getElementById('site').value+'_':'')+'공정별안전점검표_'+((document.getElementById('day')||{}).value||new Date().toISOString().slice(0,10))).replace(/[\\/:*?"<>|]/g,'_'); }
+window.addEventListener('beforeprint', setPrintTitle);
+function printDoc(){ if(!selectedKeys().length){ if(!confirm('선택한 점검 항목이 없습니다. 그래도 인쇄할까요?')) return; } setPrintTitle(); window.print(); }
+function clearAll(){ if(!confirm('입력한 내용과 서명을 모두 지울까요?'))return; try{localStorage.removeItem('jinDraft');}catch(e){} state={}; buildSites(); clearSel(); allC().forEach(el=>el.value=''); document.querySelectorAll('.signcell').forEach(c=>{ const cn=c.querySelector('canvas'); cn.getContext('2d').clearRect(0,0,cn.width,cn.height); c.querySelector('.ph').style.display=''; }); setToday(); }
+function saveDraft(){
+  snapshot();
+  const data={ site:document.getElementById('site').value, day:document.getElementById('day').value,
+    sel:selectedKeys(), state:state,
+    fields:Object.fromEntries(allC().map(el=>[el.dataset.c,el.value])),
+    appr:Object.fromEntries([...document.querySelectorAll('.signcell')].map(c=>[c.dataset.appr, (c.querySelector('.ph').style.display==='none')?c.querySelector('canvas').toDataURL('image/png'):''])) };
+  try{ localStorage.setItem('jinDraft',JSON.stringify(data)); alert('임시저장 완료.'); }catch(e){ alert('저장 실패: '+e.message); }
+}
+function loadDraft(){
+  let d; try{ d=JSON.parse(localStorage.getItem('jinDraft')); }catch(e){ return false; }
+  if(!d) return false;
+  buildSites(); if(d.site) document.getElementById('site').value=d.site; document.getElementById('day').value=d.day||'';
+  if(d.fields) allC().forEach(el=>{ if(d.fields[el.dataset.c]!=null) el.value=d.fields[el.dataset.c]; });
+  state=d.state||{};
+  (d.sel||[]).forEach(k=>{ const ch=document.querySelector('#selbody .chip[data-key="'+k+'"]'); if(ch) ch.classList.add('on'); });
+  renderContent();
+  if(d.appr) Object.entries(d.appr).forEach(([who,img])=>{ if(!img)return; const cell=document.querySelector('.signcell[data-appr="'+who+'"]'); if(!cell)return; const cn=cell.querySelector('canvas'), im=new Image();
+    im.onload=()=>{ const r=cell.getBoundingClientRect(); cn.width=r.width*DPR; cn.height=56*DPR; cn.getContext('2d').drawImage(im,0,0,cn.width,cn.height); }; im.src=img; cell.querySelector('.ph').style.display='none'; });
+  return true;
+}
+buildSites(); buildSelector();
+if(!loadDraft()){ setToday(); }
+</script>
+</body>
+</html>

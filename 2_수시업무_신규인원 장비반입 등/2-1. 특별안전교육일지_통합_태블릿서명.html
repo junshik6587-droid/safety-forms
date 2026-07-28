@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>특별안전교육일지 (통합 선택형)</title>
+<style>
+  :root{ --line:#333; --hd:#1f4e79; --hdbg:#dbe5f1; --accent:#1f6feb; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; font-family:"맑은 고딕","Malgun Gothic",AppleGothic,sans-serif; color:#111; background:#f2f4f7; }
+  .wrap{ max-width:1000px; margin:0 auto; padding:12px; }
+  .paper{ background:#fff; padding:16px 18px 26px; box-shadow:0 1px 6px rgba(0,0,0,.15); }
+  h1{ text-align:center; font-size:22px; margin:4px 0 10px; letter-spacing:4px; }
+  .tophead{ display:flex; justify-content:flex-end; margin-bottom:10px; }
+  table.appr{ border-collapse:collapse; width:auto; }
+  table.appr td,table.appr th{ border:1px solid var(--line); text-align:center; font-size:12px; }
+  table.appr .lab{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:4px 5px; writing-mode:vertical-lr; letter-spacing:2px; width:26px; }
+  table.appr .who{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:3px 6px; width:80px; }
+  .signcell{ position:relative; width:80px; height:50px; padding:0; cursor:pointer; }
+  .signcell canvas{ display:block; width:100%; height:50px; }
+  .signcell .ph{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#bbb; font-size:11px; pointer-events:none; }
+  .infobox{ border:1.5px solid var(--line); border-bottom:none; }
+  .irow{ display:flex; border-bottom:1px solid var(--line); font-size:14px; flex-wrap:wrap; }
+  .irow .l{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:7px 8px; min-width:78px; display:flex; align-items:center; }
+  .irow .v{ padding:5px 8px; flex:1; display:flex; align-items:center; gap:6px; flex-wrap:wrap; min-width:150px; }
+  .irow input,.irow select{ border:none; border-bottom:1px solid #999; font-size:14px; font-family:inherit; padding:3px 4px; }
+  .sitesel{ border:1.5px solid var(--accent); border-radius:5px; color:var(--hd); font-weight:700; }
+  /* 교육 항목 칩 선택 */
+  .selector{ border:1.5px solid var(--line); margin-bottom:10px; }
+  .selector .sh{ background:var(--hd); color:#fff; font-weight:700; padding:8px 10px; font-size:13px; display:flex; justify-content:space-between; align-items:center; }
+  .selbody{ padding:8px 10px; }
+  .grp{ margin-bottom:8px; } .grp .gt{ font-weight:700; color:var(--hd); font-size:13px; margin:6px 0 4px; border-bottom:1px solid #e0e6ee; padding-bottom:2px; }
+  .chips{ display:flex; flex-wrap:wrap; gap:6px; }
+  .chip{ border:1.5px solid #c3ccd7; background:#f6f8fb; border-radius:16px; padding:5px 11px; font-size:12.5px; cursor:pointer; color:#33404f; user-select:none; }
+  .chip.on{ background:var(--accent); border-color:var(--accent); color:#fff; font-weight:700; }
+  .mini{ border:1px solid #fff; background:rgba(255,255,255,.2); color:#fff; font-size:11px; font-weight:700; border-radius:5px; padding:3px 9px; cursor:pointer; font-family:inherit; }
+  .subjblk .subjt{ font-weight:700; color:var(--hd); padding:7px 12px 2px; font-size:13.5px; }
+  .subjblk:not(:first-child) .subjt{ border-top:1px solid var(--line); margin-top:2px; }
+  table{ width:100%; border-collapse:collapse; font-size:13px; margin-top:10px; }
+  th,td{ border:1px solid var(--line); padding:5px 6px; text-align:center; vertical-align:middle; }
+  thead th{ background:var(--hdbg); color:var(--hd); font-size:12px; }
+  td.lbl{ background:var(--hdbg); color:var(--hd); font-weight:700; white-space:nowrap; }
+  .cnt input{ width:60px; border:none; text-align:center; font-size:14px; font-family:inherit; padding:4px 2px; }
+  .cnt .gye{ background:#f3f6fb; }
+  td.left{ text-align:left; } td.reason{ padding:0; } td.reason textarea{ width:100%; min-height:70px; border:none; font-family:inherit; font-size:13px; padding:6px; resize:vertical; }
+  /* 교육과목 */
+  .subj{ border:1.5px solid var(--line); margin-top:10px; }
+  .subj .sh{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:7px 10px; font-size:13.5px; border-bottom:1px solid var(--line); }
+  .subj ul{ margin:0; padding:8px 12px 10px 26px; font-size:13.5px; line-height:1.75; }
+  .subj li{ margin:2px 0; }
+  td.cell-in input{ width:100%; border:none; text-align:center; font-size:14px; font-family:inherit; padding:6px 2px; background:transparent; }
+  td.cell-in input:focus{ outline:2px solid var(--accent); outline-offset:-2px; }
+  .cofill{ display:flex; } .cofill input{ flex:1; } .cofill .fillbtn{ flex:0 0 auto; width:28px; border:none; border-left:1px solid #ccc; background:#eef3fb; color:var(--accent); font-size:13px; font-weight:800; cursor:pointer; }
+  .colno{ width:38px; } .colco{ width:34%; } .colnm{ width:24%; } .colsig{ width:auto; }
+  .nmcell{ position:relative; }
+  .nmcell canvas.nmink{ position:absolute; inset:0; width:100%; height:46px; display:none; pointer-events:none; }
+  .nmcell.inked canvas.nmink{ display:block; } .nmcell.inked input{ visibility:hidden; }
+  .nmcell .penbtn{ position:absolute; top:3px; right:3px; width:22px; height:22px; border:none; background:#eef3fb; color:var(--accent); border-radius:5px; font-size:12px; font-weight:800; cursor:pointer; z-index:2; padding:0; }
+  .sigcell{ position:relative; height:46px; padding:0; cursor:pointer; }
+  .sigcell canvas{ display:block; width:100%; height:46px; }
+  .sigcell .ph{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:12px; pointer-events:none; }
+  .subtit{ font-weight:700; color:var(--hd); margin:14px 0 4px; font-size:14px; }
+  textarea#note{ width:100%; min-height:56px; border:1.5px solid var(--line); font-size:14px; font-family:inherit; padding:8px; resize:vertical; margin-top:4px; }
+  .controls{ position:sticky; bottom:0; z-index:20; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:12px; background:rgba(242,244,247,.95); margin-top:14px; }
+  .btn{ border:none; border-radius:8px; padding:12px 18px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; }
+  .btn.p{ background:var(--accent); color:#fff; } .btn.g{ background:#5b6470; color:#fff; } .btn.d{ background:#fff; color:#333; border:1.5px solid #bbb; }
+  .modal{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:50; } .modal.show{ display:flex; }
+  .msheet{ background:#fff; border-radius:14px; width:min(94vw,720px); padding:16px; } .msheet h3{ margin:0 0 4px; font-size:17px; text-align:center; } .msheet p{ margin:0 0 10px; text-align:center; color:#666; font-size:13px; }
+  .padwrap{ border:2px dashed #9aa4b0; border-radius:10px; background:#fff; } #padBig{ display:block; width:100%; height:300px; touch-action:none; border-radius:10px; }
+  .msheet .mrow{ display:flex; gap:10px; margin-top:12px; } .msheet .mrow .btn{ flex:1; }
+  /* 사진대지 */
+  .photopage{ margin-top:16px; }
+  .phhead{ background:var(--hd); color:#fff; font-weight:700; padding:8px 12px; border-radius:6px 6px 0 0; display:flex; justify-content:space-between; align-items:center; letter-spacing:2px; }
+  .phnote{ font-size:12px; color:#8a929c; padding:6px 2px; }
+  .photogrid{ padding:10px; border:1.5px solid var(--line); border-top:none; }
+  .pslot{ border:1.5px solid var(--line); margin-bottom:12px; } .pslot:last-child{ margin-bottom:0; }
+  .pslot .frame{ position:relative; width:100%; aspect-ratio:16/10; background:#f4f6f8; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; }
+  .pslot .frame img{ width:100%; height:100%; object-fit:contain; display:none; }
+  .pslot .frame .add{ color:#8a929c; font-size:14px; font-weight:700; text-align:center; padding:8px; }
+  .pslot .del{ position:absolute; top:6px; right:6px; background:rgba(0,0,0,.55); color:#fff; border:none; border-radius:50%; width:28px; height:28px; font-size:16px; line-height:1; cursor:pointer; display:none; }
+  .pslot.has .del{ display:block; }
+  table.pmeta{ width:100%; border-collapse:collapse; border-top:1.5px solid var(--line); margin-top:0; }
+  table.pmeta td{ border:1px solid var(--line); padding:0; text-align:left; }
+  table.pmeta td.pl{ background:var(--hdbg); color:var(--hd); font-weight:700; text-align:center; padding:7px 6px; width:62px; white-space:nowrap; }
+  table.pmeta td.dtc{ width:150px; } table.pmeta input{ width:100%; border:none; font-family:inherit; font-size:13px; padding:7px 8px; background:transparent; }
+  @media print{
+    body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:0; }
+    .selector,.controls,.modal,.cofill .fillbtn,.nmcell .penbtn,.phnote,.pslot .del,.pslot .add,.phhead button{ display:none !important; }
+    thead th,td.lbl,.irow .l,.subj .sh,table.appr .lab,table.appr .who{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    table,tr{ break-inside:avoid; }
+    .photopage.nophoto{ display:none !important; } .photopage:not(.nophoto){ break-before:page; page-break-before:always; }
+    .phhead{ background:var(--hdbg) !important; color:var(--hd) !important; border:1.5px solid var(--line); border-bottom:none; border-radius:0; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .pslot{ break-inside:avoid; } .pslot .frame{ background:#fff; aspect-ratio:auto; height:300px; }
+    @page{ size:A4 portrait; margin:8mm; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="paper">
+  <h1>특별안전교육일지</h1>
+  <div class="tophead" style="justify-content:space-between;align-items:flex-end">
+    <span style="font-weight:700;color:#1f4e79;font-size:13px;letter-spacing:.5px">(주)디아키즈건설</span>
+    <table class="appr">
+      <tr><td class="lab" rowspan="2">결 재</td><td class="who">담당자</td><td class="who">현장소장</td></tr>
+      <tr>
+        <td class="signcell" data-appr="담당자"><canvas></canvas><div class="ph">서명</div></td>
+        <td class="signcell" data-appr="현장소장"><canvas></canvas><div class="ph">서명</div></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="infobox">
+    <div class="irow"><div class="l">작성일자</div><div class="v"><input type="date" id="day"> <input type="time" id="timeStart"> ~ <input type="time" id="timeEnd"> &nbsp;작성자 <input type="text" data-c="writer" style="min-width:90px"></div></div>
+    <div class="irow"><div class="l">공사명</div><div class="v"><select id="site" class="sitesel"></select></div></div>
+  </div>
+
+  <div class="selector">
+    <div class="sh">특별교육 항목 선택 <button type="button" class="mini" onclick="clearSel()">선택 해제</button></div>
+    <div class="selbody" id="selbody"></div>
+  </div>
+
+  <table id="cntTbl">
+    <thead><tr><th style="width:150px">교육인원</th><th>구분</th><th>계</th><th>남</th><th>여</th><th style="width:34%">교육 미실시 사유</th></tr></thead>
+    <tbody>
+      <tr><td class="lbl" rowspan="3">교육인원</td><td class="lbl">대상자수</td><td class="cnt"><input class="gye" data-c="tgt_gye" readonly></td><td class="cnt"><input data-c="tgt_m" inputmode="numeric" oninput="sumRow('tgt')"></td><td class="cnt"><input data-c="tgt_f" inputmode="numeric" oninput="sumRow('tgt')"></td><td class="reason" rowspan="3"><textarea data-c="reason"></textarea></td></tr>
+      <tr><td class="lbl">실시자수</td><td class="cnt"><input class="gye" data-c="do_gye" readonly></td><td class="cnt"><input data-c="do_m" inputmode="numeric" oninput="sumRow('do')"></td><td class="cnt"><input data-c="do_f" inputmode="numeric" oninput="sumRow('do')"></td></tr>
+      <tr><td class="lbl">미실시자수</td><td class="cnt"><input class="gye" data-c="no_gye" readonly></td><td class="cnt"><input data-c="no_m" inputmode="numeric" oninput="sumRow('no')"></td><td class="cnt"><input data-c="no_f" inputmode="numeric" oninput="sumRow('no')"></td></tr>
+    </tbody>
+  </table>
+
+  <div class="subj">
+    <div class="sh">교육내용</div>
+    <div id="subjBody"></div>
+  </div>
+
+  <table>
+    <thead><tr><th style="width:150px">교육실시자 및 장소</th><th>성명</th><th>직위</th><th>교육실시장소</th><th style="width:16%">비고</th></tr></thead>
+    <tbody><tr><td class="lbl">교육실시자</td><td class="cell-in"><input data-c="instr_name"></td><td class="cell-in"><input data-c="instr_pos"></td><td class="cell-in"><input data-c="place"></td><td class="cell-in"><input data-c="remark"></td></tr></tbody>
+  </table>
+
+  <div class="subtit">교육대상자 서명란</div>
+  <table id="tbl">
+    <thead><tr><th class="colno">No</th><th class="colco">소속(회사명)</th><th class="colnm">성명</th><th class="colsig">서명 (터치)</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+  <div class="subtit">특이사항</div>
+  <textarea id="note"></textarea>
+
+  <div class="photopage">
+    <div class="phhead">교 육 사 진 대 지 <button type="button" class="mini" onclick="addPhoto()">＋ 사진 추가</button></div>
+    <div class="phnote">※ 사진을 넣지 않으면 인쇄·PDF에서 사진대지 페이지는 출력되지 않습니다.</div>
+    <div class="photogrid" id="photogrid"></div>
+  </div>
+ </div>
+</div>
+
+<div class="controls">
+  <button class="btn p" onclick="printDoc()">📄 PDF로 저장 / 인쇄</button>
+  <button class="btn d" onclick="addRow()">＋ 대상자 추가</button>
+  <button class="btn d" onclick="saveDraft()">💾 임시저장</button>
+  <button class="btn g" onclick="clearAll()">전체 초기화</button>
+  <a class="btn d" href="../index.html" style="text-decoration:none">← 메인</a>
+</div>
+
+<div class="modal" id="modal">
+  <div class="msheet"><h3 id="mTitle">서명</h3><p>아래 칸에 손가락 또는 스타일러스로 서명하세요</p>
+    <div class="padwrap"><canvas id="padBig"></canvas></div>
+    <div class="mrow"><button class="btn d" onclick="undoBig()">↩ 지우기</button><button class="btn g" onclick="closeModal()">취소</button><button class="btn p" onclick="confirmSig()">✔ 서명 완료</button></div>
+  </div>
+</div>
+
+<script src="../sites.js"></script>
+<script src="./교육통합_data.js"></script>
+<script>
+const ROWS_DEFAULT=12, DPR=Math.max(window.devicePixelRatio||1,2);
+const EDU=(window.EDU||[]);
+const ONLYCAT='특별교육';
+const DEFAULT_SITES=["아르시엘 방배 732 공동주택 신축공사","이태원동 106-2 단독주택 신축현장","보라동 20-1 단독주택 신축현장","평창동 496-4 단독주택"];
+function buildSites(){ const sel=document.getElementById('site'); sel.innerHTML='';
+  ((window.SITES&&window.SITES.length)?window.SITES:DEFAULT_SITES).forEach(s=> sel.appendChild(new Option(s,s))); }
+function buildSelector(){
+  const cats=[ONLYCAT];
+  const box=document.getElementById('selbody'); box.innerHTML='';
+  cats.forEach(cat=>{ const g=document.createElement('div'); g.className='grp';
+    let chips=''; EDU.forEach((e,i)=>{ if(e.cat===cat) chips+=`<div class="chip" data-i="${i}">${e.name}</div>`; });
+    g.innerHTML=`<div class="chips">${chips}</div>`; box.appendChild(g); });
+  box.querySelectorAll('.chip').forEach(ch=> ch.addEventListener('click',()=>{ ch.classList.toggle('on'); renderSubjects(); }));
+}
+function selectedIdx(){ return [...document.querySelectorAll('#selbody .chip.on')].map(c=>+c.dataset.i); }
+function clearSel(){ document.querySelectorAll('#selbody .chip.on').forEach(c=>c.classList.remove('on')); renderSubjects(); }
+function renderSubjects(){
+  const idx=selectedIdx(); const body=document.getElementById('subjBody');
+  if(!idx.length){ body.innerHTML='<div style="padding:14px;color:#8a929c;font-size:13px">위에서 특별교육 항목을 선택하면 교육내용이 표시됩니다. (여러 개 선택 가능)</div>'; return; }
+  body.innerHTML=idx.map(i=>{ const e=EDU[i];
+    return `<div class="subjblk"><div class="subjt">■ ${e.name}${e.subjTitle?' — '+e.subjTitle:''}</div><ul>`+
+      e.subjects.map(s=>'<li>'+s+'</li>').join('')+`</ul></div>`; }).join('');
+}
+function sumRow(p){ const m=parseInt((document.querySelector('[data-c='+p+'_m]')||{}).value)||0, f=parseInt((document.querySelector('[data-c='+p+'_f]')||{}).value)||0;
+  const g=document.querySelector('[data-c='+p+'_gye]'); if(g) g.value=(m+f)?(m+f):''; }
+function sumAll(){ ['tgt','do','no'].forEach(sumRow); }
+
+/* 서명 rows */
+function makeRow(n){ const tr=document.createElement('tr');
+  tr.innerHTML=`<td class="colno">${n}</td>
+    <td class="cell-in colco"><div class="cofill"><input type="text" data-k="co"><button type="button" class="fillbtn" title="바로 아랫줄에 소속 동일 적용">▼</button></div></td>
+    <td class="cell-in colnm nmcell"><input type="text" data-k="nm"><canvas class="nmink"></canvas><button type="button" class="penbtn" title="성명 손글씨">✍</button></td>
+    <td class="sigcell colsig"><canvas></canvas><div class="ph">여기를 눌러 서명</div></td>`;
+  tr.querySelector('.sigcell').addEventListener('click',function(){ openSig(this); });
+  tr.querySelector('.penbtn').addEventListener('click',function(e){ e.stopPropagation(); openNm(tr.querySelector('.nmcell')); });
+  tr.querySelector('.fillbtn').addEventListener('click',function(){ const v=tr.querySelector('[data-k=co]').value; if(!v){alert('먼저 이 행의 소속을 입력하세요.');return;} const nx=tr.nextElementSibling; if(!nx){alert('아래에 채울 행이 없습니다.');return;} nx.querySelector('[data-k=co]').value=v; });
+  return tr; }
+function addRow(){ const b=document.getElementById('rows'); b.appendChild(makeRow(b.children.length+1)); }
+function buildRows(k){ const b=document.getElementById('rows'); b.innerHTML=''; for(let i=1;i<=k;i++) b.appendChild(makeRow(i)); }
+
+/* 서명 모달 */
+const modal=document.getElementById('modal'), padBig=document.getElementById('padBig'), bctx=padBig.getContext('2d');
+let drawing=false, hasInk=false, last=null, curTarget=null;
+document.querySelectorAll('.signcell').forEach(c=> c.addEventListener('click',()=>openSig(c)));
+function sizeBig(){ const r=padBig.getBoundingClientRect(); padBig.width=r.width*DPR; padBig.height=r.height*DPR;
+  bctx.setTransform(1,0,0,1,0,0); bctx.scale(DPR,DPR); bctx.lineWidth=6.4; bctx.lineCap='round'; bctx.lineJoin='round'; bctx.strokeStyle='#000000'; hasInk=false; }
+function posBig(e){ const r=padBig.getBoundingClientRect(); return {x:e.clientX-r.left,y:e.clientY-r.top}; }
+padBig.addEventListener('pointerdown',e=>{ e.preventDefault(); drawing=true; last=posBig(e); try{padBig.setPointerCapture(e.pointerId);}catch(_){}; bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(last.x+0.1,last.y+0.1); bctx.stroke(); hasInk=true; });
+padBig.addEventListener('pointermove',e=>{ if(!drawing)return; e.preventDefault(); const p=posBig(e); bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(p.x,p.y); bctx.stroke(); last=p; hasInk=true; });
+padBig.addEventListener('pointerup',()=>drawing=false); padBig.addEventListener('pointercancel',()=>drawing=false);
+function openSig(cell){ const isAppr=cell.classList.contains('signcell'); const h=isAppr?50:46;
+  curTarget={ cnv:cell.querySelector('canvas'), box:cell, h:h, done:()=>{ cell.querySelector('.ph').style.display='none'; }, clear:()=>{ cell.querySelector('.ph').style.display=''; } };
+  const tr=cell.closest('tr'); const nm=tr?(tr.querySelector('[data-k=nm]')||{}).value:''; document.getElementById('mTitle').textContent=isAppr?((cell.dataset.appr||'')+' 서명'):(nm?nm+' 님 서명':'서명');
+  modal.classList.add('show'); requestAnimationFrame(sizeBig); }
+function openNm(cell){ curTarget={ cnv:cell.querySelector('.nmink'), box:cell, h:46, done:()=>cell.classList.add('inked'), clear:()=>cell.classList.remove('inked') };
+  document.getElementById('mTitle').textContent='성명 (손글씨)'; modal.classList.add('show'); requestAnimationFrame(sizeBig); }
+function closeModal(){ modal.classList.remove('show'); }
+function undoBig(){ bctx.save(); bctx.setTransform(1,0,0,1,0,0); bctx.clearRect(0,0,padBig.width,padBig.height); bctx.restore(); hasInk=false; }
+function confirmSig(){ const t=curTarget; if(!t){ closeModal(); return; }
+  if(!hasInk){ const cx=t.cnv.getContext('2d'); cx.clearRect(0,0,t.cnv.width,t.cnv.height); t.clear(); closeModal(); return; }
+  const cnv=t.cnv, r=t.box.getBoundingClientRect(); cnv.width=r.width*DPR; cnv.height=t.h*DPR;
+  cnv.getContext('2d').drawImage(padBig,0,0,padBig.width,padBig.height,0,0,cnv.width,cnv.height); t.done(); closeModal(); }
+
+/* 사진대지 */
+const PHOTO_DEFAULT=2, PHOTO_MAXW=1000;
+function readScaled(file,cb){ const r=new FileReader();
+  r.onload=()=>{ const im=new Image(); im.onload=()=>{ let w=im.width,h=im.height; if(w>PHOTO_MAXW){h=Math.round(h*PHOTO_MAXW/w);w=PHOTO_MAXW;}
+    const c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(im,0,0,w,h); cb(c.toDataURL('image/jpeg',0.82)); }; im.src=r.result; }; r.readAsDataURL(file); }
+function setPhoto(s,u){ const img=s.querySelector('img'); img.src=u; img.style.display='block'; s.querySelector('.add').style.display='none'; s.classList.add('has'); }
+function clearPhoto(s){ const img=s.querySelector('img'); img.src=''; img.style.display='none'; s.querySelector('.add').style.display=''; s.classList.remove('has'); s.querySelector('input[type=file]').value=''; }
+function makePhotoSlot(){ const d=document.createElement('div'); d.className='pslot';
+  d.innerHTML=`<div class="frame"><div class="add">＋ 사진 촬영 / 선택</div><img alt=""><button type="button" class="del" title="삭제">×</button>
+      <input type="file" accept="image/*" capture="environment" style="display:none"></div>
+    <table class="pmeta"><tr><td class="pl">내 용</td><td colspan="3"><input type="text" data-pk="content" placeholder="교육 사진 내용"></td></tr>
+      <tr><td class="pl">위 치</td><td><input type="text" data-pk="loc" placeholder="위치"></td><td class="pl">일 자</td><td class="dtc"><input type="date" data-pk="date"></td></tr></table>`;
+  const frame=d.querySelector('.frame'), inp=d.querySelector('input[type=file]'), del=d.querySelector('.del');
+  frame.addEventListener('click',e=>{ if(e.target===del)return; inp.click(); });
+  inp.addEventListener('change',()=>{ const f=inp.files[0]; if(f) readScaled(f,u=>setPhoto(d,u)); });
+  del.addEventListener('click',()=>clearPhoto(d)); return d; }
+function addPhoto(){ document.getElementById('photogrid').appendChild(makePhotoSlot()); }
+function buildPhotos(k){ const g=document.getElementById('photogrid'); g.innerHTML=''; for(let i=0;i<k;i++) g.appendChild(makePhotoSlot()); }
+function updatePhotoPrint(){ const any=document.querySelector('#photogrid .pslot.has'); document.querySelector('.photopage').classList.toggle('nophoto',!any); }
+window.addEventListener('beforeprint', updatePhotoPrint);
+
+/* actions */
+function allC(){ return [...document.querySelectorAll('[data-c]')]; }
+function setToday(){ document.getElementById('day').value=new Date().toISOString().slice(0,10); }
+function setPrintTitle(){ const names=selectedIdx().map(i=>EDU[i].name); const nm=names.length?(names.length===1?names[0]:names[0]+' 외'+(names.length-1)+'종'):'특별교육';
+  document.title=(((document.getElementById('site')&&document.getElementById('site').value)?document.getElementById('site').value+'_':'')+'특별안전교육일지_'+nm+'_'+((document.getElementById('day')||{}).value||new Date().toISOString().slice(0,10))).replace(/[\\/:*?"<>|]/g,'_'); }
+window.addEventListener('beforeprint', setPrintTitle);
+function printDoc(){ updatePhotoPrint(); setPrintTitle(); window.print(); }
+function clearAll(){ if(!confirm('입력한 내용과 서명을 모두 지울까요?'))return; try{localStorage.removeItem('specialEduDraft');}catch(e){}
+  buildSites(); buildRows(ROWS_DEFAULT); setToday(); document.getElementById('timeStart').value=''; document.getElementById('timeEnd').value='';
+  allC().forEach(el=>{ if(el.tagName==='TEXTAREA'||el.type!=='button') el.value=''; }); document.getElementById('note').value='';
+  document.querySelectorAll('.signcell').forEach(c=>{ const cn=c.querySelector('canvas'); cn.getContext('2d').clearRect(0,0,cn.width,cn.height); c.querySelector('.ph').style.display=''; });
+  clearSel(); sumAll(); buildPhotos(PHOTO_DEFAULT); }
+function saveDraft(){
+  const data={ sel:selectedIdx(), site:document.getElementById('site').value, day:document.getElementById('day').value,
+    timeStart:document.getElementById('timeStart').value, timeEnd:document.getElementById('timeEnd').value, note:document.getElementById('note').value,
+    fields:Object.fromEntries(allC().map(el=>[el.dataset.c, el.value])),
+    appr:Object.fromEntries([...document.querySelectorAll('.signcell')].map(c=>[c.dataset.appr,(c.querySelector('.ph').style.display==='none')?c.querySelector('canvas').toDataURL('image/png'):''])),
+    rows:[...document.querySelectorAll('#rows tr')].map(tr=>({ co:tr.querySelector('[data-k=co]').value, nm:tr.querySelector('[data-k=nm]').value,
+      nmSig:tr.querySelector('.nmcell').classList.contains('inked')?tr.querySelector('.nmink').toDataURL('image/png'):'',
+      sig:(tr.querySelector('.sigcell .ph').style.display==='none')?tr.querySelector('.sigcell canvas').toDataURL('image/png'):'' })),
+    photos:[...document.querySelectorAll('#photogrid .pslot')].map(p=>({ img:p.classList.contains('has')?p.querySelector('img').src:'', content:p.querySelector('[data-pk=content]').value, loc:p.querySelector('[data-pk=loc]').value, date:p.querySelector('[data-pk=date]').value })) };
+  try{ localStorage.setItem('specialEduDraft',JSON.stringify(data)); alert('임시저장 완료.'); }catch(e){ alert('저장 실패: '+e.message); }
+}
+function loadDraft(){
+  let d; try{ d=JSON.parse(localStorage.getItem('specialEduDraft')); }catch(e){ return false; }
+  if(!d) return false;
+  buildSites(); buildSelector();
+  (d.sel||[]).forEach(i=>{ const ch=document.querySelector('#selbody .chip[data-i="'+i+'"]'); if(ch) ch.classList.add('on'); });
+  renderSubjects();
+  if(d.site) document.getElementById('site').value=d.site; document.getElementById('day').value=d.day||new Date().toISOString().slice(0,10);
+  document.getElementById('timeStart').value=d.timeStart||''; document.getElementById('timeEnd').value=d.timeEnd||''; document.getElementById('note').value=d.note||'';
+  if(d.fields) allC().forEach(el=>{ if(d.fields[el.dataset.c]!=null) el.value=d.fields[el.dataset.c]; });
+  sumAll();
+  if(d.appr) Object.entries(d.appr).forEach(([who,img])=>{ if(!img)return; const cell=document.querySelector('.signcell[data-appr="'+who+'"]'); if(!cell)return; const cn=cell.querySelector('canvas'), im=new Image();
+    im.onload=()=>{ const r=cell.getBoundingClientRect(); cn.width=r.width*DPR; cn.height=50*DPR; cn.getContext('2d').drawImage(im,0,0,cn.width,cn.height); }; im.src=img; cell.querySelector('.ph').style.display='none'; });
+  const rows=d.rows||[]; buildRows(Math.max(rows.length,ROWS_DEFAULT));
+  const trs=document.querySelectorAll('#rows tr');
+  rows.forEach((rd,i)=>{ const tr=trs[i]; if(!tr)return; tr.querySelector('[data-k=co]').value=rd.co||''; tr.querySelector('[data-k=nm]').value=rd.nm||'';
+    if(rd.nmSig){ const cell=tr.querySelector('.nmcell'), img=new Image(), cnv=tr.querySelector('.nmink'), r=cell.getBoundingClientRect();
+      img.onload=()=>{ cnv.width=r.width*DPR; cnv.height=46*DPR; cnv.getContext('2d').drawImage(img,0,0,cnv.width,cnv.height); }; img.src=rd.nmSig; cell.classList.add('inked'); }
+    if(rd.sig){ const img=new Image(), cnv=tr.querySelector('.sigcell canvas'), r=tr.querySelector('.sigcell').getBoundingClientRect();
+      img.onload=()=>{ cnv.width=r.width*DPR; cnv.height=46*DPR; cnv.getContext('2d').drawImage(img,0,0,cnv.width,cnv.height); }; img.src=rd.sig; tr.querySelector('.sigcell .ph').style.display='none'; } });
+  const ph=(d.photos&&d.photos.length)?d.photos:null; buildPhotos(ph?ph.length:PHOTO_DEFAULT);
+  if(ph){ const slots=document.querySelectorAll('#photogrid .pslot'); ph.forEach((p,i)=>{ const s=slots[i]; if(!s)return; if(p.content!=null) s.querySelector('[data-pk=content]').value=p.content; if(p.loc!=null) s.querySelector('[data-pk=loc]').value=p.loc; if(p.date!=null) s.querySelector('[data-pk=date]').value=p.date; if(p.img) setPhoto(s,p.img); }); }
+  return true;
+}
+buildSites(); buildSelector();
+if(!loadDraft()){ renderSubjects(); buildRows(ROWS_DEFAULT); setToday(); sumAll(); buildPhotos(PHOTO_DEFAULT); }
+</script>
+</body>
+</html>

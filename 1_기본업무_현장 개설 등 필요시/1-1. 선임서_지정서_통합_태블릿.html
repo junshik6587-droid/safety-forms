@@ -31,6 +31,13 @@
   .dtext{ font-size:20px; letter-spacing:3px; margin-top:8px; font-weight:600; }
   .sign{ text-align:center; font-size:21px; font-weight:700; letter-spacing:2px; margin-top:24px; }
   .sign .co{ letter-spacing:1px; }
+  .signbox{ position:relative; display:inline-block; width:130px; height:58px; vertical-align:middle; cursor:pointer; }
+  .signbox canvas{ display:block; width:100%; height:58px; }
+  .signbox .ph{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#bbb; font-size:12px; font-weight:400; letter-spacing:1px; pointer-events:none; }
+  .modal{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:50; } .modal.show{ display:flex; }
+  .msheet{ background:#fff; border-radius:14px; width:min(94vw,720px); padding:16px; } .msheet h3{ margin:0 0 4px; font-size:17px; text-align:center; } .msheet p{ margin:0 0 10px; text-align:center; color:#666; font-size:13px; }
+  .padwrap{ border:2px dashed #9aa4b0; border-radius:10px; background:#fff; } #padBig{ display:block; width:100%; height:300px; touch-action:none; border-radius:10px; }
+  .msheet .row{ display:flex; gap:10px; margin-top:12px; } .msheet .row .btn{ flex:1; }
   .controls{ position:sticky; bottom:0; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:12px; background:rgba(242,244,247,.95); margin-top:14px; }
   .btn{ border:none; border-radius:8px; padding:12px 18px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; }
   .btn.p{ background:var(--accent); color:#fff; } .btn.g{ background:#5b6470; color:#fff; } .btn.d{ background:#fff; color:#333; border:1.5px solid #bbb; }
@@ -66,8 +73,32 @@
   <a class="btn d" href="../index.html" style="text-decoration:none">← 메인</a>
 </div>
 
+<div class="modal" id="modal">
+  <div class="msheet"><h3>서명</h3><p>아래 칸에 손가락 또는 스타일러스로 서명하세요</p>
+    <div class="padwrap"><canvas id="padBig"></canvas></div>
+    <div class="row"><button class="btn d" onclick="undoBig()">↩ 지우기</button><button class="btn g" onclick="closeModal()">취소</button><button class="btn p" onclick="confirmSig()">✔ 서명 완료</button></div>
+  </div>
+</div>
+
 <script>
 const CO='(주)디아키즈 건설';
+const DPR=Math.max(window.devicePixelRatio||1,2);
+const modal=document.getElementById('modal'), padBig=document.getElementById('padBig'), bctx=padBig.getContext('2d');
+let drawing=false, hasInk=false, last=null;
+function sizeBig(){ const r=padBig.getBoundingClientRect(); padBig.width=r.width*DPR; padBig.height=r.height*DPR;
+  bctx.setTransform(1,0,0,1,0,0); bctx.scale(DPR,DPR); bctx.lineWidth=6.4; bctx.lineCap='round'; bctx.lineJoin='round'; bctx.strokeStyle='#000000'; hasInk=false; }
+function posBig(e){ const r=padBig.getBoundingClientRect(); return {x:e.clientX-r.left,y:e.clientY-r.top}; }
+padBig.addEventListener('pointerdown',e=>{ e.preventDefault(); drawing=true; last=posBig(e); try{padBig.setPointerCapture(e.pointerId);}catch(_){}; bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(last.x+0.1,last.y+0.1); bctx.stroke(); hasInk=true; });
+padBig.addEventListener('pointermove',e=>{ if(!drawing)return; e.preventDefault(); const p=posBig(e); bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(p.x,p.y); bctx.stroke(); last=p; hasInk=true; });
+padBig.addEventListener('pointerup',()=>drawing=false); padBig.addEventListener('pointercancel',()=>drawing=false);
+function openSig(){ modal.classList.add('show'); requestAnimationFrame(sizeBig); }
+function closeModal(){ modal.classList.remove('show'); }
+function undoBig(){ bctx.save(); bctx.setTransform(1,0,0,1,0,0); bctx.clearRect(0,0,padBig.width,padBig.height); bctx.restore(); hasInk=false; }
+function confirmSig(){ const box=document.getElementById('signbox'); if(!box){ closeModal(); return; }
+  if(!hasInk){ signData=''; const cn=box.querySelector('canvas'); cn.getContext('2d').clearRect(0,0,cn.width,cn.height); box.querySelector('.ph').style.display=''; closeModal(); return; }
+  const cn=box.querySelector('canvas'), r=box.getBoundingClientRect(); cn.width=r.width*DPR; cn.height=58*DPR;
+  cn.getContext('2d').drawImage(padBig,0,0,padBig.width,padBig.height,0,0,cn.width,cn.height);
+  signData=cn.toDataURL('image/png'); box.querySelector('.ph').style.display='none'; closeModal(); }
 const DUTY_MGR=[
  "산업재해 예방계획의 수립에 관한 사항",
  "법 제25조 및 제26조에 따른 안전보건관리규정의 작성 및 변경에 관한 사항",
@@ -175,7 +206,16 @@ function render(){
   let du='';
   a.sections.forEach(sec=>{ du+='<div class="dt">'+sec.title+'</div><ol>'+sec.items.map(it=>'<li>'+it+'</li>').join('')+'</ol>'; });
   document.getElementById('duties').innerHTML=du;
-  document.getElementById('sign').innerHTML='<span class="co">'+CO+'</span> &nbsp; '+a.signer+' &nbsp; (인)';
+  document.getElementById('sign').innerHTML='<span class="co">'+CO+'</span> &nbsp; '+a.signer+' &nbsp; <span class="signbox" id="signbox"><canvas></canvas><div class="ph">서명</div></span>';
+  wireSign();
+}
+let signData='';
+function wireSign(){
+  const box=document.getElementById('signbox'); if(!box) return;
+  box.addEventListener('click',()=>openSig());
+  if(signData){ const cn=box.querySelector('canvas'), im=new Image();
+    im.onload=()=>{ const r=box.getBoundingClientRect(); cn.width=r.width*DPR; cn.height=58*DPR; cn.getContext('2d').drawImage(im,0,0,cn.width,cn.height); };
+    im.src=signData; box.querySelector('.ph').style.display='none'; }
 }
 
 function fmtDate(){
@@ -194,9 +234,9 @@ window.addEventListener('beforeprint', setPrintTitle);
 function printDoc(){ setPrintTitle(); window.print(); }
 
 function clearAll(){ if(!confirm('입력한 내용을 모두 지울까요?'))return; try{localStorage.removeItem('apptDraft');}catch(e){}
-  for(const k in vals) delete vals[k]; document.getElementById('type').selectedIndex=0; render(); setToday(); }
+  for(const k in vals) delete vals[k]; signData=''; document.getElementById('type').selectedIndex=0; render(); setToday(); }
 function saveDraft(){
-  const data={ type:document.getElementById('type').value, day:document.getElementById('day').value, vals:vals };
+  const data={ type:document.getElementById('type').value, day:document.getElementById('day').value, vals:vals, sign:signData };
   try{ localStorage.setItem('apptDraft',JSON.stringify(data)); alert('임시저장 완료.'); }catch(e){ alert('저장 실패: '+e.message); }
 }
 function loadDraft(){
@@ -204,6 +244,7 @@ function loadDraft(){
   if(!d) return false;
   buildTypes(); if(d.type && APPT[d.type]) document.getElementById('type').value=d.type;
   if(d.vals) Object.assign(vals, d.vals);
+  signData=d.sign||'';
   render();
   if(d.day){ document.getElementById('day').value=d.day; fmtDate(); } else setToday();
   return true;
