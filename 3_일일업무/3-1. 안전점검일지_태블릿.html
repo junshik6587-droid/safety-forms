@@ -202,5 +202,16 @@ function loadDraft(){
 buildSites();
 if(!loadDraft()){ buildChecks(); buildEq(4); setToday(); }
 </script>
+<script>
+/* AUTO_GROW_TEXTAREA: 입력란 자동 높이조절 (내용 많으면 칸이 늘어나 인쇄 시 잘리지 않음) */
+(function(){
+  function az(ta){ ta.style.overflow='hidden'; ta.style.height='auto'; ta.style.height=(ta.scrollHeight)+'px'; }
+  function all(){ document.querySelectorAll('textarea').forEach(az); }
+  document.addEventListener('input', function(e){ if(e.target && e.target.tagName==='TEXTAREA') az(e.target); });
+  window.addEventListener('load', all);
+  window.addEventListener('beforeprint', all);
+  setTimeout(all, 300);
+})();
+</script>
 </body>
 </html>

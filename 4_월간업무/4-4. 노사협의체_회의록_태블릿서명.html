@@ -24,7 +24,7 @@
   .chk.on .b{ background:var(--accent); color:#fff; border-color:var(--accent); }
   .sec{ border:1.5px solid var(--line); margin-bottom:10px; }
   .sec .h{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:6px 10px; font-size:13px; border-bottom:1px solid var(--line); }
-  .sec textarea{ width:100%; min-height:64px; border:none; font-size:14px; font-family:inherit; padding:8px 10px; resize:vertical; }
+  .sec textarea{ width:100%; min-height:64px; border:none; font-size:14px; font-family:inherit; padding:8px 10px; resize:vertical; overflow:hidden; line-height:1.5; }
   table{ width:100%; border-collapse:collapse; font-size:13px; }
   th,td{ border:1px solid var(--line); padding:3px 5px; text-align:center; }
   thead th{ background:var(--hdbg); color:var(--hd); font-size:12px; padding:6px 4px; }
@@ -181,6 +181,13 @@ function makeRow(n){
   tr.querySelector('.penbtn').addEventListener('click',function(e){ e.stopPropagation(); openNm(tr.querySelector('.nmcell')); });
   return tr;
 }
+/* 협의사항 등 입력란: 내용에 맞춰 높이 자동 확대 (적으면 현 높이 유지, 많으면 늘어남 → 인쇄 시 잘리지 않음) */
+function autoSize(ta){ ta.style.height='auto'; ta.style.height=Math.max(ta.scrollHeight, 64)+'px'; }
+function autoSizeAll(){ document.querySelectorAll('.sec textarea').forEach(autoSize); }
+document.querySelectorAll('.sec textarea').forEach(ta=>ta.addEventListener('input',()=>autoSize(ta)));
+window.addEventListener('beforeprint', autoSizeAll);
+window.addEventListener('load', autoSizeAll);
+
 function addRow(){ const b=document.getElementById('rows'); b.appendChild(makeRow(b.children.length+1)); }
 function buildRows(k){ const b=document.getElementById('rows'); b.innerHTML=''; for(let i=1;i<=k;i++) b.appendChild(makeRow(i)); }
 
@@ -253,7 +260,7 @@ function printDoc(){ updatePhotoPrint(); setPrintTitle(); window.print(); }
 function setToday(){ document.getElementById('day').value=new Date().toISOString().slice(0,10); }
 function allC(){ return [...document.querySelectorAll('[data-c]')]; }
 function clearAll(){ if(!confirm('입력한 내용과 서명을 모두 지울까요?'))return; try{localStorage.removeItem('nosaDraft');}catch(e){}
-  buildSites(); buildRows(ROWS_DEFAULT); buildPhotos(PHOTO_DEFAULT); setToday(); document.getElementById('time').value=''; document.getElementById('place').value=''; allC().forEach(el=>el.value='');
+  buildSites(); buildRows(ROWS_DEFAULT); buildPhotos(PHOTO_DEFAULT); setToday(); document.getElementById('time').value=''; document.getElementById('place').value=''; allC().forEach(el=>el.value=''); autoSizeAll();
   document.querySelectorAll('.apprcell').forEach(c=>{ const cn=c.querySelector('canvas'); cn.getContext('2d').clearRect(0,0,cn.width,cn.height); c.querySelector('.ph').style.display=''; });
   document.querySelectorAll('#kind .chk').forEach((c,i)=>{ const on=i===0; c.classList.toggle('on',on); c.querySelector('.b').textContent=on?'✓':''; }); }
 function saveDraft(){
@@ -279,6 +286,7 @@ function loadDraft(){
   day.value=d.day||''; document.getElementById('time').value=d.time||''; document.getElementById('place').value=d.place||'';
   (d.kind||[]).forEach((v,i)=>{ const c=document.querySelectorAll('#kind .chk')[i]; if(c){ c.classList.toggle('on',!!v); c.querySelector('.b').textContent=v?'✓':''; }});
   if(d.fields) allC().forEach(el=>{ if(d.fields[el.dataset.c]!=null) el.value=d.fields[el.dataset.c]; });
+  autoSizeAll();
   if(d.appr) Object.entries(d.appr).forEach(([who,img])=>{ if(!img)return; const cell=document.querySelector('.apprcell[data-appr="'+who+'"]'); if(!cell)return; const cn=cell.querySelector('canvas'), im=new Image();
     im.onload=()=>{ const r=cell.getBoundingClientRect(); cn.width=r.width*DPR; cn.height=52*DPR; cn.getContext('2d').drawImage(im,0,0,cn.width,cn.height); }; im.src=img; cell.querySelector('.ph').style.display='none'; });
   buildRows(Math.max(d.rows.length,ROWS_DEFAULT));

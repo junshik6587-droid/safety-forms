@@ -38,18 +38,18 @@
   td.left{ text-align:left; }
   .note{ font-size:12px; color:#444; margin-top:12px; line-height:1.6; }
   /* 비상연락망 */
-  .emer h1{ margin-top:28px; margin-bottom:56px; }
-  .emer .vline{ height:30px; }
+  .emer h1{ margin-top:8px; margin-bottom:48px; }
+  .emer .vline{ height:20px; }
   .emer .center{ margin:6px 0; }
   .emer .hbar{ margin:0; }
-  .ebox{ border:2px solid var(--line); border-radius:6px; padding:15px 16px; min-width:0; overflow:hidden; }
-  .ebox .et{ font-weight:700; color:var(--hd); text-align:center; font-size:16px; margin-bottom:9px; }
-  .erow{ display:flex; align-items:center; gap:8px; margin:8px 0; font-size:15px; }
+  .ebox{ border:2px solid var(--line); border-radius:6px; padding:9px 13px; min-width:0; overflow:hidden; }
+  .ebox .et{ font-weight:700; color:var(--hd); text-align:center; font-size:14px; margin-bottom:6px; }
+  .erow{ display:flex; align-items:center; gap:8px; margin:5px 0; font-size:13.5px; }
   .erow .k{ width:46px; flex:0 0 auto; color:#555; font-weight:700; text-align:justify; text-align-last:justify; }
-  .erow input{ flex:1; min-width:0; border:none; border-bottom:1px solid #aaa; font-size:16px; font-family:inherit; padding:6px 4px; }
+  .erow input{ flex:1; min-width:0; border:none; border-bottom:1px solid #aaa; font-size:15px; font-family:inherit; padding:6px 4px; }
   .erow input:focus{ outline:none; border-bottom-color:var(--accent); }
-  .egrid{ display:grid; grid-template-columns:1fr 1fr; gap:20px 22px; margin-top:26px; }
-  .ehead{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:22px; align-items:start; margin-bottom:26px; }
+  .egrid{ display:grid; grid-template-columns:1fr 1fr; gap:11px 18px; margin-top:16px; }
+  .ehead{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; align-items:start; margin-bottom:16px; }
   /* 세로 중앙 배치 (비상연락망·재난 조직도) */
   #d-emer.on, #d-disaster.on{ display:flex; flex-direction:column; justify-content:center; min-height:80vh; }
   /* 재난 조직도 셀 높이 통일 */
@@ -59,11 +59,11 @@
   .btn{ border:none; border-radius:8px; padding:12px 18px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; }
   .btn.p{ background:var(--accent); color:#fff; } .btn.g{ background:#5b6470; color:#fff; } .btn.d{ background:#fff; color:#333; border:1.5px solid #bbb; }
   @media print{
-    body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:8mm 6mm; }
+    body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:3mm 6mm; }
     .selbar,.controls{ display:none !important; }
     thead th,td.lbl,.node,.ebox,.hbar,.vline{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-    #d-emer.on, #d-disaster.on{ min-height:245mm; justify-content:center; }
-    @page{ size:A4 portrait; margin:8mm; }
+    #d-emer.on, #d-disaster.on{ min-height:0; justify-content:flex-start; }
+    @page{ size:A4 portrait; margin:6mm; }
   }
 </style>
 </head>
