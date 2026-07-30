@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>위험성평가 (공종 선택형)</title>
+<style>
+  :root{ --line:#333; --hd:#1f4e79; --hdbg:#dbe5f1; --accent:#1f6feb; --rA:#ff3b30; --rB:#ffcc00; --rC:#34c759; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; font-family:"맑은 고딕","Malgun Gothic",AppleGothic,sans-serif; color:#111; background:#f2f4f7; }
+  .wrap{ max-width:1250px; margin:0 auto; padding:12px; }
+  .selbar{ background:#fff; border:1.5px solid var(--accent); border-radius:10px; padding:10px 14px; margin-bottom:12px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:15px; font-weight:700; color:var(--hd); }
+  .selbar select{ font-size:15px; font-weight:700; padding:7px 8px; font-family:inherit; border:1.5px solid var(--accent); border-radius:6px; color:var(--hd); min-width:200px; }
+  .selbar .btnload{ background:var(--accent); color:#fff; border:none; border-radius:6px; padding:8px 12px; font-weight:700; font-family:inherit; cursor:pointer; }
+  .paper{ background:#fff; padding:16px 18px 24px; box-shadow:0 1px 6px rgba(0,0,0,.15); }
+  h1{ text-align:center; font-size:20px; margin:2px 0 12px; letter-spacing:2px; }
+  .meta{ display:flex; flex-wrap:wrap; gap:8px 18px; align-items:center; border:1.5px solid var(--line); padding:10px 12px; margin-bottom:10px; font-size:14px; }
+  .meta label{ font-weight:700; margin-right:4px; }
+  .meta input[type=text],.meta input[type=date]{ border:none; border-bottom:1px solid #999; font-size:14px; padding:3px 4px; font-family:inherit; }
+  .sitesel,.kindsel{ font-size:14px; font-weight:700; padding:5px 8px; font-family:inherit; border:1.5px solid var(--accent); border-radius:5px; color:var(--hd); }
+  .kindsel{ border-color:#999; color:#111; font-weight:400; }
+  /* 위험성 수준 판단기준 범례 */
+  .legend{ width:100%; border-collapse:collapse; font-size:12px; margin-bottom:12px; }
+  .legend th,.legend td{ border:1px solid var(--line); padding:6px 8px; text-align:center; vertical-align:middle; }
+  .legend thead th{ background:var(--hdbg); color:var(--hd); }
+  .legend td.left{ text-align:left; }
+  .legend .lv{ font-weight:800; width:120px; }
+  .legend .a{ background:var(--rA); color:#fff; }
+  .legend .b{ background:var(--rB); color:#111; }
+  .legend .c{ background:var(--rC); color:#fff; }
+  .legend .crit{ font-weight:700; width:110px; }
+  .scroll{ overflow-x:auto; }
+  table.risk{ width:100%; border-collapse:collapse; font-size:12px; min-width:1150px; }
+  table.risk th,table.risk td{ border:1px solid var(--line); padding:2px 4px; vertical-align:top; }
+  table.risk thead th{ background:var(--hdbg); color:var(--hd); font-size:12px; text-align:center; padding:5px 3px; }
+  td.no{ width:30px; text-align:center; }
+  .colstep{ width:104px; } .coltyp{ width:64px; } .colrisk{ width:60px; } .colmgmt{ width:58px; } .colwho{ width:64px; } .coldt{ width:88px; } .colimp{ width:58px; }
+  .colchk{ width:38px; text-align:center; } .prtchk{ width:20px; height:20px; cursor:pointer; }
+  .hwcell{ position:relative; }
+  .hwcell canvas.hwink{ position:absolute; inset:0; width:100%; height:100%; display:none; pointer-events:none; }
+  .hwcell.inked canvas.hwink{ display:block; }
+  .hwcell.inked input{ visibility:hidden; }
+  .hwcell .penbtn{ position:absolute; top:1px; right:1px; width:16px; height:16px; border:none; background:#eef3fb; color:var(--accent); border-radius:3px; font-size:9px; font-weight:800; cursor:pointer; z-index:2; padding:0; line-height:1; }
+  .hwcell .penbtn:active{ background:var(--accent); color:#fff; }
+  .modal{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:50; } .modal.show{ display:flex; }
+  .msheet{ background:#fff; border-radius:14px; width:min(94vw,720px); padding:16px; } .msheet h3{ margin:0 0 4px; font-size:17px; text-align:center; } .msheet p{ margin:0 0 10px; text-align:center; color:#666; font-size:13px; }
+  .padwrap{ border:2px dashed #9aa4b0; border-radius:10px; background:#fff; } #padBig{ display:block; width:100%; height:300px; touch-action:none; border-radius:10px; }
+  .msheet .mrow{ display:flex; gap:10px; margin-top:12px; } .msheet .mrow .btn{ flex:1; }
+  table.risk td textarea{ width:100%; border:none; font-family:inherit; font-size:12px; padding:4px; resize:vertical; min-height:44px; background:transparent; }
+  table.risk td input{ width:100%; border:none; font-family:inherit; font-size:12px; padding:4px 2px; text-align:center; background:transparent; }
+  table.risk td select{ width:100%; border:none; font-family:inherit; font-size:12px; text-align:center; padding:3px 0; }
+  table.risk td textarea:focus,table.risk td input:focus,table.risk td select:focus{ outline:2px solid var(--accent); outline-offset:-2px; }
+  select.rk.a{ background:var(--rA); color:#fff; font-weight:800; }
+  select.rk.b{ background:var(--rB); color:#111; font-weight:800; }
+  select.rk.c{ background:var(--rC); color:#fff; font-weight:800; }
+  .empty{ text-align:center; color:#888; padding:30px; font-size:14px; }
+  .tophead{ display:flex; justify-content:flex-end; margin:2px 0 10px; }
+  table.appr{ border-collapse:collapse; width:auto; }
+  table.appr td,table.appr th{ border:1px solid var(--line); text-align:center; font-size:12px; }
+  table.appr .lab{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:4px 5px; writing-mode:vertical-lr; letter-spacing:2px; width:26px; }
+  table.appr .who{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:3px 6px; width:96px; }
+  .apprcell{ position:relative; width:96px; height:52px; padding:0; cursor:pointer; }
+  .apprcell canvas{ display:block; width:100%; height:52px; }
+  .apprcell .ph{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#bbb; font-size:11px; pointer-events:none; }
+  .controls{ position:sticky; bottom:0; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:12px; background:rgba(242,244,247,.95); margin-top:14px; }
+  .btn{ border:none; border-radius:8px; padding:12px 18px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; }
+  .btn.p{ background:var(--accent); color:#fff; } .btn.g{ background:#5b6470; color:#fff; } .btn.d{ background:#fff; color:#333; border:1.5px solid #bbb; }
+  @media print{
+    body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:0; }
+    .selbar,.controls,.modal{ display:none !important; } .scroll{ overflow:visible; } table.risk{ min-width:0; font-size:10px; }
+    thead th,.legend .a,.legend .b,.legend .c,select.rk.a,select.rk.b,select.rk.c,table.appr .lab,table.appr .who{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    tr.hideprint{ display:none !important; } .colchk{ display:none !important; } .hwcell .penbtn{ display:none !important; }
+    input.blankdt{ visibility:hidden !important; }
+    /* PAGEBREAK_SIGN_TABLE: 서명/명단 표는 하단부터 채우고 다음 장으로 이어짐, 행 잘림 방지, 머리글 반복 */
+    table{ break-inside:auto; }
+    tr{ break-inside:avoid; }
+    thead{ display:table-header-group; }
+    @page{ size:A4 landscape; margin:7mm; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="selbar">
+   <span>공종 선택</span>
+   <select id="gong"></select>
+   <button type="button" class="btnload" onclick="loadGong()">공종 불러오기</button>
+   <span style="font-weight:400;font-size:12px;color:#888">※ 선택 후 불러오면 해당 공종 위험요인·대책이 자동으로 채워집니다</span>
+ </div>
+
+ <div class="paper">
+  <h1>위 험 성 평 가</h1>
+  <div class="tophead" style="justify-content:space-between;align-items:flex-end">
+    <span style="font-weight:700;color:#1f4e79;font-size:13px;letter-spacing:.5px">(주)디아키즈건설</span>
+    <table class="appr">
+      <tr><td class="lab" rowspan="2">결 재</td><td class="who">담당자</td><td class="who">근로자대표</td><td class="who">안전관리자</td><td class="who">현장소장</td></tr>
+      <tr>
+        <td class="apprcell" data-appr="담당자" onclick="openAppr(this)"><canvas></canvas><div class="ph">서명</div></td>
+        <td class="apprcell" data-appr="근로자대표" onclick="openAppr(this)"><canvas></canvas><div class="ph">서명</div></td>
+        <td class="apprcell" data-appr="안전관리자" onclick="openAppr(this)"><canvas></canvas><div class="ph">서명</div></td>
+        <td class="apprcell" data-appr="현장소장" onclick="openAppr(this)"><canvas></canvas><div class="ph">서명</div></td>
+      </tr>
+    </table>
+  </div>
+  <div class="meta">
+    <div><label>현장명</label><select id="site" class="sitesel"></select></div>
+    <div><label>평가구분</label><select id="kind" class="kindsel"><option>최초</option><option>수시</option><option>월간</option></select></div>
+    <div><label>작업공종</label><input type="text" id="workname" placeholder="공종명"></div>
+    <div><label>업체명</label><input type="text" id="company" placeholder="업체명"></div>
+    <div><label>작성자</label><input type="text" id="writer"></div>
+    <div><label>작성일</label><input type="date" id="day"></div>
+  </div>
+
+  <table class="legend">
+    <thead><tr><th>위험성 수준</th><th>판단 기준</th><th>허용 가능 여부</th></tr></thead>
+    <tbody>
+      <tr><td class="lv a">상 (빨강)<br>매우 높음</td><td class="left">사고 발생 시 사망 또는 장애가 남을 수 있는 위험 / 산업안전보건법에 따른 기준을 만족하지 못하는 경우</td><td rowspan="2" class="crit">허용 불가</td></tr>
+      <tr><td class="lv b">중 (노랑)<br>보통</td><td class="left">사고 발생 시 요양이 필요한 위험 / 아차사고 사례가 있는 경우</td></tr>
+      <tr><td class="lv c">하 (초록)<br>매우 낮음</td><td class="left">작업 수행에 영향을 미치지 않는 경미한 부상 또는 질병이 예상되는 경우</td><td class="crit">허용 가능</td></tr>
+    </tbody>
+  </table>
+
+  <div class="scroll">
+  <table class="risk" id="tbl">
+    <thead>
+      <tr>
+        <th class="colchk">인쇄</th>
+        <th class="colstep">작업단계</th>
+        <th>위험요인 (~에 의한 ~위험)</th>
+        <th class="coltyp">재해형태</th>
+        <th class="colrisk">위험성</th>
+        <th class="colmgmt">관리대상</th>
+        <th>안전보건대책 (제거/대체/시설/교육/관리)</th>
+        <th class="colwho">담당자</th>
+        <th class="coldt">조치일자</th>
+        <th class="colimp">중요도</th>
+      </tr>
+    </thead>
+    <tbody id="rows"><tr><td colspan="10" class="empty">상단에서 공종을 선택하고 "공종 불러오기"를 누르세요.</td></tr></tbody>
+  </table>
+  </div>
+ </div>
+</div>
+
+<div class="controls">
+  <button class="btn p" onclick="printDoc()">📄 PDF로 저장 / 인쇄</button>
+  <button class="btn d" onclick="addRow()">＋ 행 추가</button>
+  <button class="btn d" onclick="toggleAllChk()">☑ 인쇄 전체선택/해제</button>
+  <button class="btn d" onclick="saveDraft()">💾 임시저장</button>
+  <button class="btn g" onclick="clearAll()">전체 초기화</button>
+  <a class="btn d" href="../index.html" style="text-decoration:none">← 메인</a>
+</div>
+
+<div class="modal" id="modal">
+  <div class="msheet"><h3 id="mTitle">담당자 서명</h3><p>아래 칸에 손가락 또는 스타일러스로 서명하세요</p>
+    <div class="padwrap"><canvas id="padBig"></canvas></div>
+    <div class="mrow"><button class="btn d" onclick="undoBig()">↩ 지우기</button><button class="btn g" onclick="closeModal()">취소</button><button class="btn p" onclick="confirmSig()">✔ 서명 완료</button></div>
+  </div>
+</div>
+
+<script src="../sites.js"></script>
+<script src="riskdata.js"></script>
+<script>
+const DEFAULT_SITES=["아르시엘 방배 732 공동주택 신축공사","이태원동 106-2 단독주택 신축현장","보라동 20-1 단독주택 신축현장","평창동 496-4 단독주택"];
+const DPR=Math.max(window.devicePixelRatio||1,2);
+/* ---- 담당자 손글씨 서명 ---- */
+const modal=document.getElementById('modal'), padBig=document.getElementById('padBig'), bctx=padBig.getContext('2d');
+let drawing=false, hasInk=false, last=null, curCell=null, curAppr=false;
+function sizeBig(){ const r=padBig.getBoundingClientRect(); padBig.width=r.width*DPR; padBig.height=r.height*DPR;
+  bctx.setTransform(1,0,0,1,0,0); bctx.scale(DPR,DPR); bctx.lineWidth=6.4; bctx.lineCap='round'; bctx.lineJoin='round'; bctx.strokeStyle='#000000'; hasInk=false; }
+function posBig(e){ const r=padBig.getBoundingClientRect(); return {x:e.clientX-r.left,y:e.clientY-r.top}; }
+padBig.addEventListener('pointerdown',e=>{ e.preventDefault(); drawing=true; last=posBig(e); try{padBig.setPointerCapture(e.pointerId);}catch(_){}; bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(last.x+0.1,last.y+0.1); bctx.stroke(); hasInk=true; });
+padBig.addEventListener('pointermove',e=>{ if(!drawing)return; e.preventDefault(); const p=posBig(e); bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(p.x,p.y); bctx.stroke(); last=p; hasInk=true; });
+padBig.addEventListener('pointerup',()=>drawing=false); padBig.addEventListener('pointercancel',()=>drawing=false);
+function openHW(cell){ curCell=cell; curAppr=false; modal.classList.add('show'); requestAnimationFrame(sizeBig); }
+function openAppr(cell){ curCell=cell; curAppr=true; modal.classList.add('show'); requestAnimationFrame(sizeBig); }
+function closeModal(){ modal.classList.remove('show'); }
+function undoBig(){ bctx.save(); bctx.setTransform(1,0,0,1,0,0); bctx.clearRect(0,0,padBig.width,padBig.height); bctx.restore(); hasInk=false; }
+function confirmSig(){ const cell=curCell; if(!cell){ closeModal(); return; }
+  if(curAppr){
+    if(!hasInk){ const cn=cell.querySelector('canvas'); cn.getContext('2d').clearRect(0,0,cn.width,cn.height); cell.querySelector('.ph').style.display=''; closeModal(); return; }
+    const cn=cell.querySelector('canvas'), r=cell.getBoundingClientRect(); cn.width=r.width*DPR; cn.height=r.height*DPR;
+    cn.getContext('2d').drawImage(padBig,0,0,padBig.width,padBig.height,0,0,cn.width,cn.height); cell.querySelector('.ph').style.display='none'; closeModal(); return;
+  }
+  if(!hasInk){ const cn=cell.querySelector('.hwink'); cn.getContext('2d').clearRect(0,0,cn.width,cn.height); cell.classList.remove('inked'); closeModal(); return; }
+  const cnv=cell.querySelector('.hwink'), r=cell.getBoundingClientRect(); cnv.width=r.width*DPR; cnv.height=r.height*DPR;
+  cnv.getContext('2d').drawImage(padBig,0,0,padBig.width,padBig.height,0,0,cnv.width,cnv.height); cell.classList.add('inked'); closeModal(); }
+/* ---- 인쇄 항목 선택 ---- */
+function applyPrintFilter(){
+  const rows=[...document.querySelectorAll('#rows tr')].filter(tr=>tr.querySelector('.prtchk'));
+  const anyChecked=rows.some(tr=>tr.querySelector('.prtchk').checked);
+  rows.forEach(tr=>{ tr.classList.toggle('hideprint', anyChecked && !tr.querySelector('.prtchk').checked); });
+  document.querySelectorAll('#rows input[data-k=dt]').forEach(inp=>{ inp.classList.toggle('blankdt', !inp.value); });
+}
+function clearPrintFilter(){ document.querySelectorAll('#rows tr.hideprint').forEach(tr=>tr.classList.remove('hideprint')); document.querySelectorAll('#rows input.blankdt').forEach(i=>i.classList.remove('blankdt')); }
+window.addEventListener('beforeprint', applyPrintFilter);
+window.addEventListener('afterprint', clearPrintFilter);
+function toggleAllChk(){ const cbs=[...document.querySelectorAll('#rows .prtchk')]; if(!cbs.length) return; const allOn=cbs.every(c=>c.checked); cbs.forEach(c=>c.checked=!allOn); }
+function buildSites(){ const sel=document.getElementById('site'); sel.innerHTML='';
+  ((window.SITES&&window.SITES.length)?window.SITES:DEFAULT_SITES).forEach(s=> sel.appendChild(new Option(s,s))); }
+function buildGong(){ const sel=document.getElementById('gong'); sel.innerHTML='';
+  const order=(window.RISK_ORDER&&window.RISK_ORDER.length)?window.RISK_ORDER:Object.keys(window.RISK||{});
+  order.forEach(g=> sel.appendChild(new Option(g,g))); }
+
+function colorRisk(sel){ sel.classList.remove('a','b','c'); const v=sel.value;
+  if(v==='상')sel.classList.add('a'); else if(v==='중')sel.classList.add('b'); else if(v==='하')sel.classList.add('c'); }
+function rkSelect(dk,v){
+  return `<select class="rk" data-k="${dk}" onchange="colorRisk(this)"><option value=""></option>`+
+    ['상','중','하'].map(x=>`<option${x===v?' selected':''}>${x}</option>`).join('')+`</select>`;
+}
+function mgmtSelect(v){
+  return `<select data-k="mgmt"><option value=""></option>`+['○','-'].map(x=>`<option${x===v?' selected':''}>${x}</option>`).join('')+`</select>`;
+}
+function esc(s){ return (s||'').replace(/"/g,'&quot;'); }
+function makeRow(n, r){
+  r=r||{loc:'',step:'',haz:'',typ:'',risk:'',mgmt:'',mea:'',who:'',dt:'',imp:'',chk:false,whoSig:''};
+  const step=(r.loc&&r.step&&r.loc!==r.step)?(r.loc+' / '+r.step):(r.step||r.loc||'');
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td class="colchk"><input type="checkbox" class="prtchk"${r.chk?' checked':''}></td>
+    <td class="colstep"><textarea data-k="step">${step}</textarea></td>
+    <td><textarea data-k="haz">${r.haz||''}</textarea></td>
+    <td class="coltyp"><input type="text" data-k="typ" value="${esc(r.typ)}"></td>
+    <td class="colrisk">${rkSelect('risk', r.risk||'')}</td>
+    <td class="colmgmt">${mgmtSelect(r.mgmt||'')}</td>
+    <td><textarea data-k="mea">${r.mea||''}</textarea></td>
+    <td class="colwho hwcell" data-sig="${esc(r.whoSig)}"><input type="text" data-k="who" value="${esc(r.who)}"><canvas class="hwink"></canvas><button type="button" class="penbtn" title="손글씨">✍</button></td>
+    <td class="coldt"><input type="date" data-k="dt" value="${esc(r.dt)}"></td>
+    <td class="colimp">${rkSelect('imp', r.imp||'')}</td>`;
+  tr.querySelector('.penbtn').addEventListener('click',e=>{ e.stopPropagation(); openHW(tr.querySelector('.hwcell')); });
+  return tr;
+}
+function afterRender(){
+  document.querySelectorAll('#rows select.rk').forEach(colorRisk);
+  document.querySelectorAll('#rows .hwcell[data-sig]').forEach(cell=>{
+    const sig=cell.getAttribute('data-sig'); cell.removeAttribute('data-sig');
+    if(sig){ const cnv=cell.querySelector('.hwink'), img=new Image();
+      img.onload=()=>{ const r=cell.getBoundingClientRect(); cnv.width=r.width*DPR; cnv.height=r.height*DPR; cnv.getContext('2d').drawImage(img,0,0,cnv.width,cnv.height); };
+      img.src=sig; cell.classList.add('inked'); }
+  });
+}
+function renderRows(list){
+  const b=document.getElementById('rows'); b.innerHTML='';
+  if(!list||!list.length){ b.innerHTML='<tr><td colspan="10" class="empty">상단에서 공종을 선택하고 "공종 불러오기"를 누르세요.</td></tr>'; return; }
+  list.forEach((r,i)=> b.appendChild(makeRow(i+1, r))); afterRender();
+}
+function loadGong(){
+  const g=document.getElementById('gong').value;
+  const rows=(window.RISK&&window.RISK[g])?window.RISK[g]:[];
+  document.getElementById('workname').value=g;
+  renderRows(rows.map(r=>({loc:r.loc,step:r.step,haz:r.haz,typ:r.typ,mea:r.mea,risk:'',mgmt:'',who:'',dt:'',imp:''})));
+}
+function addRow(){ const b=document.getElementById('rows'); if(b.querySelector('.empty')) b.innerHTML='';
+  b.appendChild(makeRow(b.children.length+1)); }
+
+function collectRows(){
+  return [...document.querySelectorAll('#rows tr')].filter(tr=>tr.querySelector('[data-k=haz]')).map(tr=>({
+    step:tr.querySelector('[data-k=step]').value, haz:tr.querySelector('[data-k=haz]').value,
+    typ:tr.querySelector('[data-k=typ]').value, risk:tr.querySelector('[data-k=risk]').value,
+    mgmt:tr.querySelector('[data-k=mgmt]').value, mea:tr.querySelector('[data-k=mea]').value,
+    who:tr.querySelector('[data-k=who]').value, dt:tr.querySelector('[data-k=dt]').value, imp:tr.querySelector('[data-k=imp]').value,
+    chk:tr.querySelector('.prtchk')?tr.querySelector('.prtchk').checked:false,
+    whoSig:(tr.querySelector('.hwcell')&&tr.querySelector('.hwcell').classList.contains('inked'))?tr.querySelector('.hwink').toDataURL('image/png'):''
+  }));
+}
+function setPrintTitle(){ document.title=(((document.getElementById('site')&&document.getElementById('site').value)?document.getElementById('site').value+'_':'')+'위험성평가_'+(document.getElementById('workname').value||'')+'_'+((document.getElementById('day')||{}).value||new Date().toISOString().slice(0,10))).replace(/[\\/:*?"<>|]/g,'_'); }
+window.addEventListener('beforeprint', setPrintTitle);
+function printDoc(){ setPrintTitle(); window.print(); }
+function setToday(){ document.getElementById('day').value=new Date().toISOString().slice(0,10); }
+function metaObj(){ return {site:site.value,kind:document.getElementById('kind').value,workname:document.getElementById('workname').value,company:document.getElementById('company').value,writer:document.getElementById('writer').value,day:document.getElementById('day').value}; }
+function apprData(){ return Object.fromEntries([...document.querySelectorAll('.apprcell')].map(c=>[c.dataset.appr,(c.querySelector('.ph').style.display==='none')?c.querySelector('canvas').toDataURL('image/png'):''])); }
+function restoreAppr(a){ if(!a)return; Object.entries(a).forEach(([who,img])=>{ if(!img)return; const cell=document.querySelector('.apprcell[data-appr="'+who+'"]'); if(!cell)return; const cn=cell.querySelector('canvas'), im=new Image();
+  im.onload=()=>{ const r=cell.getBoundingClientRect(); cn.width=r.width*DPR; cn.height=52*DPR; cn.getContext('2d').drawImage(im,0,0,cn.width,cn.height); }; im.src=img; cell.querySelector('.ph').style.display='none'; }); }
+function clearAll(){ if(!confirm('입력한 내용을 모두 지울까요?'))return; try{localStorage.removeItem('riskDraft');}catch(e){}
+  buildSites(); document.getElementById('company').value=''; document.getElementById('writer').value=''; document.getElementById('workname').value=''; setToday(); renderRows([]);
+  document.querySelectorAll('.apprcell').forEach(c=>{ const cn=c.querySelector('canvas'); cn.getContext('2d').clearRect(0,0,cn.width,cn.height); c.querySelector('.ph').style.display=''; }); }
+function saveDraft(){
+  const data={ meta:metaObj(), gong:document.getElementById('gong').value, rows:collectRows(), appr:apprData() };
+  try{ localStorage.setItem('riskDraft',JSON.stringify(data)); alert('임시저장 완료.'); }catch(e){ alert('저장 실패: '+e.message); }
+}
+function loadDraft(){
+  let d; try{ d=JSON.parse(localStorage.getItem('riskDraft')); }catch(e){ return false; }
+  if(!d) return false;
+  buildSites(); buildGong();
+  if(d.gong) document.getElementById('gong').value=d.gong;
+  const m=d.meta||{};
+  if(m.site) site.value=m.site; if(m.kind) document.getElementById('kind').value=m.kind;
+  document.getElementById('company').value=m.company||''; document.getElementById('writer').value=m.writer||'';
+  document.getElementById('workname').value=m.workname||''; document.getElementById('day').value=m.day||new Date().toISOString().slice(0,10);
+  renderRows(d.rows||[]);
+  restoreAppr(d.appr);
+  return true;
+}
+buildSites(); buildGong();
+if(!loadDraft()){ setToday(); }
+</script>
+<script>
+/* AUTO_GROW_TEXTAREA: 입력란 자동 높이조절 (내용 많으면 칸이 늘어나 인쇄 시 잘리지 않음) */
+(function(){
+  function az(ta){ ta.style.overflow='hidden'; ta.style.height='auto'; ta.style.height=(ta.scrollHeight)+'px'; }
+  function all(){ document.querySelectorAll('textarea').forEach(az); }
+  document.addEventListener('input', function(e){ if(e.target && e.target.tagName==='TEXTAREA') az(e.target); });
+  window.addEventListener('load', all);
+  window.addEventListener('beforeprint', all);
+  setTimeout(all, 300);
+})();
+</script>
+</body>
+</html>

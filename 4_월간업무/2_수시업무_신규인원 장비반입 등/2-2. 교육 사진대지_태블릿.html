@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>교육 사진대지</title>
+<style>
+  :root{ --line:#333; --hd:#1f4e79; --hdbg:#dbe5f1; --accent:#1f6feb; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; font-family:"맑은 고딕","Malgun Gothic",AppleGothic,sans-serif; color:#111; background:#f2f4f7; }
+  .wrap{ max-width:900px; margin:0 auto; padding:12px; }
+  .paper{ background:#fff; padding:18px 20px 26px; box-shadow:0 1px 6px rgba(0,0,0,.15); }
+  h1{ text-align:center; font-size:22px; margin:2px 0 12px; letter-spacing:3px; }
+  .meta{ display:flex; flex-wrap:wrap; gap:8px 18px; align-items:center; border:1.5px solid var(--line); padding:10px 12px; margin-bottom:12px; font-size:14px; }
+  .meta label{ font-weight:700; margin-right:4px; }
+  .meta input[type=text],.meta input[type=date]{ border:none; border-bottom:1px solid #999; font-size:14px; padding:3px 4px; font-family:inherit; }
+  .sitesel{ font-size:14px; font-weight:700; padding:5px 8px; font-family:inherit; border:1.5px solid var(--accent); border-radius:5px; color:var(--hd); }
+  .mini{ border:1px solid #fff; background:rgba(255,255,255,.2); color:#fff; font-size:11px; font-weight:700; border-radius:5px; padding:2px 8px; cursor:pointer; font-family:inherit; }
+  .phhead{ background:var(--hd); color:#fff; font-weight:700; padding:8px 12px; border-radius:6px 6px 0 0; display:flex; justify-content:space-between; align-items:center; letter-spacing:2px; }
+  .phnote{ font-size:12px; color:#8a929c; padding:6px 2px; }
+  .photogrid{ padding:10px; border:1.5px solid var(--line); border-top:none; }
+  .pslot{ border:1.5px solid var(--line); margin-bottom:12px; } .pslot:last-child{ margin-bottom:0; }
+  .pslot .frame{ position:relative; width:100%; aspect-ratio:16/10; background:#f4f6f8; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; }
+  .pslot .frame img{ width:100%; height:100%; object-fit:contain; display:none; }
+  .pslot .frame .add{ color:#8a929c; font-size:14px; font-weight:700; text-align:center; padding:8px; }
+  .pslot .del{ position:absolute; top:6px; right:6px; background:rgba(0,0,0,.55); color:#fff; border:none; border-radius:50%; width:28px; height:28px; font-size:16px; line-height:1; cursor:pointer; display:none; }
+  .pslot.has .del{ display:block; }
+  table.pmeta{ width:100%; border-collapse:collapse; border-top:1.5px solid var(--line); }
+  table.pmeta td{ border:1px solid var(--line); padding:0; }
+  table.pmeta td.pl{ background:var(--hdbg); color:var(--hd); font-weight:700; text-align:center; padding:7px 6px; width:62px; white-space:nowrap; }
+  table.pmeta td.dtc{ width:150px; } table.pmeta input{ width:100%; border:none; font-family:inherit; font-size:13px; padding:7px 8px; background:transparent; }
+  .controls{ position:sticky; bottom:0; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:12px; background:rgba(242,244,247,.95); margin-top:14px; }
+  .btn{ border:none; border-radius:8px; padding:12px 18px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; }
+  .btn.p{ background:var(--accent); color:#fff; } .btn.g{ background:#5b6470; color:#fff; } .btn.d{ background:#fff; color:#333; border:1.5px solid #bbb; }
+  @media print{
+    body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:0; }
+    .controls,.mini,.pslot .del,.pslot .add,.phnote{ display:none !important; }
+    .pslot{ break-inside:avoid; } .pslot .frame{ background:#fff; aspect-ratio:auto; height:300px; }
+    .phhead{ background:var(--hdbg) !important; color:var(--hd) !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    td.pl{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    @page{ size:A4 portrait; margin:9mm; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="paper">
+  <h1>교 육 사 진 대 지</h1>
+  <div style="font-weight:700;color:#1f4e79;font-size:13px;letter-spacing:.5px;margin:-4px 0 8px">(주)디아키즈건설</div>
+  <div class="meta">
+    <div><label>현장명</label><select id="site" class="sitesel"></select></div>
+    <div><label>교육구분</label><input type="text" data-c="edu" placeholder="예) 신규채용시 교육"></div>
+    <div><label>일자</label><input type="date" id="day"></div>
+  </div>
+  <div class="phhead">사 진 대 지 <button type="button" class="mini" onclick="addPhoto()">＋ 사진 추가</button></div>
+  <div class="phnote">※ 사진칸을 눌러 촬영·선택하세요. 기본 4칸이며 필요시 추가할 수 있습니다.</div>
+  <div class="photogrid" id="photogrid"></div>
+ </div>
+</div>
+
+<div class="controls">
+  <button class="btn p" onclick="printDoc()">📄 PDF로 저장 / 인쇄</button>
+  <button class="btn d" onclick="addPhoto()">＋ 사진 추가</button>
+  <button class="btn d" onclick="saveDraft()">💾 임시저장</button>
+  <button class="btn g" onclick="clearAll()">전체 초기화</button>
+  <a class="btn d" href="../index.html" style="text-decoration:none">← 메인</a>
+</div>
+
+<script src="../sites.js"></script>
+<script>
+const DEFAULT_SITES=["아르시엘 방배 732 공동주택 신축공사","이태원동 106-2 단독주택 신축현장","보라동 20-1 단독주택 신축현장","평창동 496-4 단독주택"];
+function buildSites(){ const sel=document.getElementById('site'); sel.innerHTML='';
+  ((window.SITES&&window.SITES.length)?window.SITES:DEFAULT_SITES).forEach(s=> sel.appendChild(new Option(s,s))); }
+const PHOTO_DEFAULT=4, PHOTO_MAXW=1000;
+function readScaled(file,cb){ const r=new FileReader();
+  r.onload=()=>{ const im=new Image(); im.onload=()=>{ let w=im.width,h=im.height; if(w>PHOTO_MAXW){h=Math.round(h*PHOTO_MAXW/w);w=PHOTO_MAXW;}
+    const c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(im,0,0,w,h); cb(c.toDataURL('image/jpeg',0.82)); }; im.src=r.result; };
+  r.readAsDataURL(file); }
+function setPhoto(s,u){ const img=s.querySelector('img'); img.src=u; img.style.display='block'; s.querySelector('.add').style.display='none'; s.classList.add('has'); }
+function clearPhoto(s){ const img=s.querySelector('img'); img.src=''; img.style.display='none'; s.querySelector('.add').style.display=''; s.classList.remove('has'); s.querySelector('input[type=file]').value=''; }
+function makePhotoSlot(){ const d=document.createElement('div'); d.className='pslot';
+  d.innerHTML=`<div class="frame"><div class="add">＋ 사진 촬영 / 선택</div><img alt=""><button type="button" class="del" title="삭제">×</button>
+      <input type="file" accept="image/*" capture="environment" style="display:none"></div>
+    <table class="pmeta"><tr><td class="pl">내 용</td><td colspan="3"><input type="text" data-pk="content" placeholder="교육 내용"></td></tr>
+      <tr><td class="pl">위 치</td><td><input type="text" data-pk="loc" placeholder="장소"></td><td class="pl">일 자</td><td class="dtc"><input type="date" data-pk="date"></td></tr></table>`;
+  const frame=d.querySelector('.frame'), inp=d.querySelector('input[type=file]'), del=d.querySelector('.del');
+  frame.addEventListener('click',e=>{ if(e.target===del)return; inp.click(); });
+  inp.addEventListener('change',()=>{ const f=inp.files[0]; if(f) readScaled(f,u=>setPhoto(d,u)); });
+  del.addEventListener('click',()=>clearPhoto(d)); return d; }
+function addPhoto(){ document.getElementById('photogrid').appendChild(makePhotoSlot()); }
+function buildPhotos(k){ const g=document.getElementById('photogrid'); g.innerHTML=''; for(let i=0;i<k;i++) g.appendChild(makePhotoSlot()); }
+function setPrintTitle(){ document.title=(((document.getElementById('site')&&document.getElementById('site').value)?document.getElementById('site').value+'_':'')+'교육사진대지_'+((document.getElementById('day')||{}).value||new Date().toISOString().slice(0,10))).replace(/[\\/:*?"<>|]/g,'_'); }
+window.addEventListener('beforeprint', setPrintTitle);
+function printDoc(){ setPrintTitle(); window.print(); }
+function setToday(){ document.getElementById('day').value=new Date().toISOString().slice(0,10); }
+function allC(){ return [...document.querySelectorAll('[data-c]')]; }
+function clearAll(){ if(!confirm('입력한 내용을 모두 지울까요?'))return; try{localStorage.removeItem('eduPhotoDraft');}catch(e){}
+  buildSites(); buildPhotos(PHOTO_DEFAULT); setToday(); allC().forEach(el=>el.value=''); }
+function saveDraft(){
+  const data={ site:document.getElementById('site').value, day:day.value, fields:Object.fromEntries(allC().map(el=>[el.dataset.c,el.value])),
+    photos:[...document.querySelectorAll('#photogrid .pslot')].map(p=>({ img:p.classList.contains('has')?p.querySelector('img').src:'', content:p.querySelector('[data-pk=content]').value, loc:p.querySelector('[data-pk=loc]').value, date:p.querySelector('[data-pk=date]').value })) };
+  try{ localStorage.setItem('eduPhotoDraft',JSON.stringify(data)); alert('임시저장 완료.'); }catch(e){ alert('저장 실패: '+e.message); }
+}
+function loadDraft(){
+  let d; try{ d=JSON.parse(localStorage.getItem('eduPhotoDraft')); }catch(e){ return false; }
+  if(!d) return false;
+  buildSites(); if(d.site) document.getElementById('site').value=d.site; day.value=d.day||'';
+  if(d.fields) allC().forEach(el=>{ if(d.fields[el.dataset.c]!=null) el.value=d.fields[el.dataset.c]; });
+  const ph=(d.photos&&d.photos.length)?d.photos:null; buildPhotos(ph?ph.length:PHOTO_DEFAULT);
+  if(ph){ const slots=document.querySelectorAll('#photogrid .pslot'); ph.forEach((p,i)=>{ const s=slots[i]; if(!s)return; if(p.content!=null) s.querySelector('[data-pk=content]').value=p.content; if(p.loc!=null) s.querySelector('[data-pk=loc]').value=p.loc; if(p.date!=null) s.querySelector('[data-pk=date]').value=p.date; if(p.img) setPhoto(s,p.img); }); }
+  return true;
+}
+buildSites();
+if(!loadDraft()){ buildPhotos(PHOTO_DEFAULT); setToday(); }
+</script>
+</body>
+</html>

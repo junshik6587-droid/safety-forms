@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>신규채용 건강 문진표</title>
+<style>
+  :root{ --line:#333; --hd:#1f4e79; --hdbg:#dbe5f1; --accent:#1f6feb; --ok:#127c2b; --no:#b02a2a; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; font-family:"맑은 고딕","Malgun Gothic",AppleGothic,sans-serif; color:#111; background:#f2f4f7; }
+  .wrap{ max-width:960px; margin:0 auto; padding:12px; }
+  .paper{ background:#fff; padding:18px 20px 26px; box-shadow:0 1px 6px rgba(0,0,0,.15); }
+  h1{ text-align:center; font-size:22px; margin:2px 0 12px; letter-spacing:2px; }
+  .stt{ font-weight:700; color:var(--hd); margin:16px 0 6px; font-size:14px; }
+  table{ width:100%; border-collapse:collapse; font-size:13px; }
+  th,td{ border:1px solid var(--line); padding:5px 7px; vertical-align:middle; }
+  td.lbl{ background:var(--hdbg); color:var(--hd); font-weight:700; text-align:center; white-space:nowrap; }
+  td input,td select{ width:100%; border:none; font-size:14px; font-family:inherit; padding:5px 3px; background:transparent; }
+  td input:focus,td select:focus{ outline:2px solid var(--accent); outline-offset:-2px; }
+  .q td.qt{ text-align:left; }
+  .seg{ display:flex; width:110px; margin:0 auto; }
+  .seg button{ flex:1; border:1px solid #ccc; background:#f4f6f8; font-size:12px; font-weight:700; padding:6px 0; cursor:pointer; font-family:inherit; color:#8a929c; }
+  .seg button.y.on{ background:var(--ok); color:#fff; border-color:var(--ok); }
+  .seg button.n.on{ background:var(--no); color:#fff; border-color:var(--no); }
+  .detail{ width:100%; border:none; border-bottom:1px solid #bbb; font-family:inherit; font-size:13px; padding:3px; margin-top:4px; }
+  .bmi td{ text-align:center; padding:3px 5px; font-size:12px; }
+  .bmi .h{ background:var(--hdbg); color:var(--hd); font-weight:700; }
+  .bmi .ok{ color:#127c2b; } .bmi .warn{ color:#c78100; font-weight:700; } .bmi .dan{ color:#b02a2a; font-weight:700; }
+  .colres{ width:120px; text-align:center; }
+  .grid4 th{ background:var(--hdbg); color:var(--hd); text-align:center; }
+  .grid4 td.opt{ text-align:center; width:64px; }
+  .rk{ display:inline-block; width:20px; height:20px; border:1.6px solid var(--line); border-radius:50%; cursor:pointer; }
+  .rk.on{ background:var(--accent); border-color:var(--accent); }
+  .agree{ border:1.5px solid var(--line); padding:10px 12px; margin-top:10px; font-size:12.5px; line-height:1.6; }
+  .agree .h{ font-weight:700; color:var(--hd); margin-bottom:4px; }
+  .chk{ display:inline-flex; align-items:center; gap:6px; cursor:pointer; user-select:none; font-weight:700; margin-top:4px; }
+  .chk .b{ width:20px; height:20px; border:1.6px solid var(--line); display:inline-flex; align-items:center; justify-content:center; font-weight:800; }
+  .chk.on .b{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  .signrow{ display:flex; align-items:center; gap:14px; margin-top:14px; flex-wrap:wrap; }
+  .signrow .dt input{ border:none; border-bottom:1px solid #999; font-family:inherit; font-size:14px; padding:3px; }
+  .sigbox{ border:1.5px solid var(--line); border-radius:6px; width:220px; height:70px; position:relative; cursor:pointer; background:#fff; }
+  .sigbox canvas{ width:100%; height:100%; display:block; }
+  .sigbox .ph{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:12px; pointer-events:none; }
+  .hwwrap{ position:relative; display:block; min-height:30px; }
+  .hwwrap>input{ width:100%; }
+  .hwwrap canvas.hwink{ position:absolute; inset:0; width:100%; height:100%; display:none; pointer-events:none; }
+  .hwwrap.inked canvas.hwink{ display:block; }
+  .hwwrap.inked>input{ visibility:hidden; }
+  .hwwrap .penbtn{ position:absolute; top:2px; right:2px; width:20px; height:20px; border:none; background:#eef3fb; color:var(--accent); border-radius:4px; font-size:11px; font-weight:800; cursor:pointer; z-index:2; padding:0; }
+  .hwwrap .penbtn:active{ background:var(--accent); color:#fff; }
+  @media print{ .hwwrap .penbtn{ display:none !important; } }
+  .controls{ position:sticky; bottom:0; z-index:20; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:12px; background:rgba(242,244,247,.95); margin-top:14px; }
+  .btn{ border:none; border-radius:8px; padding:12px 18px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; }
+  .btn.p{ background:var(--accent); color:#fff; } .btn.g{ background:#5b6470; color:#fff; } .btn.d{ background:#fff; color:#333; border:1.5px solid #bbb; }
+  .modal{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:50; } .modal.show{ display:flex; }
+  .msheet{ background:#fff; border-radius:14px; width:min(94vw,720px); padding:16px; } .msheet h3{ margin:0 0 4px; font-size:17px; text-align:center; } .msheet p{ margin:0 0 10px; text-align:center; color:#666; font-size:13px; }
+  .padwrap{ border:2px dashed #9aa4b0; border-radius:10px; background:#fff; } #padBig{ display:block; width:100%; height:300px; touch-action:none; border-radius:10px; }
+  .msheet .row{ display:flex; gap:10px; margin-top:12px; } .msheet .row .btn{ flex:1; }
+  @media print{
+    body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:0; }
+    .controls,.modal{ display:none !important; }
+    td.lbl,.seg button.on,.grid4 th,.bmi .h,.chk.on .b{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    @page{ size:A4 portrait; margin:8mm; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="paper">
+  <h1>신규채용 건강 문진표</h1>
+  <div style="font-weight:700;color:#1f4e79;font-size:13px;letter-spacing:.5px;margin:-4px 0 8px">(주)디아키즈건설</div>
+
+  <table>
+    <tr><td class="lbl">성명</td><td><span class="hwwrap"><input data-k="name"><canvas class="hwink"></canvas><button type="button" class="penbtn" title="손글씨">✍</button></span></td><td class="lbl">성별</td><td style="width:80px"><select data-k="sex"><option>남</option><option>여</option></select></td><td class="lbl">생년월일</td><td><input type="date" data-k="birth"></td></tr>
+    <tr><td class="lbl">소속업체</td><td><span class="hwwrap"><input data-k="company"><canvas class="hwink"></canvas><button type="button" class="penbtn" title="손글씨">✍</button></span></td><td class="lbl">전화번호</td><td colspan="3"><span class="hwwrap"><input data-k="phone" inputmode="tel"><canvas class="hwink"></canvas><button type="button" class="penbtn" title="손글씨">✍</button></span></td></tr>
+    <tr><td class="lbl">업무경력</td><td><select data-k="career"><option value="">선택</option><option>1개월 미만</option><option>1개월</option><option>3개월</option><option>6개월</option><option>1년 미만</option><option>1년</option><option>2년</option><option>3년</option><option>4년</option><option>5년</option><option>6년</option><option>7년</option><option>8년</option><option>9년</option><option>10년 이상</option></select></td><td class="lbl">공종</td><td><span class="hwwrap"><input data-k="job"><canvas class="hwink"></canvas><button type="button" class="penbtn" title="손글씨">✍</button></span></td><td class="lbl">복용약물</td><td><span class="hwwrap"><input data-k="drug"><canvas class="hwink"></canvas><button type="button" class="penbtn" title="손글씨">✍</button></span></td></tr>
+  </table>
+
+  <div class="stt">Ⅰ. 기초질환 관련 문항</div>
+  <table id="q1"></table>
+
+  <div class="stt">BMI 판정 참고표 (신장·체중 교차 확인)</div>
+  <table class="bmi">
+    <tr><td class="h">신장\체중(kg)</td><td class="h">55</td><td class="h">60</td><td class="h">65</td><td class="h">70</td><td class="h">75</td><td class="h">80</td><td class="h">85</td><td class="h">90</td><td class="h">100</td></tr>
+    <tr><td class="h">190</td><td class="warn">주의</td><td class="warn">주의</td><td class="warn">주의</td><td class="ok">정상</td><td class="ok">정상</td><td class="ok">정상</td><td class="ok">정상</td><td class="warn">주의</td><td class="dan">위험</td></tr>
+    <tr><td class="h">180</td><td class="warn">주의</td><td class="warn">주의</td><td class="ok">정상</td><td class="ok">정상</td><td class="ok">정상</td><td class="ok">정상</td><td class="warn">주의</td><td class="dan">위험</td><td class="dan">위험</td></tr>
+    <tr><td class="h">170</td><td class="warn">주의</td><td class="ok">정상</td><td class="ok">정상</td><td class="ok">정상</td><td class="warn">주의</td><td class="warn">주의</td><td class="dan">위험</td><td class="dan">위험</td><td class="dan">위험</td></tr>
+    <tr><td class="h">160</td><td class="ok">정상</td><td class="ok">정상</td><td class="warn">주의</td><td class="dan">위험</td><td class="dan">위험</td><td class="dan">위험</td><td class="dan">위험</td><td class="dan">위험</td><td class="dan">위험</td></tr>
+    <tr><td class="h">150</td><td class="ok">정상</td><td class="warn">주의</td><td class="dan">위험</td><td class="dan">위험</td><td class="dan">위험</td><td class="dan">위험</td><td class="dan">위험</td><td class="dan">위험</td><td class="dan">위험</td></tr>
+    <tr><td class="h">140</td><td class="dan">위험</td><td class="dan">위험</td><td class="dan">위험</td><td class="dan">위험</td><td class="dan">위험</td><td class="dan">위험</td><td class="dan">위험</td><td class="dan">위험</td><td class="dan">위험</td></tr>
+  </table>
+
+  <div class="stt">Ⅱ. 근골격계 질환 문항</div>
+  <table id="q2"></table>
+
+  <div class="stt">Ⅲ. 직무스트레스 문항 (지난 2주간 증상 빈도)</div>
+  <table class="grid4">
+    <thead><tr><th style="text-align:left">문항</th><th>전혀 아님</th><th>가끔</th><th>자주</th><th>매일</th></tr></thead>
+    <tbody id="q3"></tbody>
+  </table>
+
+  <div class="agree">
+    <div class="h">〈개인정보 수집·이용 동의〉</div>
+    수집·이용 목적: 건강상태 파악을 위한 기초자료 활용 및 검사결과 등록·관리 / 수집 항목: 성명, 성별, 연령, 휴대전화번호, 회사명, 공종명 / 보유기간: 프로젝트 종료 시 파기(최대 5년).
+    <div class="chk" data-k="agree1"><span class="b"></span>위 개인정보 수집·이용에 동의합니다.</div>
+  </div>
+  <div class="agree">
+    <div class="h">〈민감 개인정보 수집·이용 동의〉</div>
+    수집 민감정보: 건강검진결과·상병·약 복용·증상 정보 등. 본인은 상기 내용의 수집·이용에 동의합니다.
+    <div class="chk" data-k="agree2"><span class="b"></span>위 민감 개인정보 수집·이용에 동의합니다.</div>
+    <div class="signrow">
+      <div class="dt">작성일 <input type="date" data-k="sdate"></div>
+      <div>성명 <span class="hwwrap" style="display:inline-block;width:150px;vertical-align:middle"><input data-k="sname" style="border:none;border-bottom:1px solid #999;font-family:inherit;font-size:14px;padding:3px;width:100%"><canvas class="hwink"></canvas><button type="button" class="penbtn" title="손글씨">✍</button></span></div>
+      <div>서명 <span class="sigbox" id="sig"><canvas></canvas><div class="ph">여기를 눌러 서명</div></span></div>
+    </div>
+  </div>
+
+ </div>
+</div>
+
+<div class="controls">
+  <button class="btn p" onclick="printDoc()">📄 PDF로 저장 / 인쇄</button>
+  <button class="btn d" onclick="saveDraft()">💾 임시저장</button>
+  <button class="btn g" onclick="clearAll()">전체 초기화</button>
+  <a class="btn d" href="../index.html" style="text-decoration:none">← 메인</a>
+</div>
+
+<div class="modal" id="modal">
+  <div class="msheet"><h3>서명</h3><p>아래 칸에 손가락 또는 스타일러스로 서명하세요</p>
+    <div class="padwrap"><canvas id="padBig"></canvas></div>
+    <div class="row"><button class="btn d" onclick="undoBig()">↩ 지우기</button><button class="btn g" onclick="closeModal()">취소</button><button class="btn p" onclick="confirmSig()">✔ 서명 완료</button></div>
+  </div>
+</div>
+
+<script>
+const Q1=[
+ {t:"최근 혈압 측정 결과 고혈압(140/90mmHg 이상) 소견이 있습니까?"},
+ {t:"위 BMI 판정표에서 본인의 신장·체중이 '주의' 또는 '위험'에 해당합니까?  (키 __ cm / 몸무게 __ kg)", d:"키/몸무게"},
+ {t:"고혈압 합병증(좌심실비대·요단백 등)을 가지고 있습니까?"},
+ {t:"가족 중 50세 이전에 뇌·심혈관계 질환을 앓은 사람이 있습니까?"},
+ {t:"질환을 앓거나 치료받은 적이 있습니까?", d:"질환명"},
+ {t:"현재 흡연을 하고 있습니까?", d:"하루 흡연량"},
+ {t:"평소 술을 드십니까?", d:"음주 횟수"}
+];
+const Q2=[
+ "류머티스 관절염 등 관절질환을 진단받은 적이 있습니까?",
+ "과거 운동·사고(교통사고·넘어짐·떨어짐 등)로 다친 적이 있습니까?",
+ "지난 1년 동안 작업과 관련한 통증·불편함을 느낀 적이 있습니까?"
+];
+const Q3=[
+ "일에 대한 흥미나 재미가 거의 없음",
+ "가라앉은 느낌, 우울감 혹은 절망감",
+ "잠들기 어렵거나 자꾸 깸, 혹은 너무 많이 잠",
+ "피곤함, 기력이 저하됨",
+ "식욕 저하 혹은 과식",
+ "자신이 나쁜 사람이라는 느낌 등",
+ "신문·TV를 볼 때 집중하기 어려움",
+ "너무 초조하고 안절부절함",
+ "차라리 죽는 것이 낫겠다는 등의 생각"
+];
+const DPR=Math.max(window.devicePixelRatio||1,2);
+function ynRow(key,text,detail){
+  const seg=`<div class="seg" data-k="${key}"><button type="button" class="y">예</button><button type="button" class="n">아니오</button></div>`;
+  const det=detail?`<input class="detail" data-k="${key}_d" placeholder="${detail}">`:'';
+  return `<tr class="q"><td class="qt">${text}${det}</td><td class="colres">${seg}</td></tr>`;
+}
+function buildYN(){
+  document.getElementById('q1').innerHTML=Q1.map((q,i)=>ynRow('a'+i,(i+1)+'. '+q.t,q.d)).join('');
+  document.getElementById('q2').innerHTML=Q2.map((t,i)=>ynRow('b'+i,(i+1)+'. '+t)).join('');
+  document.querySelectorAll('.seg').forEach(seg=>seg.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+    seg.querySelector('.y').classList.toggle('on',b.classList.contains('y')); seg.querySelector('.n').classList.toggle('on',b.classList.contains('n')); })));
+  document.getElementById('q3').innerHTML=Q3.map((t,i)=>`<tr><td>${i+1}) ${t}</td>`+[0,1,2,3].map(k=>`<td class="opt"><span class="rk" data-g="s${i}" data-v="${k}"></span></td>`).join('')+`</tr>`).join('');
+  document.querySelectorAll('.rk').forEach(r=>r.addEventListener('click',()=>{ document.querySelectorAll('.rk[data-g="'+r.dataset.g+'"]').forEach(x=>x.classList.remove('on')); r.classList.add('on'); }));
+}
+document.querySelectorAll('.chk').forEach(c=>c.addEventListener('click',()=>{ c.classList.toggle('on'); c.querySelector('.b').textContent=c.classList.contains('on')?'✓':''; }));
+
+/* 서명 */
+const modal=document.getElementById('modal'), padBig=document.getElementById('padBig'), bctx=padBig.getContext('2d');
+let drawing=false, hasInk=false, last=null, curTarget=null;
+document.getElementById('sig').addEventListener('click',openSigBox);
+document.querySelectorAll('.hwwrap .penbtn').forEach(b=>b.addEventListener('click',()=>openHW(b.closest('.hwwrap'))));
+function sizeBig(){ const r=padBig.getBoundingClientRect(); padBig.width=r.width*DPR; padBig.height=r.height*DPR;
+  bctx.setTransform(1,0,0,1,0,0); bctx.scale(DPR,DPR); bctx.lineWidth=6.4; bctx.lineCap='round'; bctx.lineJoin='round'; bctx.strokeStyle='#000000'; hasInk=false; }
+function posBig(e){ const r=padBig.getBoundingClientRect(); return {x:e.clientX-r.left,y:e.clientY-r.top}; }
+padBig.addEventListener('pointerdown',e=>{ e.preventDefault(); drawing=true; last=posBig(e); try{padBig.setPointerCapture(e.pointerId);}catch(_){}; bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(last.x+0.1,last.y+0.1); bctx.stroke(); hasInk=true; });
+padBig.addEventListener('pointermove',e=>{ if(!drawing)return; e.preventDefault(); const p=posBig(e); bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(p.x,p.y); bctx.stroke(); last=p; hasInk=true; });
+padBig.addEventListener('pointerup',()=>drawing=false); padBig.addEventListener('pointercancel',()=>drawing=false);
+function openSigBox(){ const box=document.getElementById('sig');
+  curTarget={ cnv:box.querySelector('canvas'), box:box,
+    done:()=>{ box.querySelector('.ph').style.display='none'; }, clear:()=>{ box.querySelector('.ph').style.display=''; } };
+  modal.classList.add('show'); requestAnimationFrame(sizeBig); }
+function openHW(wrap){
+  curTarget={ cnv:wrap.querySelector('.hwink'), box:wrap,
+    done:()=>wrap.classList.add('inked'), clear:()=>wrap.classList.remove('inked') };
+  modal.classList.add('show'); requestAnimationFrame(sizeBig); }
+function closeModal(){ modal.classList.remove('show'); }
+function undoBig(){ bctx.save(); bctx.setTransform(1,0,0,1,0,0); bctx.clearRect(0,0,padBig.width,padBig.height); bctx.restore(); hasInk=false; }
+function confirmSig(){ const t=curTarget; if(!t){ closeModal(); return; }
+  if(!hasInk){ const cx=t.cnv.getContext('2d'); cx.clearRect(0,0,t.cnv.width,t.cnv.height); t.clear(); closeModal(); return; }
+  const r=t.box.getBoundingClientRect(), cnv=t.cnv;
+  cnv.width=r.width*DPR; cnv.height=r.height*DPR; cnv.getContext('2d').drawImage(padBig,0,0,padBig.width,padBig.height,0,0,cnv.width,cnv.height);
+  t.done(); closeModal(); }
+
+/* actions */
+function setPrintTitle(){ document.title=('건강문진표_'+((document.querySelector('[data-k=name]')||{}).value||'')+'_'+((document.querySelector('[data-k=sdate]')||{}).value||new Date().toISOString().slice(0,10))).replace(/[\\/:*?"<>|]/g,'_'); }
+window.addEventListener('beforeprint', setPrintTitle);
+function printDoc(){ setPrintTitle(); window.print(); }
+function allK(){ return [...document.querySelectorAll('[data-k]')]; }
+function seg(k){ const s=document.querySelector('.seg[data-k="'+k+'"]'); if(!s)return ''; return s.querySelector('.y.on')?'y':(s.querySelector('.n.on')?'n':''); }
+function clearAll(){ if(!confirm('입력한 내용을 모두 지울까요?'))return; try{localStorage.removeItem('healthDraft');}catch(e){} location.reload(); }
+function saveDraft(){
+  const data={ inputs:{}, seg:{}, stress:{}, agree:{}, sig:'', hw:{} };
+  document.querySelectorAll('input[data-k],select[data-k]').forEach(el=> data.inputs[el.dataset.k]=el.value);
+  document.querySelectorAll('.hwwrap.inked').forEach(w=>{ const k=w.querySelector('input').dataset.k; data.hw[k]=w.querySelector('.hwink').toDataURL('image/png'); });
+  document.querySelectorAll('.seg').forEach(s=> data.seg[s.dataset.k]=seg(s.dataset.k));
+  document.querySelectorAll('.rk.on').forEach(r=> data.stress[r.dataset.g]=r.dataset.v);
+  document.querySelectorAll('.chk').forEach(c=> data.agree[c.dataset.k]=c.classList.contains('on')?1:0);
+  const sc=document.querySelector('#sig canvas'); if(document.querySelector('#sig .ph').style.display==='none') data.sig=sc.toDataURL('image/png');
+  try{ localStorage.setItem('healthDraft',JSON.stringify(data)); alert('임시저장 완료.'); }catch(e){ alert('저장 실패: '+e.message); }
+}
+function loadDraft(){
+  let d; try{ d=JSON.parse(localStorage.getItem('healthDraft')); }catch(e){ return; }
+  if(!d) return;
+  if(d.inputs) Object.entries(d.inputs).forEach(([k,v])=>{ const el=document.querySelector('[data-k="'+k+'"]'); if(el&&('value' in el)) el.value=v; });
+  if(d.hw) Object.entries(d.hw).forEach(([k,v])=>{ const inp=document.querySelector('.hwwrap input[data-k="'+k+'"]'); if(!inp)return; const w=inp.closest('.hwwrap'), cnv=w.querySelector('.hwink'), img=new Image();
+    img.onload=()=>{ const r=w.getBoundingClientRect(); cnv.width=r.width*DPR; cnv.height=r.height*DPR; cnv.getContext('2d').drawImage(img,0,0,cnv.width,cnv.height); }; img.src=v; w.classList.add('inked'); });
+  if(d.seg) Object.entries(d.seg).forEach(([k,v])=>{ const s=document.querySelector('.seg[data-k="'+k+'"]'); if(s&&v){ s.querySelector('.y').classList.toggle('on',v==='y'); s.querySelector('.n').classList.toggle('on',v==='n'); }});
+  if(d.stress) Object.entries(d.stress).forEach(([g,v])=>{ const r=document.querySelector('.rk[data-g="'+g+'"][data-v="'+v+'"]'); if(r) r.classList.add('on'); });
+  if(d.agree) Object.entries(d.agree).forEach(([k,v])=>{ const c=document.querySelector('.chk[data-k="'+k+'"]'); if(c&&v){ c.classList.add('on'); c.querySelector('.b').textContent='✓'; }});
+  if(d.sig){ const img=new Image(), box=document.getElementById('sig'), cn=box.querySelector('canvas'), r=box.getBoundingClientRect();
+    img.onload=()=>{ cn.width=r.width*DPR; cn.height=r.height*DPR; cn.getContext('2d').drawImage(img,0,0,cn.width,cn.height); }; img.src=d.sig; box.querySelector('.ph').style.display='none'; }
+}
+buildYN();
+if(!document.querySelector('[data-k=sdate]').value) document.querySelector('[data-k=sdate]').value=new Date().toISOString().slice(0,10);
+loadDraft();
+</script>
+</body>
+</html>

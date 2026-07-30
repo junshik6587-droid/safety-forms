@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>개인보호구 지급대장</title>
+<style>
+  :root{ --line:#333; --hd:#1f4e79; --hdbg:#dbe5f1; --accent:#1f6feb; --ok:#127c2b; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; font-family:"맑은 고딕","Malgun Gothic",AppleGothic,sans-serif; color:#111; background:#f2f4f7; }
+  .wrap{ max-width:1180px; margin:0 auto; padding:12px; }
+  .paper{ background:#fff; padding:18px 20px 26px; box-shadow:0 1px 6px rgba(0,0,0,.15); }
+  h1{ text-align:center; font-size:22px; margin:2px 0 10px; letter-spacing:2px; }
+  .meta{ display:flex; flex-wrap:wrap; gap:8px 18px; align-items:center; border:1.5px solid var(--line); padding:10px 12px; margin-bottom:10px; font-size:14px; }
+  .meta label{ font-weight:700; margin-right:4px; }
+  .sitesel{ font-size:14px; font-weight:700; padding:5px 8px; font-family:inherit; border:1.5px solid var(--accent); border-radius:5px; color:var(--hd); }
+  .pledge{ font-size:12px; line-height:1.6; border:1.5px solid var(--line); padding:8px 10px; margin-bottom:10px; background:#fafafa; }
+  .pledge b{ color:#b02a2a; }
+  .scroll{ overflow-x:auto; }
+  table{ width:100%; border-collapse:collapse; font-size:12px; min-width:900px; }
+  th,td{ border:1px solid var(--line); padding:2px 3px; text-align:center; }
+  thead th{ background:var(--hdbg); color:var(--hd); font-size:11px; padding:4px 2px; }
+  .colno{ width:34px; } .coldt{ width:124px; } .coljob{ width:80px; } .colnm{ width:78px; } .colsig{ width:130px; }
+  td.cell-in input[type=date]{ font-size:12px; }
+  .ppe{ width:52px; } .coletc{ width:96px; }
+  td.coletc input{ width:100%; border:none; text-align:center; font-size:12px; padding:5px 2px; font-family:inherit; background:transparent; }
+  td.coletc input:focus{ outline:2px solid var(--accent); outline-offset:-2px; }
+  td.cell-in input{ width:100%; border:none; text-align:center; font-size:13px; padding:5px 1px; font-family:inherit; background:transparent; }
+  td.cell-in input:focus{ outline:2px solid var(--accent); outline-offset:-2px; }
+  .tick{ cursor:pointer; user-select:none; font-size:16px; font-weight:800; color:#c7ced6; height:34px; display:flex; align-items:center; justify-content:center; }
+  .tick.on{ color:var(--ok); }
+  .sigcell{ position:relative; height:40px; padding:0; cursor:pointer; }
+  .sigcell canvas{ display:block; width:100%; height:40px; }
+  .sigcell .ph{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:11px; pointer-events:none; }
+  .hwcell{ position:relative; }
+  .hwcell canvas.hwink{ position:absolute; inset:0; width:100%; height:100%; display:none; pointer-events:none; }
+  .hwcell.inked canvas.hwink{ display:block; }
+  .hwcell.inked input{ visibility:hidden; }
+  .hwcell .penbtn{ position:absolute; top:1px; right:1px; width:18px; height:18px; border:none; background:#eef3fb; color:var(--accent); border-radius:4px; font-size:10px; font-weight:800; cursor:pointer; z-index:2; padding:0; }
+  .hwcell .penbtn:active{ background:var(--accent); color:#fff; }
+  @media print{ .hwcell .penbtn{ display:none !important; } }
+  .controls{ position:sticky; bottom:0; z-index:20; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:12px; background:rgba(242,244,247,.95); margin-top:14px; }
+  .btn{ border:none; border-radius:8px; padding:12px 18px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; }
+  .btn.p{ background:var(--accent); color:#fff; } .btn.g{ background:#5b6470; color:#fff; }
+  .btn.d{ background:#fff; color:#333; border:1.5px solid #bbb; }
+  .modal{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:50; }
+  .modal.show{ display:flex; }
+  .sheet{ background:#fff; border-radius:14px; width:min(94vw,720px); padding:16px; }
+  .sheet h3{ margin:0 0 4px; font-size:17px; text-align:center; }
+  .sheet p{ margin:0 0 10px; text-align:center; color:#666; font-size:13px; }
+  .padwrap{ border:2px dashed #9aa4b0; border-radius:10px; background:#fff; }
+  #padBig{ display:block; width:100%; height:300px; touch-action:none; border-radius:10px; }
+  .sheet .row{ display:flex; gap:10px; margin-top:12px; } .sheet .row .btn{ flex:1; }
+  @media print{
+    body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:0; }
+    .controls,.modal{ display:none !important; } .scroll{ overflow:visible; } table{ min-width:0; }
+    thead th{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .tick.on{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    /* PAGEBREAK_SIGN_TABLE: 서명/명단 표는 하단부터 채우고 다음 장으로 이어짐, 행 잘림 방지, 머리글 반복 */
+    table{ break-inside:auto; }
+    tr{ break-inside:avoid; }
+    thead{ display:table-header-group; }
+    @page{ size:A4 landscape; margin:8mm; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="paper">
+  <h1>개인보호구 지급대장</h1>
+  <div style="font-weight:700;color:#1f4e79;font-size:13px;letter-spacing:.5px;margin:-4px 0 8px">(주)디아키즈건설</div>
+  <div class="meta">
+    <div><label>현장명</label><select id="site" class="sitesel"></select></div>
+    <input type="hidden" id="day">
+  </div>
+  <div class="pledge">
+    1. 본인은 금일수령한 보호구를 안전규칙 제32조2항(보호구 착용준수)에 의거 <b>착용의무를 성실히 이행</b>하겠으며, 보호구 미착용으로 인한 귀사의 제반조치 사항에 따르겠음.<br><br>
+    2. 또한 본인은 금일 수령한 보호구의 <b>분실, 고의적 파손, 미반납</b>시에는 귀사에서 요구하는 소정의 금액을 귀사에서 요구하는 시기에 배상하겠습니다.<br><br>
+    3. 아래는 지급보호구명 및 수령자 인적사항이며, 수령란에 <b>본인이 직접 서명</b>합니다.
+  </div>
+  <div class="scroll">
+  <table id="tbl">
+    <thead>
+      <tr>
+        <th class="colno" rowspan="2">순번</th>
+        <th class="coldt" rowspan="2">지급일자</th>
+        <th class="coljob" rowspan="2">직종</th>
+        <th class="colnm" rowspan="2">성명</th>
+        <th colspan="7">지급 보호구 (해당란 터치 ✓)</th>
+        <th class="colsig" rowspan="2">수령 서명</th>
+      </tr>
+      <tr>
+        <th class="ppe">안전모</th><th class="ppe">안전화</th><th class="ppe">보안경</th><th class="ppe">분진<br>마스크</th><th class="ppe">귀마개</th><th class="ppe">분진복</th><th class="coletc">기타</th>
+      </tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+  </div>
+ </div>
+</div>
+
+<div class="controls">
+  <button class="btn p" onclick="printDoc()">📄 PDF로 저장 / 인쇄</button>
+  <button class="btn d" onclick="addRow()">＋ 행 추가</button>
+  <button class="btn d" onclick="saveDraft()">💾 임시저장</button>
+  <button class="btn g" onclick="clearAll()">전체 초기화</button>
+  <a class="btn d" href="../index.html" style="text-decoration:none">← 메인</a>
+</div>
+
+<div class="modal" id="modal">
+  <div class="sheet">
+    <h3 id="mTitle">서명</h3>
+    <p>아래 칸에 손가락 또는 스타일러스로 서명하세요</p>
+    <div class="padwrap"><canvas id="padBig"></canvas></div>
+    <div class="row">
+      <button class="btn d" onclick="undoBig()">↩ 지우기</button>
+      <button class="btn g" onclick="closeModal()">취소</button>
+      <button class="btn p" onclick="confirmSig()">✔ 서명 완료</button>
+    </div>
+  </div>
+</div>
+
+<script src="../sites.js"></script>
+<script>
+const ROWS_DEFAULT = 18;
+const PPE = 7;
+const DPR = Math.max(window.devicePixelRatio||1, 2);
+let curIndex=null;
+
+const DEFAULT_SITES=["아르시엘 방배 732 공동주택 신축공사","이태원동 106-2 단독주택 신축현장","보라동 20-1 단독주택 신축현장","평창동 496-4 단독주택"];
+function buildSites(){ const sel=document.getElementById('site'); sel.innerHTML='';
+  ((window.SITES && window.SITES.length)?window.SITES:DEFAULT_SITES).forEach(s=> sel.appendChild(new Option(s,s))); }
+
+function makeRow(n){
+  const tr=document.createElement('tr');
+  let ticks=''; for(let i=0;i<6;i++) ticks+=`<td class="ppe"><div class="tick" data-p="${i}"></div></td>`;
+  ticks+=`<td class="coletc cell-in hwcell"><input type="text" data-k="etc" class="etcin" placeholder="기타 품목"><canvas class="hwink"></canvas><button type="button" class="penbtn" title="손글씨">✍</button></td>`;
+  tr.innerHTML=`
+    <td class="colno">${n}</td>
+    <td class="cell-in coldt"><input type="date" data-k="dt"></td>
+    <td class="cell-in coljob hwcell"><input type="text" data-k="job"><canvas class="hwink"></canvas><button type="button" class="penbtn" title="손글씨">✍</button></td>
+    <td class="cell-in colnm hwcell"><input type="text" data-k="nm"><canvas class="hwink"></canvas><button type="button" class="penbtn" title="손글씨">✍</button></td>
+    ${ticks}
+    <td class="sigcell colsig"><canvas></canvas><div class="ph">여기를 눌러 서명</div></td>`;
+  tr.querySelectorAll('.tick').forEach(t=> t.addEventListener('click',()=>{ t.classList.toggle('on'); t.textContent=t.classList.contains('on')?'✓':''; }));
+  tr.querySelector('.sigcell').addEventListener('click',function(){ openSig(this); });
+  tr.querySelectorAll('.hwcell .penbtn').forEach(b=>b.addEventListener('click',function(e){ e.stopPropagation(); openHW(b.closest('.hwcell')); }));
+  return tr;
+}
+function addRow(){ const b=document.getElementById('rows'); b.appendChild(makeRow(b.children.length+1)); }
+function buildRows(k){ const b=document.getElementById('rows'); b.innerHTML=''; for(let i=1;i<=k;i++) b.appendChild(makeRow(i)); }
+
+/* signature */
+const modal=document.getElementById('modal'), padBig=document.getElementById('padBig'), bctx=padBig.getContext('2d');
+let drawing=false, hasInk=false, last=null;
+function sizeBig(){ const r=padBig.getBoundingClientRect(); padBig.width=r.width*DPR; padBig.height=r.height*DPR;
+  bctx.setTransform(1,0,0,1,0,0); bctx.scale(DPR,DPR); bctx.lineWidth=6.4; bctx.lineCap='round'; bctx.lineJoin='round'; bctx.strokeStyle='#000000'; hasInk=false; }
+function posBig(e){ const r=padBig.getBoundingClientRect(); return {x:e.clientX-r.left,y:e.clientY-r.top}; }
+function startB(e){ e.preventDefault(); drawing=true; last=posBig(e); try{ padBig.setPointerCapture(e.pointerId);}catch(_){}
+  bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(last.x+0.1,last.y+0.1); bctx.stroke(); hasInk=true; }
+function moveB(e){ if(!drawing)return; e.preventDefault(); const p=posBig(e); bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(p.x,p.y); bctx.stroke(); last=p; hasInk=true; }
+function endB(e){ if(drawing){ drawing=false; try{ padBig.releasePointerCapture(e.pointerId);}catch(_){} } }
+padBig.addEventListener('pointerdown',startB); padBig.addEventListener('pointermove',moveB);
+padBig.addEventListener('pointerup',endB); padBig.addEventListener('pointercancel',endB);
+let curTarget=null;
+function openSig(cell){ const tr=cell.closest('tr'); const nm=tr.querySelector('[data-k=nm]').value||tr.children[0].textContent;
+  curTarget={ cnv:cell.querySelector('canvas'), box:cell, done:()=>{ cell.querySelector('.ph').style.display='none'; }, clear:()=>{ cell.querySelector('.ph').style.display=''; } };
+  document.getElementById('mTitle').textContent=nm?nm+' 님 서명':'서명'; modal.classList.add('show'); requestAnimationFrame(sizeBig); }
+function openHW(cell){ curTarget={ cnv:cell.querySelector('.hwink'), box:cell, done:()=>cell.classList.add('inked'), clear:()=>cell.classList.remove('inked') };
+  document.getElementById('mTitle').textContent='손글씨 입력'; modal.classList.add('show'); requestAnimationFrame(sizeBig); }
+function closeModal(){ modal.classList.remove('show'); }
+function undoBig(){ bctx.save(); bctx.setTransform(1,0,0,1,0,0); bctx.clearRect(0,0,padBig.width,padBig.height); bctx.restore(); hasInk=false; }
+function confirmSig(){ const t=curTarget; if(!t){ closeModal(); return; }
+  if(!hasInk){ const cx=t.cnv.getContext('2d'); cx.clearRect(0,0,t.cnv.width,t.cnv.height); t.clear(); closeModal(); return; }
+  const cnv=t.cnv, r=t.box.getBoundingClientRect(); cnv.width=r.width*DPR; cnv.height=r.height*DPR;
+  cnv.getContext('2d').drawImage(padBig,0,0,padBig.width,padBig.height,0,0,cnv.width,cnv.height); t.done(); closeModal(); }
+
+/* actions */
+function setPrintTitle(){ document.title=(((document.getElementById('site')&&document.getElementById('site').value)?document.getElementById('site').value+'_':'')+'개인보호구_지급대장_'+((document.getElementById('day')||{}).value||new Date().toISOString().slice(0,10))).replace(/[\\/:*?"<>|]/g,'_'); }
+window.addEventListener('beforeprint', setPrintTitle);
+function printDoc(){ setPrintTitle(); window.print(); }
+function setToday(){ document.getElementById('day').value=new Date().toISOString().slice(0,10); }
+function clearAll(){ if(!confirm('입력한 내용과 서명을 모두 지울까요?'))return; try{localStorage.removeItem('ppeDraft');}catch(e){} buildSites(); buildRows(ROWS_DEFAULT); setToday(); }
+function saveDraft(){
+  const data={ site:document.getElementById('site').value, day:day.value,
+    rows:[...document.querySelectorAll('#rows tr')].map(tr=>({
+      dt:tr.querySelector('[data-k=dt]').value, job:tr.querySelector('[data-k=job]').value, nm:tr.querySelector('[data-k=nm]').value,
+      p:[...tr.querySelectorAll('.tick')].map(t=>t.classList.contains('on')?1:0),
+      etc:tr.querySelector('[data-k=etc]').value,
+      hw:Object.fromEntries([...tr.querySelectorAll('.hwcell.inked')].map(c=>[c.querySelector('input').dataset.k, c.querySelector('.hwink').toDataURL('image/png')])),
+      sig:(tr.querySelector('.sigcell .ph').style.display==='none')?tr.querySelector('.sigcell canvas').toDataURL('image/png'):''
+    }))};
+  try{ localStorage.setItem('ppeDraft',JSON.stringify(data)); alert('임시저장 완료.'); }catch(e){ alert('저장 실패: '+e.message); }
+}
+function loadDraft(){
+  let d; try{ d=JSON.parse(localStorage.getItem('ppeDraft')); }catch(e){ return false; }
+  if(!d || !Array.isArray(d.rows)) return false;
+  buildSites(); if(d.site) document.getElementById('site').value=d.site; day.value=d.day||'';
+  buildRows(Math.max(d.rows.length,ROWS_DEFAULT));
+  const trs=document.querySelectorAll('#rows tr');
+  d.rows.forEach((rd,i)=>{ const tr=trs[i]; if(!tr)return;
+    tr.querySelector('[data-k=dt]').value=rd.dt||''; tr.querySelector('[data-k=job]').value=rd.job||''; tr.querySelector('[data-k=nm]').value=rd.nm||'';
+    (rd.p||[]).forEach((v,j)=>{ const t=tr.querySelectorAll('.tick')[j]; if(t&&v){ t.classList.add('on'); t.textContent='✓'; }});
+    if(rd.etc) tr.querySelector('[data-k=etc]').value=rd.etc;
+    if(rd.hw) Object.entries(rd.hw).forEach(([k,v])=>{ const inp=tr.querySelector('.hwcell input[data-k="'+k+'"]'); if(!inp)return; const c=inp.closest('.hwcell'), cnv=c.querySelector('.hwink'), img=new Image();
+      img.onload=()=>{ const r=c.getBoundingClientRect(); cnv.width=r.width*DPR; cnv.height=r.height*DPR; cnv.getContext('2d').drawImage(img,0,0,cnv.width,cnv.height); }; img.src=v; c.classList.add('inked'); });
+    if(rd.sig){ const img=new Image(), cnv=tr.querySelector('.sigcell canvas'), r=tr.querySelector('.sigcell').getBoundingClientRect();
+      img.onload=()=>{ cnv.width=r.width*DPR; cnv.height=40*DPR; cnv.getContext('2d').drawImage(img,0,0,cnv.width,cnv.height); };
+      img.src=rd.sig; tr.querySelector('.sigcell .ph').style.display='none'; }
+  });
+  return true;
+}
+buildSites();
+if(!loadDraft()){ buildRows(ROWS_DEFAULT); setToday(); }
+</script>
+</body>
+</html>

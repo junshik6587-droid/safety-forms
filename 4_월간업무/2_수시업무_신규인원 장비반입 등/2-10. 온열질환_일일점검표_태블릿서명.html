@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>온열질환 예방 일일 체크리스트</title>
+<style>
+  :root{ --line:#333; --hd:#1f4e79; --hdbg:#dbe5f1; --accent:#1f6feb; --ok:#127c2b; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; font-family:"맑은 고딕","Malgun Gothic",AppleGothic,sans-serif; color:#111; background:#f2f4f7; }
+  .wrap{ max-width:900px; margin:0 auto; padding:12px; }
+  .paper{ background:#fff; padding:20px 22px 26px; box-shadow:0 1px 6px rgba(0,0,0,.15); }
+  h1{ text-align:center; font-size:22px; margin:2px 0 14px; letter-spacing:3px; font-weight:800; text-decoration:underline; text-underline-offset:6px; }
+  .siteline{ font-size:14px; font-weight:700; color:var(--hd); margin-bottom:8px; display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+  .siteline .co{ font-size:13px; letter-spacing:.5px; }
+  /* 손글씨 입력 */
+  .hwcell{ display:inline-flex; align-items:center; gap:2px; vertical-align:middle; }
+  .hwf{ position:relative; display:inline-block; }
+  .hwink{ position:absolute; left:0; top:0; width:100%; height:100%; display:none; pointer-events:none; }
+  .hwcell.inked .hwink{ display:block; }
+  .hwcell.inked > .hwf > input{ visibility:hidden; }
+  .pen{ flex:0 0 auto; border:none; background:#eef3fb; color:var(--accent); border-radius:5px; font-size:12px; font-weight:800; width:24px; height:22px; cursor:pointer; padding:0; }
+  .pen:active{ background:var(--accent); color:#fff; }
+  @media print{ .pen{ display:none !important; } }
+  .sitesel{ font-size:14px; font-weight:700; padding:5px 8px; font-family:inherit; border:1.5px solid var(--accent); border-radius:5px; color:var(--hd); }
+  table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+  th,td{ border:1px solid var(--line); padding:7px 8px; vertical-align:middle; }
+  td.lbl{ background:var(--hdbg); color:var(--hd); font-weight:700; text-align:center; white-space:nowrap; }
+  .info td:not(.lbl){ text-align:left; }
+  .info input[type=text],.info input[type=date],.info input[type=time]{ border:none; border-bottom:1px solid #999; font-size:14px; font-family:inherit; padding:3px 4px; background:transparent; }
+  .info input.grow{ width:100%; }
+  .note{ font-size:12px; color:#555; margin:6px 2px 14px; }
+  .timetbl{ margin-bottom:10px; }
+  .timetbl td{ text-align:center; height:34px; }
+  .timetbl input{ width:100%; border:none; text-align:center; font-size:14px; font-family:inherit; padding:4px 2px; background:transparent; }
+  .sec{ margin-top:14px; }
+  .sec .cond{ font-weight:800; color:#b02a2a; font-size:13.5px; margin:0 0 7px; }
+  .chk{ display:flex; align-items:flex-start; gap:8px; cursor:pointer; user-select:none; font-size:14px; padding:5px 2px; }
+  .chk .b{ width:20px; height:20px; flex:0 0 auto; border:1.7px solid var(--line); border-radius:3px; display:inline-flex; align-items:center; justify-content:center; font-weight:800; font-size:15px; color:#fff; margin-top:1px; }
+  .chk.on .b{ background:var(--accent); border-color:var(--accent); }
+  .chk .tx{ flex:1; }
+  .chk .tx input{ border:none; border-bottom:1px solid #999; font-family:inherit; font-size:13.5px; padding:2px 4px; background:transparent; }
+  .chips{ display:inline-flex; gap:8px; flex-wrap:wrap; }
+  .chip{ border:1.6px solid #c3ccd7; background:#f6f8fb; border-radius:16px; padding:5px 13px; font-size:13px; cursor:pointer; color:#33404f; user-select:none; font-weight:700; }
+  .chip.on{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  .inl{ border:none; border-bottom:1px solid #999; font-family:inherit; font-size:13.5px; padding:2px 4px; background:transparent; text-align:center; }
+  /* 서명 */
+  .signbar{ display:flex; flex-wrap:wrap; gap:12px 26px; margin-top:20px; align-items:flex-end; }
+  .signitem{ display:flex; align-items:flex-end; gap:6px; font-size:14px; font-weight:700; }
+  .sigbox{ position:relative; width:150px; height:48px; border-bottom:1.5px solid #999; cursor:pointer; }
+  .sigbox canvas{ display:block; width:100%; height:48px; }
+  .sigbox .ph{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:12px; pointer-events:none; }
+  .controls{ position:sticky; bottom:0; z-index:20; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:12px; background:rgba(242,244,247,.95); margin-top:16px; }
+  .btn{ border:none; border-radius:8px; padding:12px 18px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; }
+  .btn.p{ background:var(--accent); color:#fff; } .btn.g{ background:#5b6470; color:#fff; } .btn.d{ background:#fff; color:#333; border:1.5px solid #bbb; }
+  .modal{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:50; } .modal.show{ display:flex; }
+  .msheet{ background:#fff; border-radius:14px; width:min(94vw,720px); padding:16px; } .msheet h3{ margin:0 0 4px; font-size:17px; text-align:center; } .msheet p{ margin:0 0 10px; text-align:center; color:#666; font-size:13px; }
+  .padwrap{ border:2px dashed #9aa4b0; border-radius:10px; background:#fff; } #padBig{ display:block; width:100%; height:300px; touch-action:none; border-radius:10px; }
+  .msheet .row{ display:flex; gap:10px; margin-top:12px; } .msheet .row .btn{ flex:1; }
+  @media print{
+    body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:0; }
+    .siteline .sitesel{ border:none; } .controls,.modal{ display:none !important; }
+    td.lbl,.chk.on .b,.chip.on{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    @page{ size:A4 portrait; margin:10mm; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="paper">
+  <h1>온열질환 예방 일일 체크리스트</h1>
+  <div class="siteline"><span>현장명 <select id="site" class="sitesel"></select></span><span class="co">(주)디아키즈건설</span></div>
+
+  <table class="info">
+    <tr><td class="lbl" style="width:130px">작성 일시</td>
+        <td><input type="date" data-k="wdate"> &nbsp;<input type="time" data-k="wtime"></td></tr>
+    <tr><td class="lbl">폭염특보</td>
+        <td><div class="chips" id="lv">
+          <div class="chip" data-lv="해당없음">해당 없음</div>
+          <div class="chip" data-lv="폭염주의보">폭염주의보</div>
+          <div class="chip" data-lv="폭염경보">폭염경보</div>
+        </div></td></tr>
+    <tr><td class="lbl">현재 기온 / 습도</td><td><input type="text" class="grow" data-k="temp" placeholder="예: 32℃ / 60%"></td></tr>
+    <tr><td class="lbl">현재 체감온도</td><td><input type="text" class="grow" data-k="feel" placeholder="예: 34℃"></td></tr>
+    <tr><td class="lbl">최고 체감온도 예보</td><td><input type="text" class="grow" data-k="fore" placeholder="예: 35℃"></td></tr>
+  </table>
+  <div class="note">※ 기온, 습도, 체감온도 예보는 기상청 날씨누리(www.weather.go.kr)에서 확인</div>
+
+  <!-- 31℃ 이상 -->
+  <div class="sec">
+    <div class="cond">❊ 최고 체감온도 예보가 31℃ 이상인 경우 작성</div>
+    <table class="timetbl">
+      <tr><td class="lbl" style="width:130px">시 간</td><td>10시</td><td>12시</td><td>14시</td></tr>
+      <tr><td class="lbl">체감온도</td><td><input type="text" data-k="t10"></td><td><input type="text" data-k="t12"></td><td><input type="text" data-k="t14"></td></tr>
+    </table>
+    <div class="chk" data-chk="c_shade"><span class="b">✓</span><span class="tx">그늘 준비</span></div>
+    <div class="chk" data-chk="c_water"><span class="b">✓</span><span class="tx">시원하고 깨끗한 물 준비</span></div>
+    <div class="chk" data-chk="c_sensi"><span class="b">✓</span><span class="tx">민감군 사전 확인</span></div>
+  </div>
+
+  <!-- 33℃ 이상 / 폭염주의보 -->
+  <div class="sec">
+    <div class="cond">❊ 최고 체감온도 예보가 33℃ 이상이거나 폭염주의보 발령 시 작성</div>
+    <div class="chk" data-chk="c_rest10"><span class="b">✓</span><span class="tx">매시간 10분씩 그늘에서 휴식하도록 조치</span></div>
+    <div class="chk" data-chk="c_reduce"><span class="b">✓</span><span class="tx">오후 2시~5시 옥외작업 단축 또는 작업시간대 조정</span></div>
+    <div class="chk" data-chk="c_sensirest"><span class="b">✓</span><span class="tx">민감군 휴식시간 추가</span></div>
+    <div class="chk" data-chk="c_ice"><span class="b">✓</span><span class="tx">아이스 조끼, 아이스팩 등 보냉장구 준비</span></div>
+    <div class="chk" style="cursor:default"><span class="b" style="visibility:hidden">✓</span><span class="tx">휴게시간 10분 ( <input type="text" class="inl" data-k="rest_extra" style="width:220px"> )</span></div>
+  </div>
+
+  <!-- 35℃ 이상 / 폭염경보 -->
+  <div class="sec">
+    <div class="cond">❊ 최고 체감온도 예보가 35℃ 이상이거나 폭염경보 발령 시 작성</div>
+    <div class="chk" data-chk="c_rest15"><span class="b">✓</span><span class="tx">매시간 15분씩 그늘에서 휴식하도록 조치</span></div>
+    <div class="chk" data-chk="c_stop25"><span class="b">✓</span><span class="tx">오후 2시~5시 옥외작업 중지</span></div>
+    <div class="chk" data-chk="c_sensistop"><span class="b">✓</span><span class="tx">민감군 옥외작업 중지 (중지시간 : <input type="text" class="inl" data-k="sensistop_s" style="width:44px">시 <input type="text" class="inl" data-k="sensistop_sm" style="width:44px">분 ~ <input type="text" class="inl" data-k="sensistop_e" style="width:44px">시 <input type="text" class="inl" data-k="sensistop_em" style="width:44px">분)</span></div>
+  </div>
+
+  <!-- 38℃ 이상 -->
+  <div class="sec">
+    <div class="cond">❊ 최고 체감온도 예보가 38℃ 이상인 경우 작성</div>
+    <div class="chk" data-chk="c_allstop"><span class="b">✓</span><span class="tx">사업장 전체 옥외작업 중지 (중지시간 : <input type="text" class="inl" data-k="allstop_s" style="width:44px">시 <input type="text" class="inl" data-k="allstop_sm" style="width:44px">분 ~ <input type="text" class="inl" data-k="allstop_e" style="width:44px">시 <input type="text" class="inl" data-k="allstop_em" style="width:44px">분)</span></div>
+  </div>
+
+  <div class="signbar">
+    <div class="signitem">작성자 : <input type="text" class="inl hw" data-k="writer" style="width:80px">
+      <div class="sigbox" data-sig="writer"><canvas></canvas><div class="ph">서명</div></div> (인)</div>
+    <div class="signitem">안전보건관리책임자 : <input type="text" class="inl hw" data-k="manager" style="width:80px">
+      <div class="sigbox" data-sig="manager"><canvas></canvas><div class="ph">서명</div></div> (인)</div>
+  </div>
+ </div>
+</div>
+
+<div class="controls">
+  <button class="btn p" onclick="printDoc()">📄 PDF로 저장 / 인쇄</button>
+  <button class="btn d" onclick="saveDraft()">💾 임시저장</button>
+  <button class="btn g" onclick="clearAll()">전체 초기화</button>
+  <a class="btn d" href="../index.html" style="text-decoration:none">← 메인</a>
+</div>
+
+<div class="modal" id="modal">
+  <div class="msheet">
+    <h3 id="mTitle">서명</h3><p>아래 칸에 손가락 또는 스타일러스로 서명하세요</p>
+    <div class="padwrap"><canvas id="padBig"></canvas></div>
+    <div class="row"><button class="btn d" onclick="undoBig()">↩ 지우기</button><button class="btn g" onclick="closeModal()">취소</button><button class="btn p" onclick="confirmSig()">✔ 서명 완료</button></div>
+  </div>
+</div>
+
+<script src="../sites.js"></script>
+<script>
+const DPR=Math.max(window.devicePixelRatio||1,2);
+const DEFAULT_SITES=["아르시엘 방배 732 공동주택 신축공사","이태원동 106-2 단독주택 신축현장","보라동 20-1 단독주택 신축현장","평창동 496-4 단독주택"];
+function buildSites(){ const sel=document.getElementById('site'); sel.innerHTML='';
+  ((window.SITES&&window.SITES.length)?window.SITES:DEFAULT_SITES).forEach(s=> sel.appendChild(new Option(s,s))); }
+
+/* 체크박스 토글 */
+document.querySelectorAll('.chk[data-chk]').forEach(c=>c.addEventListener('click',e=>{ if(e.target.tagName==='INPUT')return; c.classList.toggle('on'); }));
+/* 폭염특보 단일 선택 */
+document.querySelectorAll('#lv .chip').forEach(c=>c.addEventListener('click',()=>{
+  const on=c.classList.contains('on'); document.querySelectorAll('#lv .chip').forEach(x=>x.classList.remove('on')); if(!on) c.classList.add('on'); }));
+
+/* 서명 모달 */
+const modal=document.getElementById('modal'), padBig=document.getElementById('padBig'), bctx=padBig.getContext('2d');
+let drawing=false, hasInk=false, last=null, curTarget=null;
+function sizeBig(){ const r=padBig.getBoundingClientRect(); padBig.width=r.width*DPR; padBig.height=r.height*DPR;
+  bctx.setTransform(1,0,0,1,0,0); bctx.scale(DPR,DPR); bctx.lineWidth=6.4; bctx.lineCap='round'; bctx.lineJoin='round'; bctx.strokeStyle='#000'; hasInk=false; }
+function posBig(e){ const r=padBig.getBoundingClientRect(); return {x:e.clientX-r.left,y:e.clientY-r.top}; }
+function startB(e){ e.preventDefault(); drawing=true; last=posBig(e); try{ padBig.setPointerCapture(e.pointerId);}catch(_){}
+  bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(last.x+0.1,last.y+0.1); bctx.stroke(); hasInk=true; }
+function moveB(e){ if(!drawing)return; e.preventDefault(); const p=posBig(e); bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(p.x,p.y); bctx.stroke(); last=p; hasInk=true; }
+function endB(e){ if(drawing){ drawing=false; try{ padBig.releasePointerCapture(e.pointerId);}catch(_){} } }
+padBig.addEventListener('pointerdown',startB); padBig.addEventListener('pointermove',moveB);
+padBig.addEventListener('pointerup',endB); padBig.addEventListener('pointercancel',endB);
+function openSig(cell){ curTarget={ cnv:cell.querySelector('canvas'), box:cell, done:()=>{ cell.querySelector('.ph').style.display='none'; cell.dataset.inked='1'; }, clear:()=>{ cell.querySelector('.ph').style.display=''; cell.dataset.inked=''; } };
+  document.getElementById('mTitle').textContent=(cell.dataset.sig==='writer'?'작성자':'안전보건관리책임자')+' 서명'; modal.classList.add('show'); requestAnimationFrame(sizeBig); }
+document.querySelectorAll('.sigbox').forEach(c=>c.addEventListener('click',()=>openSig(c)));
+
+/* 이름 손글씨 입력 (input.hw 자동 업그레이드) */
+function initHw(){ document.querySelectorAll('input.hw').forEach(inp=>{ if(inp.closest('.hwcell'))return;
+  const cell=document.createElement('span'); cell.className='hwcell'; const f=document.createElement('span'); f.className='hwf';
+  inp.parentNode.insertBefore(cell,inp); f.appendChild(inp);
+  const cv=document.createElement('canvas'); cv.className='hwink'; f.appendChild(cv);
+  const btn=document.createElement('button'); btn.type='button'; btn.className='pen'; btn.textContent='✍'; btn.title='손글씨';
+  cell.appendChild(f); cell.appendChild(btn);
+  btn.addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation(); openHw(cell); }); }); }
+function openHw(cell){ const f=cell.querySelector('.hwf'), cnv=cell.querySelector('.hwink');
+  curTarget={ cnv, box:f, done:()=>cell.classList.add('inked'), clear:()=>cell.classList.remove('inked') };
+  document.getElementById('mTitle').textContent='손글씨 입력'; modal.classList.add('show'); requestAnimationFrame(sizeBig); }
+function closeModal(){ modal.classList.remove('show'); }
+function undoBig(){ bctx.save(); bctx.setTransform(1,0,0,1,0,0); bctx.clearRect(0,0,padBig.width,padBig.height); bctx.restore(); hasInk=false; }
+function confirmSig(){ const t=curTarget; if(!t){ closeModal(); return; }
+  if(!hasInk){ const cx=t.cnv.getContext('2d'); cx.clearRect(0,0,t.cnv.width,t.cnv.height); t.clear(); closeModal(); return; }
+  const cnv=t.cnv, r=t.box.getBoundingClientRect(); cnv.width=r.width*DPR; cnv.height=r.height*DPR;
+  cnv.getContext('2d').drawImage(padBig,0,0,padBig.width,padBig.height,0,0,cnv.width,cnv.height); t.done(); closeModal(); }
+
+/* 저장 / 불러오기 */
+function allK(){ return [...document.querySelectorAll('[data-k]')]; }
+function setToday(){ document.querySelector('[data-k=wdate]').value=new Date().toISOString().slice(0,10); }
+function heatLevel(){ const c=document.querySelector('#lv .chip.on'); return c?c.dataset.lv:''; }
+function setPrintTitle(){ const site=document.getElementById('site').value||''; const d=(document.querySelector('[data-k=wdate]')||{}).value||new Date().toISOString().slice(0,10);
+  document.title=('온열질환일일점검표_'+site+'_'+d).replace(/[\\/:*?"<>|]/g,'_'); }
+window.addEventListener('beforeprint', setPrintTitle);
+function printDoc(){ setPrintTitle(); window.print(); }
+function clearAll(){ if(!confirm('입력한 내용과 서명을 모두 지울까요?'))return; try{localStorage.removeItem('heatDraft');}catch(e){}
+  buildSites(); allK().forEach(el=>el.value=''); setToday();
+  document.querySelectorAll('.chk.on').forEach(c=>c.classList.remove('on'));
+  document.querySelectorAll('#lv .chip.on').forEach(c=>c.classList.remove('on'));
+  document.querySelectorAll('.sigbox').forEach(c=>{ const cn=c.querySelector('canvas'); cn.getContext('2d').clearRect(0,0,cn.width,cn.height); c.querySelector('.ph').style.display=''; c.dataset.inked=''; });
+  document.querySelectorAll('.hwcell.inked').forEach(cell=>{ cell.classList.remove('inked'); const c=cell.querySelector('.hwink'); if(c) c.getContext('2d').clearRect(0,0,c.width,c.height); }); }
+function saveDraft(){
+  const data={ site:document.getElementById('site').value, level:heatLevel(),
+    vals:Object.fromEntries(allK().map(el=>[el.dataset.k, el.value])),
+    checks:[...document.querySelectorAll('.chk[data-chk]')].filter(c=>c.classList.contains('on')).map(c=>c.dataset.chk),
+    sigs:{}, hw:{} };
+  document.querySelectorAll('.sigbox').forEach(c=>{ if(c.dataset.inked==='1') data.sigs[c.dataset.sig]=c.querySelector('canvas').toDataURL('image/png'); });
+  document.querySelectorAll('.hwcell.inked').forEach(cell=>{ const inp=cell.querySelector('input[data-k]'); if(inp) data.hw[inp.dataset.k]=cell.querySelector('.hwink').toDataURL('image/png'); });
+  try{ localStorage.setItem('heatDraft',JSON.stringify(data)); alert('임시저장 완료.'); }catch(e){ alert('저장 실패: '+e.message); }
+}
+function restoreSig(cell,url){ const cn=cell.querySelector('canvas'), img=new Image();
+  img.onload=()=>{ const r=cell.getBoundingClientRect(); cn.width=r.width*DPR; cn.height=48*DPR; cn.getContext('2d').drawImage(img,0,0,cn.width,cn.height); };
+  img.src=url; cell.querySelector('.ph').style.display='none'; cell.dataset.inked='1'; }
+function loadDraft(){
+  let d; try{ d=JSON.parse(localStorage.getItem('heatDraft')); }catch(e){ return false; }
+  if(!d) return false;
+  buildSites(); if(d.site) document.getElementById('site').value=d.site;
+  if(d.vals) allK().forEach(el=>{ if(d.vals[el.dataset.k]!=null) el.value=d.vals[el.dataset.k]; });
+  if(d.level){ const c=document.querySelector('#lv .chip[data-lv="'+d.level+'"]'); if(c) c.classList.add('on'); }
+  (d.checks||[]).forEach(k=>{ const c=document.querySelector('.chk[data-chk="'+k+'"]'); if(c) c.classList.add('on'); });
+  if(d.sigs) Object.entries(d.sigs).forEach(([k,url])=>{ if(!url)return; const cell=document.querySelector('.sigbox[data-sig="'+k+'"]'); if(cell) restoreSig(cell,url); });
+  if(d.hw) Object.entries(d.hw).forEach(([k,url])=>{ if(!url)return; const inp=document.querySelector('input[data-k="'+k+'"]'); const cell=inp&&inp.closest('.hwcell'); if(!cell)return; const cnv=cell.querySelector('.hwink'), img=new Image();
+    img.onload=()=>{ const r=cell.querySelector('.hwf').getBoundingClientRect(); cnv.width=r.width*DPR; cnv.height=(r.height||22)*DPR; cnv.getContext('2d').drawImage(img,0,0,cnv.width,cnv.height); }; img.src=url; cell.classList.add('inked'); });
+  return true;
+}
+initHw();
+buildSites();
+if(!loadDraft()){ setToday(); }
+</script>
+</body>
+</html>
