@@ -133,7 +133,7 @@
  <div class="paper">
 
   <!-- ================= 표지: 합동안전보건점검일지 ================= -->
-  <h1>20<input class="yr" data-c="ty" inputmode="numeric" maxlength="2">년 <input class="yr" data-c="tm" inputmode="numeric" maxlength="2">월 합동안전보건점검일지</h1>
+  <h1>20<select class="yr" data-c="ty"></select>년 <select class="yr" data-c="tm"></select>월 합동안전보건점검일지</h1>
   <div class="tophead" style="justify-content:space-between;align-items:flex-end">
     <span class="co">(주)디아키즈건설</span>
     <table class="appr">
@@ -255,6 +255,14 @@ const DEFAULT_SITES=["아르시엘 방배 732 공동주택 신축공사","이태
 function buildSites(){ const sel=document.getElementById('site'); sel.innerHTML='';
   ((window.SITES&&window.SITES.length)?window.SITES:DEFAULT_SITES).forEach(s=> sel.appendChild(new Option(s,s))); syncHead(); }
 
+/* 제목 년·월 선택 드롭다운 */
+function buildYM(setDefault){
+  const ty=document.querySelector('[data-c=ty]'), tm=document.querySelector('[data-c=tm]'), now=new Date();
+  if(ty && !ty.options.length){ const y=now.getFullYear(); for(let v=y-1;v<=y+3;v++){ const s=String(v).slice(2); ty.appendChild(new Option(s,s)); } }
+  if(tm && !tm.options.length){ for(let m=1;m<=12;m++) tm.appendChild(new Option(m,m)); }
+  if(setDefault){ if(ty) ty.value=String(now.getFullYear()).slice(2); if(tm) tm.value=String(now.getMonth()+1); }
+}
+
 /* 점검표 상단 현장명/일자/점검자 자동 반영 */
 function syncHead(){
   const s=(document.getElementById('site')||{}).value||'';
@@ -359,7 +367,7 @@ function setToday(){ document.getElementById('day').value=new Date().toISOString
 function allC(){ return [...document.querySelectorAll('[data-c]')]; }
 function clearAll(){ if(!confirm('입력한 내용과 서명을 모두 지울까요?'))return; try{localStorage.removeItem('jointDraft');}catch(e){}
   buildSites(); buildChecks(); buildRows(ROWS_DEFAULT); buildPhotos(PHOTO_DEFAULT); setToday();
-  document.getElementById('place').value=''; document.getElementById('inspector').value=''; allC().forEach(el=>el.value='');
+  document.getElementById('place').value=''; document.getElementById('inspector').value=''; allC().forEach(el=>el.value=''); buildYM(true);
   document.querySelectorAll('.apprcell').forEach(c=>{ const cn=c.querySelector('canvas'); cn.getContext('2d').clearRect(0,0,cn.width,cn.height); c.querySelector('.ph').style.display=''; });
   syncHead(); }
 function saveDraft(){
@@ -410,7 +418,8 @@ function loadDraft(){
   return true;
 }
 buildSites();
-if(!loadDraft()){ buildChecks(); buildRows(ROWS_DEFAULT); buildPhotos(PHOTO_DEFAULT); setToday(); }
+buildYM(false);
+if(!loadDraft()){ buildChecks(); buildRows(ROWS_DEFAULT); buildPhotos(PHOTO_DEFAULT); setToday(); buildYM(true); }
 </script>
 <script>
 /* AUTO_GROW_TEXTAREA: 입력란 자동 높이조절 (내용 많으면 칸이 늘어나 인쇄 시 잘리지 않음) */
