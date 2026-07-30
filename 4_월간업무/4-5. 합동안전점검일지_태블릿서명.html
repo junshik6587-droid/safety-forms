@@ -10,24 +10,61 @@
   html,body{ margin:0; font-family:"맑은 고딕","Malgun Gothic",AppleGothic,sans-serif; color:#111; background:#f2f4f7; }
   .wrap{ max-width:1000px; margin:0 auto; padding:12px; }
   .paper{ background:#fff; padding:18px 20px 26px; box-shadow:0 1px 6px rgba(0,0,0,.15); }
-  h1{ text-align:center; font-size:21px; margin:2px 0 12px; letter-spacing:2px; }
-  .meta{ display:flex; flex-wrap:wrap; gap:8px 18px; align-items:center; border:1.5px solid var(--line); padding:10px 12px; margin-bottom:10px; font-size:14px; }
-  .meta label{ font-weight:700; margin-right:4px; }
-  .meta input[type=text],.meta input[type=date]{ border:none; border-bottom:1px solid #999; font-size:14px; padding:3px 4px; font-family:inherit; }
-  .sitesel{ font-size:14px; font-weight:700; padding:5px 8px; font-family:inherit; border:1.5px solid var(--accent); border-radius:5px; color:var(--hd); }
-  .chkttl{ background:var(--hd); color:#fff; font-weight:700; font-size:14px; padding:7px 10px; border-radius:6px 6px 0 0; }
+  h1{ text-align:center; font-size:22px; margin:2px 0 12px; letter-spacing:2px; }
+  h1 .yr{ width:52px; font-size:inherit; font-weight:inherit; font-family:inherit; text-align:center; border:none; border-bottom:2px solid #999; background:transparent; letter-spacing:inherit; }
+  h1 .yr:focus{ outline:none; border-bottom-color:var(--accent); }
+  .co{ font-weight:700; color:#1f4e79; font-size:13px; letter-spacing:.5px; margin:-4px 0 8px; }
+  /* 점검내용/지적/조치 수직배열 표 */
+  table.cont{ margin-top:10px; }
+  table.cont td{ vertical-align:top; }
+  table.cont .vlbl{ writing-mode:vertical-lr; text-align:center; background:var(--hdbg); color:var(--hd); font-weight:700; letter-spacing:3px; white-space:nowrap; width:38px; }
+  table.cont .clbl{ background:var(--hdbg); color:var(--hd); font-weight:700; text-align:center; white-space:nowrap; padding:9px 10px; width:calc((100% - 38px)/3); }
+  table.cont .cc{ vertical-align:top; padding:0; }
+  table.cont textarea{ width:100%; min-height:600px; border:none; font-size:14px; font-family:inherit; padding:8px; resize:vertical; display:block; }
+  /* 점검자 명단 (원본: 원청/협력업체 좌우 그룹) */
+  table.roster .vlabel{ writing-mode:vertical-lr; text-align:center; background:var(--hdbg); color:var(--hd); font-weight:700; letter-spacing:4px; width:30px; white-space:nowrap; }
+  table.roster th{ background:var(--hdbg); color:var(--hd); font-size:12px; text-align:center; }
+  table.roster td input{ width:100%; border:none; text-align:center; font-size:13px; font-family:inherit; padding:5px 2px; background:transparent; }
+  table.roster td input:focus{ outline:2px solid var(--accent); outline-offset:-2px; }
+  table.roster .rsig{ position:relative; height:40px; padding:0; cursor:pointer; }
+  table.roster .rsig canvas{ display:block; width:100%; height:40px; }
+  table.roster .rsig .ph{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:11px; pointer-events:none; }
+  .rostdate{ text-align:right; font-size:13px; font-weight:700; margin:2px 2px 6px; }
+  table.roster .nmcell canvas.nmink{ height:40px; }
+  /* 결재란 */
+  .tophead{ display:flex; justify-content:flex-end; margin:2px 0 12px; }
+  table.appr{ border-collapse:collapse; width:auto; }
+  table.appr td,table.appr th{ border:1px solid var(--line); text-align:center; font-size:12px; }
+  table.appr .lab{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:4px 5px; writing-mode:vertical-lr; letter-spacing:2px; width:26px; }
+  table.appr .who{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:3px 6px; width:82px; }
+  .apprcell{ position:relative; width:82px; height:50px; padding:0; cursor:pointer; }
+  .apprcell canvas{ display:block; width:100%; height:50px; }
+  .apprcell .ph{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#bbb; font-size:11px; pointer-events:none; }
+  /* 표 공통 */
   table{ width:100%; border-collapse:collapse; font-size:13px; }
   th,td{ border:1px solid var(--line); padding:4px 6px; }
   thead th{ background:var(--hdbg); color:var(--hd); font-size:12px; text-align:center; }
-  td.no{ width:32px; text-align:center; } td.item{ text-align:left; } td.bigo input{ width:100%; border:none; font-size:13px; font-family:inherit; padding:3px 2px; text-align:center; }
-  .colbigo{ width:120px; }
-  .seg{ display:flex; width:118px; margin:0 auto; }
-  .seg button{ flex:1; border:1px solid #ccc; background:#f4f6f8; font-size:12px; font-weight:700; padding:6px 0; cursor:pointer; font-family:inherit; color:#8a929c; }
-  .seg button.y.on{ background:var(--ok); color:#fff; border-color:var(--ok); }
-  .seg button.n.on{ background:var(--no); color:#fff; border-color:var(--no); }
-  .colres{ width:130px; text-align:center; }
+  td.lbl{ background:var(--hdbg); color:var(--hd); font-weight:700; text-align:center; white-space:nowrap; }
+  /* 표지 정보 */
+  table.cover{ margin-bottom:12px; }
+  table.cover td{ height:34px; }
+  table.cover .sitesel{ font-size:14px; font-weight:700; padding:5px 8px; font-family:inherit; border:1.5px solid var(--accent); border-radius:5px; color:var(--hd); width:100%; }
+  table.cover input{ width:100%; border:none; font-size:14px; font-family:inherit; padding:4px 4px; text-align:center; background:transparent; }
+  table.cover input:focus{ outline:2px solid var(--accent); outline-offset:-2px; }
   .note{ border:1.5px solid var(--line); margin-top:10px; } .note .h{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:6px 8px; font-size:13px; }
-  .note textarea{ width:100%; min-height:56px; border:none; font-size:14px; font-family:inherit; padding:8px; resize:vertical; }
+  .note textarea{ width:100%; min-height:52px; border:none; font-size:14px; font-family:inherit; padding:8px; resize:vertical; }
+  .attach{ border:1.5px solid var(--line); margin-top:12px; padding:10px 12px; font-size:13.5px; line-height:1.9; }
+  .attach b{ color:var(--hd); }
+  /* 점검표 */
+  .pgbreak{ height:0; }
+  .chkttl{ background:var(--hd); color:#fff; font-weight:700; font-size:15px; padding:8px 10px; border-radius:6px 6px 0 0; text-align:center; letter-spacing:2px; margin-top:6px; }
+  .chkhead{ display:flex; flex-wrap:wrap; gap:6px 20px; border:1.5px solid var(--line); border-top:none; padding:8px 12px; font-size:13px; font-weight:700; color:#222; }
+  .chkhead span.v{ color:var(--hd); }
+  td.no{ width:32px; text-align:center; } td.item{ text-align:left; }
+  .colres{ width:180px; text-align:center; }
+  td.colres input.resin{ width:100%; border:none; text-align:center; font-size:14px; font-family:inherit; padding:6px 2px; background:transparent; }
+  td.colres input.resin:focus{ outline:2px solid var(--accent); outline-offset:-2px; }
+  .colbigo{ width:104px; } td.bigo input{ width:100%; border:none; font-size:13px; font-family:inherit; padding:3px 2px; text-align:center; }
   .subttl{ font-weight:700; color:var(--hd); margin:14px 0 6px; }
   .colgb{ width:130px; } .colnm{ width:110px; } .colsig{ width:auto; }
   td.cell-in input{ width:100%; border:none; text-align:center; font-size:14px; padding:6px 2px; font-family:inherit; background:transparent; }
@@ -71,15 +108,22 @@
   @media print{
     body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:0; }
     .controls,.modal,.mini,.pslot .del,.pslot .add,.phnote{ display:none !important; }
+    .pgbreak{ break-before:page; page-break-before:always; }
     .photopage.nophoto{ display:none !important; }
     .photopage:not(.nophoto){ break-before:page; page-break-before:always; }
     .phhead{ background:var(--hdbg) !important; color:var(--hd) !important; border:1.5px solid var(--line); border-bottom:none; border-radius:0; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
     .pslot{ break-inside:avoid; } .pslot .frame{ background:#fff; aspect-ratio:auto; height:300px; }
-    thead th,.chkttl,.note .h,.seg button.on,td.pl{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-    /* PAGEBREAK_SIGN_TABLE: 서명/명단 표는 하단부터 채우고 다음 장으로 이어짐, 행 잘림 방지, 머리글 반복 */
+    thead th,.chkttl,.chkhead,.note .h,td.lbl,table.appr .lab,table.appr .who,td.pl{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    /* 서명/명단 표는 하단부터 채우고 다음 장으로 이어짐, 행 잘림 방지, 머리글 반복 */
     table{ break-inside:auto; }
     tr{ break-inside:avoid; }
     thead{ display:table-header-group; }
+    /* 점검표: 한 장을 꽉 채우도록 행 높이·글자 조정 */
+    .chk td,.chk th{ padding:5px 6px; }
+    .chk td.item{ font-size:12px; line-height:1.3; }
+    .chk thead th{ font-size:11.5px; }
+    .chk td.colres input.resin,.chk td.bigo input{ font-size:12.5px; padding:3px; }
+    .note textarea[data-c=etc]{ min-height:90px !important; }
     @page{ size:A4 portrait; margin:9mm; }
   }
 </style>
@@ -87,30 +131,72 @@
 <body>
 <div class="wrap">
  <div class="paper">
-  <h1>합동안전보건점검일지</h1>
-  <div style="font-weight:700;color:#1f4e79;font-size:13px;letter-spacing:.5px;margin:-4px 0 8px">(주)디아키즈건설</div>
-  <div class="meta">
-    <div><label>현장명</label><select id="site" class="sitesel"></select></div>
-    <div><label>점검일시</label><input type="date" id="day"></div>
-    <div><label>점검장소</label><input type="text" id="place" placeholder="점검 장소"></div>
-    <div><label>점검자</label><input type="text" id="inspector" placeholder="점검자"></div>
+
+  <!-- ================= 표지: 합동안전보건점검일지 ================= -->
+  <h1>20<input class="yr" data-c="ty" inputmode="numeric" maxlength="2">년 <input class="yr" data-c="tm" inputmode="numeric" maxlength="2">월 합동안전보건점검일지</h1>
+  <div class="tophead" style="justify-content:space-between;align-items:flex-end">
+    <span class="co">(주)디아키즈건설</span>
+    <table class="appr">
+      <tr><td class="lab" rowspan="2">결 재</td><td class="who">담당</td><td class="who">과장</td><td class="who">소장</td></tr>
+      <tr>
+        <td class="apprcell" data-appr="담당" onclick="openAppr(this)"><canvas></canvas><div class="ph">서명</div></td>
+        <td class="apprcell" data-appr="과장" onclick="openAppr(this)"><canvas></canvas><div class="ph">서명</div></td>
+        <td class="apprcell" data-appr="소장" onclick="openAppr(this)"><canvas></canvas><div class="ph">서명</div></td>
+      </tr>
+    </table>
   </div>
 
-  <div class="chkttl">합동안전보건점검표 <span style="font-weight:400;font-size:12px">(각 항목 양호/불량 선택)</span></div>
+  <table class="cover">
+    <colgroup><col style="width:90px"><col><col style="width:90px"><col></colgroup>
+    <tr><td class="lbl">현장명</td><td><select id="site" class="sitesel"></select></td>
+        <td class="lbl">점검일시</td><td><input type="date" id="day"></td></tr>
+    <tr><td class="lbl">점검장소</td><td><input type="text" id="place" placeholder="점검 장소"></td>
+        <td class="lbl">점검자</td><td><input type="text" id="inspector" placeholder="점검자"></td></tr>
+  </table>
+
+  <table class="cont">
+    <tr><td class="vlbl" rowspan="2">점검내용 및 조치사항</td>
+        <td class="clbl">점검내용</td><td class="clbl">지적사항</td><td class="clbl">조치사항</td></tr>
+    <tr><td class="cc"><textarea data-c="content"></textarea></td>
+        <td class="cc"><textarea data-c="point"></textarea></td>
+        <td class="cc"><textarea data-c="action"></textarea></td></tr>
+  </table>
+
+  <div class="attach">
+    <b>첨부서류</b><br>
+    1. 합동안전보건점검표(개인별)<br>
+    2. 점검자 명단<br>
+    3. 사진대지
+  </div>
+
+  <!-- ================= 점검표 (다음 페이지) ================= -->
+  <div class="pgbreak"></div>
+  <div class="chkttl">합동안전보건점검표</div>
+  <div class="chkhead">
+    <span>■ 현장명 : <span class="v" id="e_site"></span></span>
+    <span>■ 점검일자 : <span class="v" id="e_day"></span></span>
+    <span>■ 점검자 : <span class="v" id="e_insp"></span></span>
+  </div>
   <table class="chk">
     <thead><tr><th class="no">No</th><th>점검내용</th><th class="colres">점검결과</th><th class="colbigo">비고</th></tr></thead>
     <tbody id="chkbody"></tbody>
   </table>
+  <div class="note"><div class="h">기타 지적사항</div><textarea data-c="etc"></textarea></div>
 
-  <div class="note"><div class="h">지적사항</div><textarea data-c="point"></textarea></div>
-  <div class="note"><div class="h">조치사항</div><textarea data-c="action"></textarea></div>
-
-  <div class="subttl">점검자(참석자) 명단 · 서명</div>
-  <table id="tbl">
-    <thead><tr><th class="no">No</th><th class="colgb">구분</th><th class="colnm">직책·업체</th><th class="colnm">성명</th><th class="colsig">서명 (터치)</th></tr></thead>
-    <tbody id="rows"></tbody>
+  <!-- ================= 점검자 명단 (원본 양식) ================= -->
+  <div class="pgbreak"></div>
+  <h1 style="font-size:19px">합동안전보건점검자 명단</h1>
+  <div class="rostdate">점검일자 : <span id="e_day2"></span></div>
+  <table class="roster" id="tbl">
+    <tbody id="rbody">
+      <tr><td class="vlabel" id="vlabel" rowspan="10">점 검 위 원</td>
+          <th colspan="3">원청 (도급인)</th><th colspan="3">협력업체 (수급인)</th></tr>
+      <tr><th style="width:88px">직 책</th><th style="width:88px">성 명</th><th>서 명</th>
+          <th style="width:108px">협력업체명</th><th style="width:88px">성 명</th><th>서 명</th></tr>
+    </tbody>
   </table>
 
+  <!-- ================= 사진대지 ================= -->
   <div class="photopage">
     <div class="phhead">사 진 대 지 <button type="button" class="mini" onclick="addPhoto()">＋ 사진 추가</button></div>
     <div class="phnote">※ 사진을 넣지 않으면 인쇄·PDF에서 사진대지 페이지는 출력되지 않습니다.</div>
@@ -121,7 +207,7 @@
 
 <div class="controls">
   <button class="btn p" onclick="printDoc()">📄 PDF로 저장 / 인쇄</button>
-  <button class="btn d" onclick="allGood()">전체 양호</button>
+  <button class="btn d" onclick="allGood()">전체 '양호' 입력</button>
   <button class="btn d" onclick="addRow()">＋ 점검자 추가</button>
   <button class="btn d" onclick="saveDraft()">💾 임시저장</button>
   <button class="btn g" onclick="clearAll()">전체 초기화</button>
@@ -165,41 +251,50 @@ const CHECKS=[
 ];
 const ROWS_DEFAULT=8;
 const DPR=Math.max(window.devicePixelRatio||1,2);
-let curIndex=null;
 const DEFAULT_SITES=["아르시엘 방배 732 공동주택 신축공사","이태원동 106-2 단독주택 신축현장","보라동 20-1 단독주택 신축현장","평창동 496-4 단독주택"];
 function buildSites(){ const sel=document.getElementById('site'); sel.innerHTML='';
-  ((window.SITES&&window.SITES.length)?window.SITES:DEFAULT_SITES).forEach(s=> sel.appendChild(new Option(s,s))); }
+  ((window.SITES&&window.SITES.length)?window.SITES:DEFAULT_SITES).forEach(s=> sel.appendChild(new Option(s,s))); syncHead(); }
 
+/* 점검표 상단 현장명/일자/점검자 자동 반영 */
+function syncHead(){
+  const s=(document.getElementById('site')||{}).value||'';
+  const d=(document.getElementById('day')||{}).value||'';
+  const i=(document.getElementById('inspector')||{}).value||'';
+  const es=document.getElementById('e_site'), ed=document.getElementById('e_day'), ei=document.getElementById('e_insp'), ed2=document.getElementById('e_day2');
+  if(es) es.textContent=s; if(ed) ed.textContent=d; if(ei) ei.textContent=i; if(ed2) ed2.textContent=d;
+}
+['site','day','inspector'].forEach(id=>{ const el=document.getElementById(id); if(el){ el.addEventListener('input',syncHead); el.addEventListener('change',syncHead); } });
+
+/* 점검표: 점검결과 = 직접 입력 공란 */
 function buildChecks(){
   const tb=document.getElementById('chkbody'); tb.innerHTML='';
   CHECKS.forEach((it,i)=>{
     const tr=document.createElement('tr');
     tr.innerHTML=`<td class="no">${i+1}</td><td class="item">${it}</td>
-      <td class="colres"><div class="seg" data-k="c${i}"><button type="button" class="y on">양호</button><button type="button" class="n">불량</button></div></td>
+      <td class="colres"><input type="text" class="resin" data-r="r${i}"></td>
       <td class="bigo"><input type="text" data-b="b${i}"></td>`;
-    const seg=tr.querySelector('.seg');
-    seg.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
-      seg.querySelector('.y').classList.toggle('on',b.classList.contains('y'));
-      seg.querySelector('.n').classList.toggle('on',b.classList.contains('n'));
-    }));
     tb.appendChild(tr);
   });
 }
-function allGood(){ document.querySelectorAll('.seg').forEach(s=>{ s.querySelector('.y').classList.add('on'); s.querySelector('.n').classList.remove('on'); }); }
+function allGood(){ document.querySelectorAll('.resin').forEach(el=>el.value='양호'); }
 
-function makeRow(n){
+/* 점검자 명단 (원청/협력업체 좌우 그룹) */
+function makeRosterRow(){
   const tr=document.createElement('tr');
-  tr.innerHTML=`<td class="no">${n}</td>
-    <td class="cell-in colgb"><select data-k="gb"><option>원청(도급인)</option><option>협력업체(수급인)</option></select></td>
-    <td class="cell-in colnm"><input type="text" data-k="job"></td>
-    <td class="cell-in colnm nmcell"><input type="text" data-k="nm"><canvas class="nmink"></canvas><button type="button" class="penbtn" title="성명 손글씨로 쓰기">✍</button></td>
-    <td class="sigcell colsig"><canvas></canvas><div class="ph">여기를 눌러 서명</div></td>`;
-  tr.querySelector('.sigcell').addEventListener('click',function(){ openSig(this); });
-  tr.querySelector('.penbtn').addEventListener('click',function(e){ e.stopPropagation(); openNm(tr.querySelector('.nmcell')); });
+  tr.innerHTML=`<td class="cell-in nmcell"><input type="text" data-k="ljob"><canvas class="nmink"></canvas><button type="button" class="penbtn" title="손글씨">✍</button></td>
+    <td class="cell-in nmcell"><input type="text" data-k="lname"><canvas class="nmink"></canvas><button type="button" class="penbtn" title="손글씨">✍</button></td>
+    <td class="rsig" data-side="l"><canvas></canvas><div class="ph">서명</div></td>
+    <td class="cell-in nmcell"><input type="text" data-k="rco"><canvas class="nmink"></canvas><button type="button" class="penbtn" title="손글씨">✍</button></td>
+    <td class="cell-in nmcell"><input type="text" data-k="rname"><canvas class="nmink"></canvas><button type="button" class="penbtn" title="손글씨">✍</button></td>
+    <td class="rsig" data-side="r"><canvas></canvas><div class="ph">서명</div></td>`;
+  tr.querySelectorAll('.rsig').forEach(c=>c.addEventListener('click',function(){ openSig2(this); }));
+  tr.querySelectorAll('.penbtn').forEach(b=>b.addEventListener('click',function(e){ e.stopPropagation(); openNm(this.closest('.nmcell')); }));
   return tr;
 }
-function addRow(){ const b=document.getElementById('rows'); b.appendChild(makeRow(b.children.length+1)); }
-function buildRows(k){ const b=document.getElementById('rows'); b.innerHTML=''; for(let i=1;i<=k;i++) b.appendChild(makeRow(i)); }
+function rosterRows(){ return [...document.querySelectorAll('#rbody > tr')].slice(2); }
+function updateVlabel(){ const v=document.getElementById('vlabel'); if(v) v.rowSpan=2+rosterRows().length; }
+function addRow(){ document.getElementById('rbody').appendChild(makeRosterRow()); updateVlabel(); }
+function buildRows(k){ rosterRows().forEach(r=>r.remove()); const b=document.getElementById('rbody'); for(let i=0;i<k;i++) b.appendChild(makeRosterRow()); updateVlabel(); }
 
 const modal=document.getElementById('modal'), padBig=document.getElementById('padBig'), bctx=padBig.getContext('2d');
 let drawing=false, hasInk=false, last=null;
@@ -218,6 +313,12 @@ function openSig(cell){ const tr=cell.closest('tr'); const nm=tr.querySelector('
   document.getElementById('mTitle').textContent=nm?nm+' 님 서명':'서명'; modal.classList.add('show'); requestAnimationFrame(sizeBig); }
 function openNm(cell){ curTarget={ cnv:cell.querySelector('.nmink'), box:cell, done:()=>cell.classList.add('inked'), clear:()=>cell.classList.remove('inked') };
   document.getElementById('mTitle').textContent='성명 (손글씨)'; modal.classList.add('show'); requestAnimationFrame(sizeBig); }
+function openAppr(cell){ curTarget={ cnv:cell.querySelector('canvas'), box:cell, done:()=>{ cell.querySelector('.ph').style.display='none'; }, clear:()=>{ cell.querySelector('.ph').style.display=''; } };
+  document.getElementById('mTitle').textContent=(cell.dataset.appr||'')+' 서명'; modal.classList.add('show'); requestAnimationFrame(sizeBig); }
+function openSig2(cell){ curTarget={ cnv:cell.querySelector('canvas'), box:cell, done:()=>{ cell.querySelector('.ph').style.display='none'; }, clear:()=>{ cell.querySelector('.ph').style.display=''; } };
+  const tr=cell.closest('tr'), side=cell.dataset.side;
+  const nm=tr?(tr.querySelector(side==='l'?'[data-k=lname]':'[data-k=rname]')||{}).value:'';
+  document.getElementById('mTitle').textContent=nm?nm+' 님 서명':'서명'; modal.classList.add('show'); requestAnimationFrame(sizeBig); }
 function closeModal(){ modal.classList.remove('show'); }
 function undoBig(){ bctx.save(); bctx.setTransform(1,0,0,1,0,0); bctx.clearRect(0,0,padBig.width,padBig.height); bctx.restore(); hasInk=false; }
 function confirmSig(){ const t=curTarget; if(!t){ closeModal(); return; }
@@ -254,20 +355,25 @@ window.addEventListener('beforeprint', updatePhotoPrint);
 function setPrintTitle(){ document.title=(((document.getElementById('site')&&document.getElementById('site').value)?document.getElementById('site').value+'_':'')+'합동안전보건점검일지_'+((document.getElementById('day')||{}).value||new Date().toISOString().slice(0,10))).replace(/[\\/:*?"<>|]/g,'_'); }
 window.addEventListener('beforeprint', setPrintTitle);
 function printDoc(){ updatePhotoPrint(); setPrintTitle(); window.print(); }
-function setToday(){ document.getElementById('day').value=new Date().toISOString().slice(0,10); }
+function setToday(){ document.getElementById('day').value=new Date().toISOString().slice(0,10); syncHead(); }
 function allC(){ return [...document.querySelectorAll('[data-c]')]; }
-function segVal(k){ const s=document.querySelector(`.seg[data-k="${k}"]`); return s.querySelector('.n.on')?'n':'y'; }
 function clearAll(){ if(!confirm('입력한 내용과 서명을 모두 지울까요?'))return; try{localStorage.removeItem('jointDraft');}catch(e){}
   buildSites(); buildChecks(); buildRows(ROWS_DEFAULT); buildPhotos(PHOTO_DEFAULT); setToday();
-  document.getElementById('place').value=''; document.getElementById('inspector').value=''; allC().forEach(el=>el.value=''); }
+  document.getElementById('place').value=''; document.getElementById('inspector').value=''; allC().forEach(el=>el.value='');
+  document.querySelectorAll('.apprcell').forEach(c=>{ const cn=c.querySelector('canvas'); cn.getContext('2d').clearRect(0,0,cn.width,cn.height); c.querySelector('.ph').style.display=''; });
+  syncHead(); }
 function saveDraft(){
   const data={ site:document.getElementById('site').value, day:day.value, place:document.getElementById('place').value, inspector:document.getElementById('inspector').value,
     fields:Object.fromEntries(allC().map(el=>[el.dataset.c,el.value])),
-    checks:Object.fromEntries([...document.querySelectorAll('.seg')].map(s=>[s.dataset.k, segVal(s.dataset.k)])),
+    results:Object.fromEntries([...document.querySelectorAll('[data-r]')].map(el=>[el.dataset.r, el.value])),
     bigo:Object.fromEntries([...document.querySelectorAll('[data-b]')].map(el=>[el.dataset.b, el.value])),
-    rows:[...document.querySelectorAll('#rows tr')].map(tr=>({ gb:tr.querySelector('[data-k=gb]').value, job:tr.querySelector('[data-k=job]').value, nm:tr.querySelector('[data-k=nm]').value,
-      nmSig:tr.querySelector('.nmcell').classList.contains('inked')?tr.querySelector('.nmink').toDataURL('image/png'):'',
-      sig:(tr.querySelector('.sigcell .ph').style.display==='none')?tr.querySelector('.sigcell canvas').toDataURL('image/png'):'' })),
+    appr:Object.fromEntries([...document.querySelectorAll('.apprcell')].map(c=>[c.dataset.appr,(c.querySelector('.ph').style.display==='none')?c.querySelector('canvas').toDataURL('image/png'):''])),
+    rows:rosterRows().map(tr=>{ const c=tr.querySelectorAll('.rsig'); const nm={};
+      tr.querySelectorAll('.nmcell').forEach(cell=>{ const k=cell.querySelector('input').dataset.k; nm[k]=cell.classList.contains('inked')?cell.querySelector('.nmink').toDataURL('image/png'):''; });
+      return { ljob:tr.querySelector('[data-k=ljob]').value, lname:tr.querySelector('[data-k=lname]').value,
+        rco:tr.querySelector('[data-k=rco]').value, rname:tr.querySelector('[data-k=rname]').value, nm:nm,
+        lsig:(c[0].querySelector('.ph').style.display==='none')?c[0].querySelector('canvas').toDataURL('image/png'):'',
+        rsig:(c[1].querySelector('.ph').style.display==='none')?c[1].querySelector('canvas').toDataURL('image/png'):'' }; }),
     photos:[...document.querySelectorAll('#photogrid .pslot')].map(p=>({ img:p.classList.contains('has')?p.querySelector('img').src:'', content:p.querySelector('[data-pk=content]').value, loc:p.querySelector('[data-pk=loc]').value, date:p.querySelector('[data-pk=date]').value })) };
   try{ localStorage.setItem('jointDraft',JSON.stringify(data)); alert('임시저장 완료.'); }catch(e){ alert('저장 실패: '+e.message); }
 }
@@ -277,23 +383,30 @@ function loadDraft(){
   buildSites(); if(d.site) document.getElementById('site').value=d.site;
   day.value=d.day||''; document.getElementById('place').value=d.place||''; document.getElementById('inspector').value=d.inspector||'';
   buildChecks();
-  if(d.checks) Object.entries(d.checks).forEach(([k,v])=>{ const s=document.querySelector(`.seg[data-k="${k}"]`); if(s){ s.querySelector('.y').classList.toggle('on',v==='y'); s.querySelector('.n').classList.toggle('on',v==='n'); }});
+  if(d.results) Object.entries(d.results).forEach(([k,v])=>{ const el=document.querySelector(`[data-r="${k}"]`); if(el) el.value=v; });
   if(d.bigo) Object.entries(d.bigo).forEach(([k,v])=>{ const el=document.querySelector(`[data-b="${k}"]`); if(el) el.value=v; });
   if(d.fields) allC().forEach(el=>{ if(d.fields[el.dataset.c]!=null) el.value=d.fields[el.dataset.c]; });
+  if(d.appr) Object.entries(d.appr).forEach(([who,img])=>{ if(!img)return; const cell=document.querySelector('.apprcell[data-appr="'+who+'"]'); if(!cell)return; const cn=cell.querySelector('canvas'), im=new Image();
+    im.onload=()=>{ const r=cell.getBoundingClientRect(); cn.width=r.width*DPR; cn.height=50*DPR; cn.getContext('2d').drawImage(im,0,0,cn.width,cn.height); }; im.src=img; cell.querySelector('.ph').style.display='none'; });
   buildRows(Math.max((d.rows||[]).length,ROWS_DEFAULT));
-  const trs=document.querySelectorAll('#rows tr');
-  (d.rows||[]).forEach((rd,i)=>{ const tr=trs[i]; if(!tr)return;
-    if(rd.gb) tr.querySelector('[data-k=gb]').value=rd.gb; tr.querySelector('[data-k=job]').value=rd.job||''; tr.querySelector('[data-k=nm]').value=rd.nm||'';
-    if(rd.nmSig){ const cell=tr.querySelector('.nmcell'), img=new Image(), cnv=tr.querySelector('.nmink'), r=cell.getBoundingClientRect();
-      img.onload=()=>{ cnv.width=r.width*DPR; cnv.height=44*DPR; cnv.getContext('2d').drawImage(img,0,0,cnv.width,cnv.height); }; img.src=rd.nmSig; cell.classList.add('inked'); }
-    if(rd.sig){ const img=new Image(), cnv=tr.querySelector('.sigcell canvas'), r=tr.querySelector('.sigcell').getBoundingClientRect();
-      img.onload=()=>{ cnv.width=r.width*DPR; cnv.height=44*DPR; cnv.getContext('2d').drawImage(img,0,0,cnv.width,cnv.height); };
-      img.src=rd.sig; tr.querySelector('.sigcell .ph').style.display='none'; }
+  const trs=rosterRows();
+  function drawInto(cell,url){ const cnv=cell.querySelector('canvas'), img=new Image();
+    img.onload=()=>{ const r=cell.getBoundingClientRect(); cnv.width=r.width*DPR; cnv.height=40*DPR; cnv.getContext('2d').drawImage(img,0,0,cnv.width,cnv.height); };
+    img.src=url; cell.querySelector('.ph').style.display='none'; }
+  function drawNm(cell,url){ const cnv=cell.querySelector('.nmink'), img=new Image();
+    img.onload=()=>{ const r=cell.getBoundingClientRect(); cnv.width=r.width*DPR; cnv.height=(r.height||40)*DPR; cnv.getContext('2d').drawImage(img,0,0,cnv.width,cnv.height); };
+    img.src=url; cell.classList.add('inked'); }
+  (d.rows||[]).forEach((rd,i)=>{ const tr=trs[i]; if(!tr)return; const c=tr.querySelectorAll('.rsig');
+    tr.querySelector('[data-k=ljob]').value=rd.ljob||''; tr.querySelector('[data-k=lname]').value=rd.lname||'';
+    tr.querySelector('[data-k=rco]').value=rd.rco||''; tr.querySelector('[data-k=rname]').value=rd.rname||'';
+    if(rd.nm) Object.entries(rd.nm).forEach(([k,url])=>{ if(!url)return; const inp=tr.querySelector('[data-k='+k+']'); const cell=inp&&inp.closest('.nmcell'); if(cell) drawNm(cell,url); });
+    if(rd.lsig) drawInto(c[0],rd.lsig); if(rd.rsig) drawInto(c[1],rd.rsig);
   });
   const ph=(d.photos&&d.photos.length)?d.photos:null; buildPhotos(ph?ph.length:PHOTO_DEFAULT);
   if(ph){ const slots=document.querySelectorAll('#photogrid .pslot'); ph.forEach((p,i)=>{ const s=slots[i]; if(!s)return;
     if(p.content!=null) s.querySelector('[data-pk=content]').value=p.content; if(p.loc!=null) s.querySelector('[data-pk=loc]').value=p.loc; if(p.date!=null) s.querySelector('[data-pk=date]').value=p.date;
     if(p.img) setPhoto(s,p.img); }); }
+  syncHead();
   return true;
 }
 buildSites();
