@@ -82,6 +82,10 @@
     .lbl,table.log thead th{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
     .page2{ break-before:page; page-break-before:always; margin-top:0; }
     table.doc td,table.doc th{ padding:4px 6px; }
+    /* PAGEBREAK_SIGN_TABLE: 서명/명단 표는 하단부터 채우고 다음 장으로 이어짐, 행 잘림 방지, 머리글 반복 */
+    table{ break-inside:auto; }
+    tr{ break-inside:avoid; }
+    thead{ display:table-header-group; }
     @page{ size:A4 portrait; margin:8mm; }
   }
 </style>

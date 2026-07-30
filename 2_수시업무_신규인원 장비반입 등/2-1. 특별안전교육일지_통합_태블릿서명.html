@@ -91,6 +91,10 @@
     .photopage.nophoto{ display:none !important; } .photopage:not(.nophoto){ break-before:page; page-break-before:always; }
     .phhead{ background:var(--hdbg) !important; color:var(--hd) !important; border:1.5px solid var(--line); border-bottom:none; border-radius:0; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
     .pslot{ break-inside:avoid; } .pslot .frame{ background:#fff; aspect-ratio:auto; height:300px; }
+    /* PAGEBREAK_SIGN_TABLE: 서명/명단 표는 하단부터 채우고 다음 장으로 이어짐, 행 잘림 방지, 머리글 반복 */
+    table{ break-inside:auto; }
+    tr{ break-inside:avoid; }
+    thead{ display:table-header-group; }
     @page{ size:A4 portrait; margin:8mm; }
   }
 </style>

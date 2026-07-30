@@ -89,6 +89,10 @@
     .pslot .frame{ background:#fff; aspect-ratio:auto; height:300px; }
     table.pmeta input::placeholder{ color:transparent !important; }
     thead th,.bl,.sec .h,.chk.on .b,table.pmeta td.pl,table.appr .lab,table.appr .who{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    /* PAGEBREAK_SIGN_TABLE: 서명/명단 표는 하단부터 채우고 다음 장으로 이어짐, 행 잘림 방지, 머리글 반복 */
+    table{ break-inside:auto; }
+    tr{ break-inside:avoid; }
+    thead{ display:table-header-group; }
     @page{ size:A4 portrait; margin:9mm; }
   }
 </style>

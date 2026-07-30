@@ -46,28 +46,28 @@
   .mini{ border:1px solid #fff; background:rgba(255,255,255,.2); color:#fff; font-size:11px; font-weight:700; border-radius:5px; padding:3px 9px; cursor:pointer; font-family:inherit; }
   .subjblk .subjt{ font-weight:700; color:var(--hd); padding:7px 12px 2px; font-size:13.5px; }
   .subjblk:not(:first-child) .subjt{ border-top:1px solid var(--line); margin-top:2px; }
-  table{ width:100%; border-collapse:collapse; font-size:13px; margin-top:10px; }
-  th,td{ border:1px solid var(--line); padding:5px 6px; text-align:center; vertical-align:middle; }
+  table{ width:100%; border-collapse:collapse; font-size:13px; margin-top:6px; }
+  th,td{ border:1px solid var(--line); padding:3px 6px; text-align:center; vertical-align:middle; }
   thead th{ background:var(--hdbg); color:var(--hd); font-size:12px; }
   td.lbl{ background:var(--hdbg); color:var(--hd); font-weight:700; white-space:nowrap; }
-  .cnt input{ width:60px; border:none; text-align:center; font-size:14px; font-family:inherit; padding:4px 2px; }
+  .cnt input{ width:60px; border:none; text-align:center; font-size:14px; font-family:inherit; padding:2px 2px; }
   .cnt .gye{ background:#f3f6fb; }
   td.left{ text-align:left; } td.reason{ padding:0; } td.reason textarea{ width:100%; min-height:70px; border:none; font-family:inherit; font-size:13px; padding:6px; resize:vertical; }
   /* 교육과목 */
   .subj{ border:1.5px solid var(--line); margin-top:10px; }
   .subj .sh{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:7px 10px; font-size:13.5px; border-bottom:1px solid var(--line); }
-  .subj ul{ margin:0; padding:8px 12px 10px 26px; font-size:13.5px; line-height:1.75; }
+  .subj ul{ margin:0; padding:6px 12px 6px 26px; font-size:13.5px; line-height:1.5; }
   .subj li{ margin:2px 0; }
-  td.cell-in input{ width:100%; border:none; text-align:center; font-size:14px; font-family:inherit; padding:6px 2px; background:transparent; }
+  td.cell-in input{ width:100%; border:none; text-align:center; font-size:14px; font-family:inherit; padding:3px 2px; background:transparent; }
   td.cell-in input:focus{ outline:2px solid var(--accent); outline-offset:-2px; }
   .cofill{ display:flex; } .cofill input{ flex:1; } .cofill .fillbtn{ flex:0 0 auto; width:28px; border:none; border-left:1px solid #ccc; background:#eef3fb; color:var(--accent); font-size:13px; font-weight:800; cursor:pointer; }
   .colno{ width:38px; } .colco{ width:34%; } .colnm{ width:24%; } .colsig{ width:auto; }
   .nmcell{ position:relative; }
-  .nmcell canvas.nmink{ position:absolute; inset:0; width:100%; height:46px; display:none; pointer-events:none; }
+  .nmcell canvas.nmink{ position:absolute; inset:0; width:100%; height:36px; display:none; pointer-events:none; }
   .nmcell.inked canvas.nmink{ display:block; } .nmcell.inked input{ visibility:hidden; }
   .nmcell .penbtn{ position:absolute; top:3px; right:3px; width:22px; height:22px; border:none; background:#eef3fb; color:var(--accent); border-radius:5px; font-size:12px; font-weight:800; cursor:pointer; z-index:2; padding:0; }
-  .sigcell{ position:relative; height:46px; padding:0; cursor:pointer; }
-  .sigcell canvas{ display:block; width:100%; height:46px; }
+  .sigcell{ position:relative; height:36px; padding:0; cursor:pointer; }
+  .sigcell canvas{ display:block; width:100%; height:36px; }
   .sigcell .ph{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:12px; pointer-events:none; }
   .subtit{ font-weight:700; color:var(--hd); margin:14px 0 4px; font-size:14px; }
   textarea#note{ width:100%; min-height:56px; border:1.5px solid var(--line); font-size:14px; font-family:inherit; padding:8px; resize:vertical; margin-top:4px; }
@@ -98,6 +98,7 @@
     .selector,.controls,.modal,.cofill .fillbtn,.nmcell .penbtn,.phnote,.pslot .del,.pslot .add,.phhead button{ display:none !important; }
     thead th,td.lbl,.irow .l,.gubun,.subj .sh,table.appr .lab,table.appr .who,.chk.on .b{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
     table,tr{ break-inside:avoid; }
+    #tbl{ break-inside:auto; } #tbl thead{ display:table-header-group; }
     .photopage.nophoto{ display:none !important; } .photopage:not(.nophoto){ break-before:page; page-break-before:always; }
     .phhead{ background:var(--hdbg) !important; color:var(--hd) !important; border:1.5px solid var(--line); border-bottom:none; border-radius:0; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
     .pslot{ break-inside:avoid; } .pslot .frame{ background:#fff; aspect-ratio:auto; height:300px; }
@@ -184,7 +185,7 @@
 <script src="../sites.js"></script>
 <script src="./교육통합_data.js"></script>
 <script>
-const ROWS_DEFAULT=12, DPR=Math.max(window.devicePixelRatio||1,2);
+const ROWS_DEFAULT=8, DPR=Math.max(window.devicePixelRatio||1,2);
 const EDU=(window.EDU||[]);
 const ONLYCAT='일반교육';
 const DEFAULT_SITES=["아르시엘 방배 732 공동주택 신축공사","이태원동 106-2 단독주택 신축현장","보라동 20-1 단독주택 신축현장","평창동 496-4 단독주택"];
@@ -234,11 +235,11 @@ function posBig(e){ const r=padBig.getBoundingClientRect(); return {x:e.clientX-
 padBig.addEventListener('pointerdown',e=>{ e.preventDefault(); drawing=true; last=posBig(e); try{padBig.setPointerCapture(e.pointerId);}catch(_){}; bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(last.x+0.1,last.y+0.1); bctx.stroke(); hasInk=true; });
 padBig.addEventListener('pointermove',e=>{ if(!drawing)return; e.preventDefault(); const p=posBig(e); bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(p.x,p.y); bctx.stroke(); last=p; hasInk=true; });
 padBig.addEventListener('pointerup',()=>drawing=false); padBig.addEventListener('pointercancel',()=>drawing=false);
-function openSig(cell){ const isAppr=cell.classList.contains('signcell'); const h=isAppr?50:46;
+function openSig(cell){ const isAppr=cell.classList.contains('signcell'); const h=isAppr?50:36;
   curTarget={ cnv:cell.querySelector('canvas'), box:cell, h:h, done:()=>{ cell.querySelector('.ph').style.display='none'; }, clear:()=>{ cell.querySelector('.ph').style.display=''; } };
   const tr=cell.closest('tr'); const nm=tr?(tr.querySelector('[data-k=nm]')||{}).value:''; document.getElementById('mTitle').textContent=isAppr?((cell.dataset.appr||'')+' 서명'):(nm?nm+' 님 서명':'서명');
   modal.classList.add('show'); requestAnimationFrame(sizeBig); }
-function openNm(cell){ curTarget={ cnv:cell.querySelector('.nmink'), box:cell, h:46, done:()=>cell.classList.add('inked'), clear:()=>cell.classList.remove('inked') };
+function openNm(cell){ curTarget={ cnv:cell.querySelector('.nmink'), box:cell, h:36, done:()=>cell.classList.add('inked'), clear:()=>cell.classList.remove('inked') };
   document.getElementById('mTitle').textContent='성명 (손글씨)'; modal.classList.add('show'); requestAnimationFrame(sizeBig); }
 function closeModal(){ modal.classList.remove('show'); }
 function undoBig(){ bctx.save(); bctx.setTransform(1,0,0,1,0,0); bctx.clearRect(0,0,padBig.width,padBig.height); bctx.restore(); hasInk=false; }
@@ -307,9 +308,9 @@ function loadDraft(){
   const trs=document.querySelectorAll('#rows tr');
   rows.forEach((rd,i)=>{ const tr=trs[i]; if(!tr)return; tr.querySelector('[data-k=co]').value=rd.co||''; tr.querySelector('[data-k=nm]').value=rd.nm||'';
     if(rd.nmSig){ const cell=tr.querySelector('.nmcell'), img=new Image(), cnv=tr.querySelector('.nmink'), r=cell.getBoundingClientRect();
-      img.onload=()=>{ cnv.width=r.width*DPR; cnv.height=46*DPR; cnv.getContext('2d').drawImage(img,0,0,cnv.width,cnv.height); }; img.src=rd.nmSig; cell.classList.add('inked'); }
+      img.onload=()=>{ cnv.width=r.width*DPR; cnv.height=36*DPR; cnv.getContext('2d').drawImage(img,0,0,cnv.width,cnv.height); }; img.src=rd.nmSig; cell.classList.add('inked'); }
     if(rd.sig){ const img=new Image(), cnv=tr.querySelector('.sigcell canvas'), r=tr.querySelector('.sigcell').getBoundingClientRect();
-      img.onload=()=>{ cnv.width=r.width*DPR; cnv.height=46*DPR; cnv.getContext('2d').drawImage(img,0,0,cnv.width,cnv.height); }; img.src=rd.sig; tr.querySelector('.sigcell .ph').style.display='none'; } });
+      img.onload=()=>{ cnv.width=r.width*DPR; cnv.height=36*DPR; cnv.getContext('2d').drawImage(img,0,0,cnv.width,cnv.height); }; img.src=rd.sig; tr.querySelector('.sigcell .ph').style.display='none'; } });
   const ph=(d.photos&&d.photos.length)?d.photos:null; buildPhotos(ph?ph.length:PHOTO_DEFAULT);
   if(ph){ const slots=document.querySelectorAll('#photogrid .pslot'); ph.forEach((p,i)=>{ const s=slots[i]; if(!s)return; if(p.content!=null) s.querySelector('[data-pk=content]').value=p.content; if(p.loc!=null) s.querySelector('[data-pk=loc]').value=p.loc; if(p.date!=null) s.querySelector('[data-pk=date]').value=p.date; if(p.img) setPhoto(s,p.img); }); }
   return true;
