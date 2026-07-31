@@ -29,6 +29,17 @@
   .updbar input{ border:none; border-bottom:1.2px solid #999; font-family:inherit; font-size:15px; padding:3px 6px; color:#111; }
   .updbar input:focus{ outline:none; border-bottom-color:var(--accent); }
   .hbar{ height:2px; background:var(--line); margin:0 8%; }
+  /* 노사협의체 구성 조직도 */
+  #d-nosa .ncols{ display:flex; gap:24px; margin-top:12px; align-items:flex-start; }
+  #d-nosa .ncol{ flex:1; min-width:0; }
+  #d-nosa .nside{ text-align:center; font-weight:800; color:#fff; background:var(--hd); padding:7px; border-radius:6px; margin-bottom:10px; letter-spacing:2px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  #d-nosa .node{ margin:0 0 9px; display:flex; align-items:center; gap:8px; text-align:left; }
+  #d-nosa .node .role{ flex:0 0 auto; min-width:42px; margin:0; border:none; text-align:center; }
+  #d-nosa .node input{ flex:1; margin-top:0; border-top:none; border-bottom:1px solid #aaa; text-align:left; }
+  #d-nosa .node.chair{ max-width:300px; min-height:58px; }
+  #d-nosa .nhead{ display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:6px 16px; font-size:14px; font-weight:700; color:var(--hd); border-bottom:1px solid #ccc; padding-bottom:8px; margin-bottom:16px; }
+  #d-nosa .nhead input{ border:none; border-bottom:1px solid #999; font-family:inherit; font-size:14px; padding:3px 4px; }
+  #d-nosa .nsite-v{ font-weight:700; color:var(--hd); }
   table{ width:100%; border-collapse:collapse; font-size:13px; margin-top:16px; }
   th,td{ border:1px solid var(--line); padding:6px 8px; text-align:center; vertical-align:middle; }
   thead th{ background:var(--hdbg); color:var(--hd); }
@@ -75,6 +86,7 @@
      <option value="safety">안전보건관리조직도</option>
      <option value="disaster">재난(수방·방화)관리 조직도</option>
      <option value="emer">비상연락망</option>
+     <option value="nosa">노사협의체 구성 조직도</option>
    </select>
    <span class="site">현장명 <input type="text" data-k="site" placeholder="현장명 입력"></span>
  </div>
@@ -186,6 +198,40 @@
     </div>
   </div>
 
+  <!-- ============ 노사협의체 구성 조직도 ============ -->
+  <div class="doc" id="d-nosa">
+    <h1>노사협의체 구성 조직도</h1>
+    <div class="nhead">
+      <span>현장명 <span id="n_site_txt" class="nsite-v"></span></span>
+      <span>구성(변경)일자 : <input type="date" data-k="n_date"></span>
+    </div>
+    <div class="center"><div class="node chair"><div class="role">위원장</div><input type="text" data-k="n_chair"></div></div>
+    <div class="vline"></div>
+    <div class="ncols">
+      <div class="ncol">
+        <div class="nside">근로자 측</div>
+        <div class="node"><div class="role">대표</div><input type="text" data-k="n_lrep"></div>
+        <div class="node"><div class="role">위원</div><input type="text" data-k="n_lw1"></div>
+        <div class="node"><div class="role">위원</div><input type="text" data-k="n_lw2"></div>
+        <div class="node"><div class="role">위원</div><input type="text" data-k="n_lw3"></div>
+        <div class="node"><div class="role">위원</div><input type="text" data-k="n_lw4"></div>
+        <div class="node"><div class="role">위원</div><input type="text" data-k="n_lw5"></div>
+        <div class="node"><div class="role">위원</div><input type="text" data-k="n_lw6"></div>
+      </div>
+      <div class="ncol">
+        <div class="nside">사용자 측</div>
+        <div class="node"><div class="role">대표</div><input type="text" data-k="n_urep"></div>
+        <div class="node"><div class="role">위원</div><input type="text" data-k="n_uw1"></div>
+        <div class="node"><div class="role">위원</div><input type="text" data-k="n_uw2"></div>
+        <div class="node"><div class="role">위원</div><input type="text" data-k="n_uw3"></div>
+        <div class="node"><div class="role">위원</div><input type="text" data-k="n_uw4"></div>
+        <div class="node"><div class="role">위원</div><input type="text" data-k="n_uw5"></div>
+        <div class="node"><div class="role">위원</div><input type="text" data-k="n_uw6"></div>
+        <div class="node"><div class="role">간사</div><input type="text" data-k="n_sec"></div>
+      </div>
+    </div>
+  </div>
+
  </div>
 </div>
 
@@ -201,10 +247,12 @@ function showDoc(){
   const v=document.getElementById('doc').value;
   document.querySelectorAll('.doc').forEach(d=>d.classList.remove('on'));
   document.getElementById('d-'+v).classList.add('on');
+  syncNSite();
 }
+function syncNSite(){ const s=(document.querySelector('[data-k=site]')||{}).value||''; const el=document.getElementById('n_site_txt'); if(el) el.textContent=s; }
 function allK(){ return [...document.querySelectorAll('[data-k]')]; }
 function setPrintTitle(){
-  const label={safety:'안전보건관리조직도',disaster:'재난관리조직도',emer:'비상연락망'}[document.getElementById('doc').value];
+  const label={safety:'안전보건관리조직도',disaster:'재난관리조직도',emer:'비상연락망',nosa:'노사협의체구성조직도'}[document.getElementById('doc').value];
   const site=(document.querySelector('[data-k=site]')||{}).value||'';
   const d=new Date().toISOString().slice(0,10);
   document.title=(label+'_'+site+'_'+d).replace(/[\\/:*?"<>|]/g,'_');
@@ -225,6 +273,7 @@ function loadDraft(){
   return true;
 }
 loadDraft();
+(function(){ const si=document.querySelector('[data-k=site]'); if(si) si.addEventListener('input',syncNSite); syncNSite(); })();
 </script>
 </body>
 </html>

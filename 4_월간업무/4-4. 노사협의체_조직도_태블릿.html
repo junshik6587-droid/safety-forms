@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>노사협의체 구성 조직도</title>
+<style>
+  :root{ --line:#333; --hd:#1f4e79; --hdbg:#dbe5f1; --accent:#1f6feb; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; font-family:"맑은 고딕","Malgun Gothic",AppleGothic,sans-serif; color:#111; background:#f2f4f7; }
+  .wrap{ max-width:900px; margin:0 auto; padding:12px; }
+  .paper{ background:#fff; padding:22px 24px 28px; box-shadow:0 1px 6px rgba(0,0,0,.15); }
+  h1{ text-align:center; font-size:23px; margin:24px 0 80px; letter-spacing:4px; font-weight:800; }
+  .co{ text-align:left; font-weight:700; color:var(--hd); font-size:13px; letter-spacing:.5px; margin-bottom:10px; }
+  .hdrow{ display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:8px 16px; font-size:14px; font-weight:700; color:var(--hd); border-bottom:1px solid #ccc; padding-bottom:8px; margin-bottom:64px; }
+  .hdrow .sitesel{ font-size:14px; font-weight:700; padding:5px 8px; font-family:inherit; border:1.5px solid var(--accent); border-radius:5px; color:var(--hd); }
+  .hdrow input{ border:none; border-bottom:1px solid #999; font-family:inherit; font-size:14px; padding:3px 4px; }
+  /* 조직도 */
+  .chairwrap{ display:flex; justify-content:center; }
+  .vconn{ width:2px; height:72px; background:var(--line); margin:0 auto; }
+  .cols{ display:flex; gap:26px; margin-top:0; align-items:flex-start; }
+  .col{ flex:1; min-width:0; }
+  .side{ text-align:center; font-weight:800; color:#fff; background:var(--hd); padding:7px; border-radius:6px; margin-bottom:10px; letter-spacing:2px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .node{ border:1.8px solid var(--line); border-radius:6px; padding:7px 9px; margin:0 auto 9px; display:flex; align-items:center; gap:8px; background:#fff; }
+  .node .role{ font-weight:700; color:var(--hd); font-size:12.5px; white-space:nowrap; flex:0 0 auto; min-width:42px; text-align:center; }
+  .node.chair{ max-width:300px; border-width:2.4px; min-height:64px; }
+  .node input{ flex:1; min-width:0; border:none; border-bottom:1px solid #aaa; font-family:inherit; font-size:14px; padding:4px 4px; background:transparent; }
+  .node input:focus{ outline:none; border-bottom-color:var(--accent); }
+  .delw{ flex:0 0 auto; border:none; background:#fdeaea; color:#b02a2a; border-radius:5px; width:22px; height:22px; font-size:14px; font-weight:800; cursor:pointer; padding:0; }
+  .addbtn{ display:block; width:100%; border:1.4px dashed #9fb2cc; background:#f2f6fc; color:var(--accent); border-radius:7px; padding:8px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; margin-top:2px; }
+  /* 손글씨 */
+  .hwcell{ display:inline-flex; align-items:center; gap:2px; flex:1; min-width:0; }
+  .hwf{ position:relative; display:block; flex:1 1 auto; min-width:0; }
+  .hwf > input{ width:100%; }
+  .hwink{ position:absolute; inset:0; width:100%; height:100%; display:none; pointer-events:none; }
+  .hwcell.inked .hwink{ display:block; }
+  .hwcell.inked > .hwf > input{ visibility:hidden; }
+  .pen{ flex:0 0 auto; border:none; background:#eef3fb; color:var(--accent); border-radius:5px; font-size:12px; font-weight:800; width:24px; height:24px; cursor:pointer; padding:0; }
+  .pen:active{ background:var(--accent); color:#fff; }
+  .controls{ position:sticky; bottom:0; z-index:20; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:12px; background:rgba(242,244,247,.95); margin-top:16px; }
+  .btn{ border:none; border-radius:8px; padding:12px 18px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; }
+  .btn.p{ background:var(--accent); color:#fff; } .btn.g{ background:#5b6470; color:#fff; } .btn.d{ background:#fff; color:#333; border:1.5px solid #bbb; }
+  .modal{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:50; } .modal.show{ display:flex; }
+  .msheet{ background:#fff; border-radius:14px; width:min(94vw,720px); padding:16px; } .msheet h3{ margin:0 0 4px; font-size:17px; text-align:center; } .msheet p{ margin:0 0 10px; text-align:center; color:#666; font-size:13px; }
+  .padwrap{ border:2px dashed #9aa4b0; border-radius:10px; background:#fff; } #padBig{ display:block; width:100%; height:300px; touch-action:none; border-radius:10px; }
+  .msheet .row{ display:flex; gap:10px; margin-top:12px; } .msheet .row .btn{ flex:1; }
+  @media print{
+    body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:5.2em 0 0; }
+    .hdrow .sitesel{ border:none; } .controls,.modal,.pen,.delw,.addbtn{ display:none !important; }
+    @page{ size:A4 portrait; margin:10mm; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="paper">
+  <h1>노사협의체 구성 조직도</h1>
+  <div class="co">(주)디아키즈건설</div>
+  <div class="hdrow">
+    <span>현장명 <select id="site" class="sitesel"></select></span>
+    <span>구성(변경)일자 : <input type="date" data-k="setdate"></span>
+  </div>
+
+  <div class="org">
+    <div class="chairwrap"><div class="node chair"><span class="role">위원장</span><input type="text" class="hw" data-k="chair"></div></div>
+    <div class="vconn"></div>
+
+    <div class="cols">
+      <div class="col">
+        <div class="side">근로자 측</div>
+        <div class="node"><span class="role">대표</span><input type="text" class="hw" data-k="lrep"></div>
+        <div id="lwList"></div>
+        <button type="button" class="addbtn" onclick="addWiwon('l')">＋ 근로자 위원 추가</button>
+      </div>
+      <div class="col">
+        <div class="side">사용자 측</div>
+        <div class="node"><span class="role">대표</span><input type="text" class="hw" data-k="urep"></div>
+        <div id="uwList"></div>
+        <button type="button" class="addbtn" onclick="addWiwon('u')">＋ 사용자 위원 추가</button>
+        <div class="node" style="margin-top:9px"><span class="role">간사</span><input type="text" class="hw" data-k="usec"></div>
+      </div>
+    </div>
+  </div>
+ </div>
+</div>
+
+<div class="controls">
+  <button class="btn p" onclick="printDoc()">📄 PDF로 저장 / 인쇄</button>
+  <button class="btn d" onclick="saveDraft()">💾 임시저장</button>
+  <button class="btn g" onclick="clearAll()">전체 초기화</button>
+  <a class="btn d" href="../index.html" style="text-decoration:none">← 메인</a>
+</div>
+
+<div class="modal" id="modal">
+  <div class="msheet">
+    <h3 id="mTitle">손글씨 입력</h3><p>아래 칸에 손가락 또는 스타일러스로 쓰세요</p>
+    <div class="padwrap"><canvas id="padBig"></canvas></div>
+    <div class="row"><button class="btn d" onclick="undoBig()">↩ 지우기</button><button class="btn g" onclick="closeModal()">취소</button><button class="btn p" onclick="confirmSig()">✔ 완료</button></div>
+  </div>
+</div>
+
+<script src="../sites.js"></script>
+<script>
+const DPR=Math.max(window.devicePixelRatio||1,2);
+const LW_DEFAULT=4, UW_DEFAULT=4;
+const DEFAULT_SITES=["아르시엘 방배 732 공동주택 신축공사","이태원동 106-2 단독주택 신축현장","보라동 20-1 단독주택 신축현장","평창동 496-4 단독주택"];
+function buildSites(){ const sel=document.getElementById('site'); sel.innerHTML='';
+  ((window.SITES&&window.SITES.length)?window.SITES:DEFAULT_SITES).forEach(s=> sel.appendChild(new Option(s,s))); }
+
+/* 위원 행 */
+function makeWiwon(side,idx){
+  const div=document.createElement('div'); div.className='node';
+  div.innerHTML=`<span class="role">위원</span><input type="text" class="hw" data-k="${side}w${idx}"><button type="button" class="delw" title="삭제">×</button>`;
+  div.querySelector('.delw').addEventListener('click',()=>{ div.remove(); });
+  return div;
+}
+function addWiwon(side){ const list=document.getElementById(side+'wList'); const idx=list.children.length; list.appendChild(makeWiwon(side,idx)); initHw(); }
+function buildWiwon(side,k){ const list=document.getElementById(side+'wList'); list.innerHTML=''; for(let i=0;i<k;i++) list.appendChild(makeWiwon(side,i)); }
+
+/* 손글씨 */
+function initHw(){ document.querySelectorAll('input.hw').forEach(inp=>{ if(inp.closest('.hwcell'))return;
+  const cell=document.createElement('span'); cell.className='hwcell'; const f=document.createElement('span'); f.className='hwf';
+  inp.parentNode.insertBefore(cell,inp); f.appendChild(inp);
+  const cv=document.createElement('canvas'); cv.className='hwink'; f.appendChild(cv);
+  const btn=document.createElement('button'); btn.type='button'; btn.className='pen'; btn.textContent='✍'; btn.title='손글씨';
+  cell.appendChild(f); cell.appendChild(btn);
+  btn.addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation(); openHw(cell); }); }); }
+const modal=document.getElementById('modal'), padBig=document.getElementById('padBig'), bctx=padBig.getContext('2d');
+let drawing=false, hasInk=false, last=null, curTarget=null;
+function sizeBig(){ const r=padBig.getBoundingClientRect(); padBig.width=r.width*DPR; padBig.height=r.height*DPR;
+  bctx.setTransform(1,0,0,1,0,0); bctx.scale(DPR,DPR); bctx.lineWidth=6.4; bctx.lineCap='round'; bctx.lineJoin='round'; bctx.strokeStyle='#000'; hasInk=false; }
+function posBig(e){ const r=padBig.getBoundingClientRect(); return {x:e.clientX-r.left,y:e.clientY-r.top}; }
+function startB(e){ e.preventDefault(); drawing=true; last=posBig(e); try{ padBig.setPointerCapture(e.pointerId);}catch(_){}
+  bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(last.x+0.1,last.y+0.1); bctx.stroke(); hasInk=true; }
+function moveB(e){ if(!drawing)return; e.preventDefault(); const p=posBig(e); bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(p.x,p.y); bctx.stroke(); last=p; hasInk=true; }
+function endB(e){ if(drawing){ drawing=false; try{ padBig.releasePointerCapture(e.pointerId);}catch(_){} } }
+padBig.addEventListener('pointerdown',startB); padBig.addEventListener('pointermove',moveB);
+padBig.addEventListener('pointerup',endB); padBig.addEventListener('pointercancel',endB);
+function openHw(cell){ const f=cell.querySelector('.hwf'), cnv=cell.querySelector('.hwink');
+  curTarget={ cnv, box:f, done:()=>cell.classList.add('inked'), clear:()=>cell.classList.remove('inked') };
+  document.getElementById('mTitle').textContent='손글씨 입력'; modal.classList.add('show'); requestAnimationFrame(sizeBig); }
+function closeModal(){ modal.classList.remove('show'); }
+function undoBig(){ bctx.save(); bctx.setTransform(1,0,0,1,0,0); bctx.clearRect(0,0,padBig.width,padBig.height); bctx.restore(); hasInk=false; }
+function confirmSig(){ const t=curTarget; if(!t){ closeModal(); return; }
+  if(!hasInk){ const cx=t.cnv.getContext('2d'); cx.clearRect(0,0,t.cnv.width,t.cnv.height); t.clear(); closeModal(); return; }
+  const cnv=t.cnv, r=t.box.getBoundingClientRect(); cnv.width=r.width*DPR; cnv.height=r.height*DPR;
+  cnv.getContext('2d').drawImage(padBig,0,0,padBig.width,padBig.height,0,0,cnv.width,cnv.height); t.done(); closeModal(); }
+
+/* 저장 / 불러오기 */
+function allK(){ return [...document.querySelectorAll('[data-k]')]; }
+function setPrintTitle(){ const site=document.getElementById('site').value||'';
+  document.title=('노사협의체_구성조직도_'+site).replace(/[\\/:*?"<>|]/g,'_'); }
+window.addEventListener('beforeprint', setPrintTitle);
+function printDoc(){ setPrintTitle(); window.print(); }
+function clearAll(){ if(!confirm('입력한 내용을 모두 지울까요?'))return; try{localStorage.removeItem('nosaOrgDraft');}catch(e){}
+  buildSites(); buildWiwon('l',LW_DEFAULT); buildWiwon('u',UW_DEFAULT); initHw(); allK().forEach(el=>el.value='');
+  document.querySelectorAll('.hwcell.inked').forEach(cell=>{ cell.classList.remove('inked'); const c=cell.querySelector('.hwink'); if(c) c.getContext('2d').clearRect(0,0,c.width,c.height); }); }
+function saveDraft(){
+  const data={ site:document.getElementById('site').value, lw:document.getElementById('lwList').children.length, uw:document.getElementById('uwList').children.length,
+    vals:Object.fromEntries(allK().map(el=>[el.dataset.k, el.value])), hw:{} };
+  document.querySelectorAll('.hwcell.inked').forEach(cell=>{ const inp=cell.querySelector('input[data-k]'); if(inp) data.hw[inp.dataset.k]=cell.querySelector('.hwink').toDataURL('image/png'); });
+  try{ localStorage.setItem('nosaOrgDraft',JSON.stringify(data)); alert('임시저장 완료.'); }catch(e){ alert('저장 실패: '+e.message); }
+}
+function loadDraft(){
+  let d; try{ d=JSON.parse(localStorage.getItem('nosaOrgDraft')); }catch(e){ return false; }
+  if(!d) return false;
+  buildSites(); if(d.site) document.getElementById('site').value=d.site;
+  buildWiwon('l',Math.max(d.lw||0,1)); buildWiwon('u',Math.max(d.uw||0,1)); initHw();
+  if(d.vals) allK().forEach(el=>{ if(d.vals[el.dataset.k]!=null) el.value=d.vals[el.dataset.k]; });
+  if(d.hw) Object.entries(d.hw).forEach(([k,url])=>{ if(!url)return; const inp=document.querySelector('input[data-k="'+k+'"]'); const cell=inp&&inp.closest('.hwcell'); if(!cell)return; const cnv=cell.querySelector('.hwink'), img=new Image();
+    img.onload=()=>{ const r=cell.querySelector('.hwf').getBoundingClientRect(); cnv.width=r.width*DPR; cnv.height=(r.height||24)*DPR; cnv.getContext('2d').drawImage(img,0,0,cnv.width,cnv.height); }; img.src=url; cell.classList.add('inked'); });
+  return true;
+}
+buildSites();
+if(!loadDraft()){ buildWiwon('l',LW_DEFAULT); buildWiwon('u',UW_DEFAULT); initHw(); }
+</script>
+</body>
+</html>
