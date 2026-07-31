@@ -31,6 +31,8 @@
   .dtext{ font-size:20px; letter-spacing:3px; margin-top:8px; font-weight:600; }
   .sign{ text-align:center; font-size:21px; font-weight:700; letter-spacing:2px; margin-top:24px; }
   .sign .co{ letter-spacing:1px; }
+  .signname{ border:none; border-bottom:1.5px solid #555; font-size:20px; font-family:inherit; font-weight:700; text-align:center; padding:2px 6px; width:120px; letter-spacing:1px; }
+  .signname:focus{ outline:none; border-bottom-color:var(--accent); }
   .signbox{ position:relative; display:inline-block; width:130px; height:58px; vertical-align:middle; cursor:pointer; }
   .signbox canvas{ display:block; width:100%; height:58px; }
   .signbox .ph{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#bbb; font-size:12px; font-weight:400; letter-spacing:1px; pointer-events:none; }
@@ -45,6 +47,7 @@
     body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:18mm 22mm; }
     .selbar,.controls{ display:none !important; }
     .datewrap input[type=date]{ display:none !important; }
+    .signname{ border-bottom:none !important; }
     @page{ size:A4 portrait; margin:0; }
   }
 </style>
@@ -121,7 +124,7 @@ const APPT = {
     job:"안전보건관리책임자", title:"안전보건관리책임자 선임서", fields:["현장명","업체명","공종명","성명"],
     law:'위 사람을 「산업안전보건법」 제15조에 의거 안전보건 업무를 총괄 관리할<br><b>안전보건관리책임자</b>로 선임합니다.',
     sections:[{title:"※ 안전보건관리책임자의 업무내용", items:DUTY_MGR}],
-    signer:"현장대리인"
+    signer:"현장대리인", signName:true
   },
   "안전관리자": {
     job:"안전관리자", title:"안전관리자 선임서", fields:["현장명","성명"],
@@ -164,7 +167,7 @@ const APPT = {
       "위험성평가에 관한 사항 중 유해·위험요인의 파악 및 개선조치의 시행에 대한 참여",
       "그 밖에 해당 작업의 안전 및 보건에 관한 사항으로서 고용노동부령으로 정하는 사항"
     ]}],
-    signer:"대 표 이 사 &nbsp; 명 재 용"
+    signer:"현장대리인", signName:true
   },
   "화재감시자": {
     job:"화재감시자", title:"화재감시자 지정서", fields:["현장명","협력사명","성명"],
@@ -206,7 +209,9 @@ function render(){
   let du='';
   a.sections.forEach(sec=>{ du+='<div class="dt">'+sec.title+'</div><ol>'+sec.items.map(it=>'<li>'+it+'</li>').join('')+'</ol>'; });
   document.getElementById('duties').innerHTML=du;
-  document.getElementById('sign').innerHTML='<span class="co">'+CO+'</span> &nbsp; '+a.signer+' &nbsp; <span class="signbox" id="signbox"><canvas></canvas><div class="ph">서명</div></span>';
+  const nameField = a.signName ? ' <input type="text" class="signname" data-f="현장대리인성명" placeholder="성명"> ' : '';
+  document.getElementById('sign').innerHTML='<span class="co">'+CO+'</span> &nbsp; '+a.signer+nameField+' &nbsp; <span class="signbox" id="signbox"><canvas></canvas><div class="ph">서명</div></span>';
+  const sn=document.querySelector('.signname'); if(sn){ const f=sn.dataset.f; if(vals[f]!=null) sn.value=vals[f]; sn.addEventListener('input',()=>{ vals[f]=sn.value; }); }
   wireSign();
 }
 let signData='';

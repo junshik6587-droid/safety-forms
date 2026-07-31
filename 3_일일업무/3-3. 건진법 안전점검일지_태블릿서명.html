@@ -41,6 +41,9 @@
   table.chk th,table.chk td{ border:1px solid var(--line); padding:5px 6px; vertical-align:middle; }
   table.chk thead th{ background:#eef2f7; color:var(--hd); font-size:12px; text-align:center; }
   table.chk td.no{ width:30px; text-align:center; color:#666; }
+  table.chk td.ck{ width:38px; text-align:center; padding:3px; }
+  .cbox{ display:inline-block; width:21px; height:21px; border:1.7px solid var(--line); border-radius:4px; line-height:18px; font-size:15px; font-weight:800; color:#fff; cursor:pointer; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .cbox.on{ background:var(--accent); border-color:var(--accent); }
   table.chk td.q{ text-align:left; line-height:1.35; }
   table.chk td.yn{ width:44px; text-align:center; padding:2px; }
   table.chk td.act{ width:26%; padding:2px; }
@@ -67,7 +70,11 @@
     body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:0; }
     .controls,.modal,.selector,.mini{ display:none !important; }
     table.appr .lab,table.appr .who,.secblock .st,table.chk thead th,table.bot td.bl,.common .ch,.yn button.on{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-    .secblock,table.chk tr{ break-inside:avoid; }
+    /* 섹션은 페이지에 이어져 채워지고(빈 공백 방지), 각 행·머리글은 유지 */
+    table.chk tr,table.bot tr{ break-inside:avoid; }
+    table.chk thead{ display:table-header-group; }
+    .secblock .st{ break-after:avoid; }
+    .common{ break-inside:auto; }
     @page{ size:A4 portrait; margin:8mm; }
   }
 </style>
@@ -159,7 +166,7 @@ function snapshot(){
     const id=tr.dataset.row;
     const y=tr.querySelector('.yn.y button').classList.contains('on');
     const n=tr.querySelector('.yn.n button').classList.contains('on');
-    state[id]={ v:y?'y':(n?'n':''), act:tr.querySelector('.act input').value };
+    state[id]={ v:y?'y':(n?'n':''), act:tr.querySelector('.act input').value, ck:tr.querySelector('.cbox').classList.contains('on') };
   });
 }
 function renderContent(){
@@ -173,13 +180,13 @@ function renderContent(){
     let rows='';
     sec.items.forEach((it,i)=>{
       const id=sec.key+'_'+i; const st=state[id]||{};
-      rows+=`<tr data-row="${id}"><td class="no">${i+1}</td><td class="q">${it}</td>
+      rows+=`<tr data-row="${id}"><td class="ck"><span class="cbox${st.ck?' on':''}">✓</span></td><td class="q">${it}</td>
         <td class="yn y"><button type="button" class="${st.v==='y'?'on':''}">양</button></td>
         <td class="yn n"><button type="button" class="${st.v==='n'?'on':''}">불</button></td>
         <td class="act"><input type="text" value="${(st.act||'').replace(/"/g,'&quot;')}" placeholder="조치사항"></td></tr>`;
     });
     blk.innerHTML=`<div class="st">${sec.name}</div>
-      <table class="chk"><thead><tr><th style="width:30px">No</th><th>안전점검 내용</th><th style="width:44px">양</th><th style="width:44px">불</th><th style="width:26%">조치사항</th></tr></thead><tbody>${rows}</tbody></table>`;
+      <table class="chk"><thead><tr><th style="width:38px">체크</th><th>안전점검 내용</th><th style="width:44px">양</th><th style="width:44px">불</th><th style="width:26%">조치사항</th></tr></thead><tbody>${rows}</tbody></table>`;
     cont.appendChild(blk);
   });
   // wire toggles
@@ -187,6 +194,7 @@ function renderContent(){
     const yb=tr.querySelector('.yn.y button'), nb=tr.querySelector('.yn.n button');
     yb.addEventListener('click',()=>{ const on=yb.classList.contains('on'); yb.classList.toggle('on',!on); if(!on) nb.classList.remove('on'); });
     nb.addEventListener('click',()=>{ const on=nb.classList.contains('on'); nb.classList.toggle('on',!on); if(!on) yb.classList.remove('on'); });
+    const cb=tr.querySelector('.cbox'); if(cb) cb.addEventListener('click',()=>cb.classList.toggle('on'));
   });
 }
 
