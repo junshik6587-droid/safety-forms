@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TBM 전파 일지</title>
+<style>
+  :root{ --line:#333; --hd:#1f4e79; --hdbg:#dbe5f1; --accent:#1f6feb; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; font-family:"맑은 고딕","Malgun Gothic",AppleGothic,sans-serif; color:#111; background:#f2f4f7; }
+  .wrap{ max-width:1000px; margin:0 auto; padding:12px; }
+  .paper{ background:#fff; padding:18px 20px 26px; box-shadow:0 1px 6px rgba(0,0,0,.15); }
+  h1{ text-align:center; font-size:22px; margin:2px 0 12px; letter-spacing:4px; font-weight:800; }
+  .co{ text-align:left; font-weight:700; color:var(--hd); font-size:13px; margin:-4px 0 8px; }
+  table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+  th,td{ border:1px solid var(--line); padding:6px 8px; vertical-align:middle; }
+  td.lbl,th.lbl{ background:var(--hdbg); color:var(--hd); font-weight:700; text-align:center; white-space:nowrap; }
+  thead th{ background:var(--hdbg); color:var(--hd); text-align:center; font-size:12.5px; }
+  .top input[type=text],.top input[type=date]{ border:none; border-bottom:1px solid #999; font-size:14px; font-family:inherit; padding:3px 4px; background:transparent; }
+  .top .sitesel{ font-size:14px; font-weight:700; padding:5px 8px; font-family:inherit; border:1.5px solid var(--accent); border-radius:5px; color:var(--hd); }
+  .cnt input{ width:100%; border:none; text-align:center; font-size:14px; font-family:inherit; padding:5px 2px; background:transparent; }
+  .cnt input[readonly]{ background:#f6f8fa; font-weight:700; }
+  .cnt .u{ display:flex; align-items:center; gap:4px; white-space:nowrap; font-weight:700; color:var(--hd); }
+  .cnt .u input{ flex:1; min-width:0; text-align:center; }
+  table.risk{ margin-top:10px; table-layout:fixed; }
+  table.risk .cno{ width:34px; text-align:center; }
+  table.risk .cp{ width:120px; }
+  table.risk textarea{ width:100%; min-height:40px; border:none; font-size:13px; font-family:inherit; padding:6px; resize:vertical; }
+  table.risk td.pin input{ width:100%; border:none; text-align:center; font-size:13.5px; font-family:inherit; padding:6px 2px; background:transparent; }
+  table.risk .csig{ width:118px; } table.risk .cdel{ width:34px; text-align:center; }
+  table.risk .rsig{ position:relative; height:40px; padding:0; cursor:pointer; }
+  table.risk .rsig canvas{ display:block; width:100%; height:40px; }
+  table.risk .rsig .ph{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:11px; pointer-events:none; }
+  /* 손글씨 */
+  .hwcell{ display:inline-flex; align-items:center; gap:2px; width:100%; }
+  .hwf{ position:relative; flex:1 1 auto; min-width:0; }
+  .hwf > input{ width:100%; }
+  .hwink{ position:absolute; inset:0; width:100%; height:100%; display:none; pointer-events:none; }
+  .hwcell.inked .hwink{ display:block; }
+  .hwcell.inked > .hwf > input{ visibility:hidden; }
+  .pen{ flex:0 0 auto; border:none; background:#eef3fb; color:var(--accent); border-radius:5px; font-size:12px; font-weight:800; width:24px; height:24px; cursor:pointer; padding:0; }
+  .pen:active{ background:var(--accent); color:#fff; }
+  /* 서명 모달 */
+  .modal{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:50; } .modal.show{ display:flex; }
+  .msheet{ background:#fff; border-radius:14px; width:min(94vw,720px); padding:16px; } .msheet h3{ margin:0 0 4px; font-size:17px; text-align:center; } .msheet p{ margin:0 0 10px; text-align:center; color:#666; font-size:13px; }
+  .padwrap{ border:2px dashed #9aa4b0; border-radius:10px; background:#fff; } #padBig{ display:block; width:100%; height:300px; touch-action:none; border-radius:10px; }
+  .msheet .mrow{ display:flex; gap:10px; margin-top:12px; } .msheet .mrow .btn{ flex:1; }
+  .addbtn{ display:block; width:100%; border:1.4px dashed #9fb2cc; background:#f2f6fc; color:var(--accent); border-radius:7px; padding:9px; font-size:13.5px; font-weight:700; cursor:pointer; font-family:inherit; margin-top:8px; }
+  .delr{ border:none; background:#fdeaea; color:#b02a2a; border-radius:5px; width:24px; height:24px; font-size:14px; font-weight:800; cursor:pointer; padding:0; }
+  /* 사진 */
+  .photohead{ background:var(--hd); color:#fff; font-weight:700; padding:8px 12px; border-radius:6px 6px 0 0; letter-spacing:2px; margin-top:16px; display:flex; justify-content:space-between; align-items:center; }
+  .phnote{ font-size:12px; color:#8a929c; padding:6px 2px; }
+  .photogrid{ padding:10px; border:1.5px solid var(--line); border-top:none; }
+  .pslot{ border:1.5px solid var(--line); margin-bottom:12px; } .pslot:last-child{ margin-bottom:0; }
+  .pslot .frame{ position:relative; width:100%; aspect-ratio:16/10; background:#f4f6f8; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; }
+  .pslot .frame img{ width:100%; height:100%; object-fit:contain; display:none; }
+  .pslot .frame .add{ color:#8a929c; font-size:14px; font-weight:700; text-align:center; padding:8px; }
+  .pslot .del{ position:absolute; top:6px; right:6px; background:rgba(0,0,0,.55); color:#fff; border:none; border-radius:50%; width:28px; height:28px; font-size:16px; line-height:1; cursor:pointer; display:none; }
+  .pslot.has .del{ display:block; }
+  table.pmeta{ width:100%; border-collapse:collapse; border-top:1.5px solid var(--line); }
+  table.pmeta td{ border:1px solid var(--line); padding:0; }
+  table.pmeta td.pl{ background:var(--hdbg); color:var(--hd); font-weight:700; text-align:center; padding:7px 6px; width:62px; white-space:nowrap; }
+  table.pmeta td.dtc{ width:150px; }
+  table.pmeta input{ width:100%; border:none; font-family:inherit; font-size:13px; padding:7px 8px; background:transparent; }
+  .mini{ border:1px solid #fff; background:rgba(255,255,255,.2); color:#fff; font-size:11px; font-weight:700; border-radius:5px; padding:2px 8px; cursor:pointer; font-family:inherit; }
+  .controls{ position:sticky; bottom:0; z-index:20; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:12px; background:rgba(242,244,247,.95); margin-top:14px; }
+  .btn{ border:none; border-radius:8px; padding:12px 18px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; }
+  .btn.p{ background:var(--accent); color:#fff; } .btn.g{ background:#5b6470; color:#fff; } .btn.d{ background:#fff; color:#333; border:1.5px solid #bbb; }
+  @media print{
+    body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:0; }
+    .top .sitesel{ border:none; } .controls,.mini,.pslot .del,.pslot .add,.phnote,.addbtn,.delr,.pen,.modal,table.risk .cdel{ display:none !important; }
+    td.lbl,th.lbl,thead th,.photohead{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .photohead{ background:var(--hdbg) !important; color:var(--hd) !important; border:1.5px solid var(--line); border-bottom:none; border-radius:0; }
+    table tr,.pslot{ break-inside:avoid; } table thead{ display:table-header-group; }
+    .pslot .frame{ background:#fff; aspect-ratio:auto; height:260px; }
+    .photopage.nophoto{ display:none !important; }
+    .photopage:not(.nophoto){ break-before:page; page-break-before:always; }
+    @page{ size:A4 portrait; margin:9mm; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="paper">
+  <div class="co">(주)디아키즈건설</div>
+  <h1>TBM 전파 일지</h1>
+
+  <table class="top">
+    <colgroup><col style="width:90px"><col><col style="width:70px"><col style="width:150px"></colgroup>
+    <tr><td class="lbl">현장명</td><td><select id="site" class="sitesel"></select></td>
+        <td class="lbl">일 자</td><td><input type="date" data-k="day"></td></tr>
+  </table>
+
+  <table style="margin-top:8px" class="cnt">
+    <tr>
+      <td class="lbl" style="width:90px">참석인원</td>
+      <td class="lbl">현장소장</td><td><span class="u"><input type="text" data-k="c_mgr" inputmode="numeric"> 명</span></td>
+      <td class="lbl">관리감독자</td><td><span class="u"><input type="text" data-k="c_sv" inputmode="numeric"> 명</span></td>
+      <td class="lbl">작업자</td><td><span class="u"><input type="text" data-k="c_wk" inputmode="numeric"> 명</span></td>
+      <td class="lbl">총 원</td><td><span class="u"><input type="text" data-k="c_total" readonly> 명</span></td>
+    </tr>
+  </table>
+
+  <table class="risk">
+    <thead><tr><th class="cno">No</th><th>금일 잠재위험요인</th><th>안전대책</th><th class="cp">조치예정자</th><th class="csig">서명</th><th class="cdel"></th></tr></thead>
+    <tbody id="rrows"></tbody>
+  </table>
+  <button type="button" class="addbtn" onclick="addRisk()">＋ 항목 추가</button>
+
+  <div class="photopage">
+    <div class="photohead">안전조회 실시 사진 <button type="button" class="mini" onclick="addPhoto()">＋ 사진 추가</button></div>
+    <div class="phnote">※ 사진을 넣지 않으면 인쇄·PDF에서 사진 영역은 출력되지 않습니다.</div>
+    <div class="photogrid" id="photogrid"></div>
+  </div>
+ </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="msheet"><h3 id="mTitle">서명</h3><p>아래 칸에 손가락 또는 스타일러스로 쓰세요</p>
+    <div class="padwrap"><canvas id="padBig"></canvas></div>
+    <div class="mrow"><button class="btn d" onclick="undoBig()">↩ 지우기</button><button class="btn g" onclick="closeModal()">취소</button><button class="btn p" onclick="confirmSig()">✔ 완료</button></div>
+  </div>
+</div>
+
+<div class="controls">
+  <button class="btn p" onclick="printDoc()">📄 PDF로 저장 / 인쇄</button>
+  <button class="btn d" onclick="saveDraft()">💾 임시저장</button>
+  <button class="btn g" onclick="clearAll()">전체 초기화</button>
+  <a class="btn d" href="../index.html" style="text-decoration:none">← 메인</a>
+</div>
+
+<script src="../sites.js"></script>
+<script>
+const RISK_DEFAULT=8, PHOTO_DEFAULT=1, PHOTO_MAXW=1000;
+const DEFAULT_SITES=["아르시엘 방배 732 공동주택 신축공사","이태원동 106-2 단독주택 신축현장","보라동 20-1 단독주택 신축현장","평창동 496-4 단독주택"];
+function buildSites(){ const sel=document.getElementById('site'); sel.innerHTML='';
+  ((window.SITES&&window.SITES.length)?window.SITES:DEFAULT_SITES).forEach(s=> sel.appendChild(new Option(s,s))); }
+
+/* ===== 서명 모달 + 손글씨 ===== */
+const DPR=Math.max(window.devicePixelRatio||1,2);
+const modal=document.getElementById('modal'), padBig=document.getElementById('padBig'), bctx=padBig.getContext('2d');
+let drawing=false, hasInk=false, last=null, curTarget=null;
+function sizeBig(){ const r=padBig.getBoundingClientRect(); padBig.width=r.width*DPR; padBig.height=r.height*DPR;
+  bctx.setTransform(1,0,0,1,0,0); bctx.scale(DPR,DPR); bctx.lineWidth=6.4; bctx.lineCap='round'; bctx.lineJoin='round'; bctx.strokeStyle='#000'; hasInk=false; }
+function posBig(e){ const r=padBig.getBoundingClientRect(); return {x:e.clientX-r.left,y:e.clientY-r.top}; }
+padBig.addEventListener('pointerdown',e=>{ e.preventDefault(); drawing=true; last=posBig(e); try{padBig.setPointerCapture(e.pointerId);}catch(_){}; bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(last.x+0.1,last.y+0.1); bctx.stroke(); hasInk=true; });
+padBig.addEventListener('pointermove',e=>{ if(!drawing)return; e.preventDefault(); const p=posBig(e); bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(p.x,p.y); bctx.stroke(); last=p; hasInk=true; });
+padBig.addEventListener('pointerup',()=>drawing=false); padBig.addEventListener('pointercancel',()=>drawing=false);
+function openSig2(cell){ curTarget={ cnv:cell.querySelector('canvas'), box:cell, done:()=>{ cell.querySelector('.ph').style.display='none'; }, clear:()=>{ cell.querySelector('.ph').style.display=''; } };
+  document.getElementById('mTitle').textContent='서명'; modal.classList.add('show'); requestAnimationFrame(sizeBig); }
+function openHw(cell){ const f=cell.querySelector('.hwf'), cnv=cell.querySelector('.hwink');
+  curTarget={ cnv, box:f, done:()=>cell.classList.add('inked'), clear:()=>cell.classList.remove('inked') };
+  document.getElementById('mTitle').textContent='조치예정자 손글씨'; modal.classList.add('show'); requestAnimationFrame(sizeBig); }
+function closeModal(){ modal.classList.remove('show'); }
+function undoBig(){ bctx.save(); bctx.setTransform(1,0,0,1,0,0); bctx.clearRect(0,0,padBig.width,padBig.height); bctx.restore(); hasInk=false; }
+function confirmSig(){ const t=curTarget; if(!t){ closeModal(); return; }
+  if(!hasInk){ const cx=t.cnv.getContext('2d'); cx.clearRect(0,0,t.cnv.width,t.cnv.height); t.clear(); closeModal(); return; }
+  const cnv=t.cnv, r=t.box.getBoundingClientRect(); cnv.width=r.width*DPR; cnv.height=r.height*DPR;
+  cnv.getContext('2d').drawImage(padBig,0,0,padBig.width,padBig.height,0,0,cnv.width,cnv.height); t.done(); closeModal(); }
+function initHw(){ document.querySelectorAll('input.hw').forEach(inp=>{ if(inp.closest('.hwcell'))return;
+  const cell=document.createElement('span'); cell.className='hwcell'; const f=document.createElement('span'); f.className='hwf';
+  inp.parentNode.insertBefore(cell,inp); f.appendChild(inp);
+  const cv=document.createElement('canvas'); cv.className='hwink'; f.appendChild(cv);
+  const btn=document.createElement('button'); btn.type='button'; btn.className='pen'; btn.textContent='✍'; btn.title='손글씨';
+  cell.appendChild(f); cell.appendChild(btn);
+  btn.addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation(); openHw(cell); }); }); }
+
+/* 총원 자동합산 */
+function numOf(k){ const el=document.querySelector('[data-k='+k+']'); return el?(parseInt((el.value||'').replace(/[^0-9]/g,''),10)||0):0; }
+function calcTotal(){ const t=numOf('c_mgr')+numOf('c_sv')+numOf('c_wk'); const el=document.querySelector('[data-k=c_total]'); if(el) el.value=t?t:''; }
+document.querySelectorAll('[data-k=c_mgr],[data-k=c_sv],[data-k=c_wk]').forEach(el=>el.addEventListener('input',calcTotal));
+
+/* 위험요인 표 */
+function makeRisk(n){
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td class="cno">${n}</td>
+    <td><textarea data-r="risk"></textarea></td>
+    <td><textarea data-r="meas"></textarea></td>
+    <td class="pin"><input type="text" class="hw" data-r="pin"></td>
+    <td class="rsig" data-r="sig"><canvas></canvas><div class="ph">서명</div></td>
+    <td class="cdel"><button type="button" class="delr" title="삭제">×</button></td>`;
+  tr.querySelector('.delr').addEventListener('click',()=>{ tr.remove(); renumber(); });
+  tr.querySelector('.rsig').addEventListener('click',function(){ openSig2(this); });
+  return tr;
+}
+function renumber(){ [...document.querySelectorAll('#rrows tr')].forEach((tr,i)=> tr.querySelector('.cno').textContent=i+1); }
+function addRisk(){ document.getElementById('rrows').appendChild(makeRisk(document.getElementById('rrows').children.length+1)); initHw(); }
+function buildRisk(k){ const b=document.getElementById('rrows'); b.innerHTML=''; for(let i=1;i<=k;i++) b.appendChild(makeRisk(i)); initHw(); }
+
+/* 사진 */
+function readScaled(file,cb){ const r=new FileReader();
+  r.onload=()=>{ const im=new Image(); im.onload=()=>{ let w=im.width,h=im.height; if(w>PHOTO_MAXW){h=Math.round(h*PHOTO_MAXW/w);w=PHOTO_MAXW;}
+    const c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(im,0,0,w,h); cb(c.toDataURL('image/jpeg',0.82)); }; im.src=r.result; };
+  r.readAsDataURL(file); }
+function setPhoto(s,u){ const img=s.querySelector('img'); img.src=u; img.style.display='block'; s.querySelector('.add').style.display='none'; s.classList.add('has'); }
+function clearPhoto(s){ const img=s.querySelector('img'); img.src=''; img.style.display='none'; s.querySelector('.add').style.display=''; s.classList.remove('has'); s.querySelector('input[type=file]').value=''; }
+function makePhotoSlot(){
+  const d=document.createElement('div'); d.className='pslot';
+  d.innerHTML=`<div class="frame"><div class="add">＋ 사진 촬영 / 선택</div><img alt=""><button type="button" class="del" title="삭제">×</button>
+      <input type="file" accept="image/*" capture="environment" style="display:none"></div>
+    <table class="pmeta">
+      <tr><td class="pl">내 용</td><td colspan="3"><input type="text" data-pk="content" placeholder="안전조회 내용"></td></tr>
+      <tr><td class="pl">위 치</td><td><input type="text" data-pk="loc" placeholder="위치"></td><td class="pl">일 자</td><td class="dtc"><input type="date" data-pk="date"></td></tr>
+    </table>`;
+  const frame=d.querySelector('.frame'), inp=d.querySelector('input[type=file]'), del=d.querySelector('.del');
+  frame.addEventListener('click',e=>{ if(e.target===del)return; inp.click(); });
+  inp.addEventListener('change',()=>{ const f=inp.files[0]; if(f) readScaled(f,u=>setPhoto(d,u)); });
+  del.addEventListener('click',()=>clearPhoto(d));
+  return d;
+}
+function addPhoto(){ document.getElementById('photogrid').appendChild(makePhotoSlot()); }
+function buildPhotos(k){ const g=document.getElementById('photogrid'); g.innerHTML=''; for(let i=0;i<k;i++) g.appendChild(makePhotoSlot()); }
+function updatePhotoPrint(){ const any=document.querySelector('#photogrid .pslot.has'); document.querySelector('.photopage').classList.toggle('nophoto',!any); }
+window.addEventListener('beforeprint', updatePhotoPrint);
+
+/* 저장 / 불러오기 */
+function setToday(){ document.querySelector('[data-k=day]').value=new Date().toISOString().slice(0,10); }
+function setPrintTitle(){ const site=document.getElementById('site').value||''; const d=(document.querySelector('[data-k=day]')||{}).value||new Date().toISOString().slice(0,10);
+  document.title=('TBM전파일지_'+site+'_'+d).replace(/[\\/:*?"<>|]/g,'_'); }
+window.addEventListener('beforeprint', setPrintTitle);
+function printDoc(){ updatePhotoPrint(); setPrintTitle(); window.print(); }
+function autoGrow(){ document.querySelectorAll('#rrows textarea').forEach(ta=>{ ta.style.overflow='hidden'; ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; }); }
+document.addEventListener('input',e=>{ if(e.target&&e.target.tagName==='TEXTAREA'){ e.target.style.overflow='hidden'; e.target.style.height='auto'; e.target.style.height=e.target.scrollHeight+'px'; } });
+window.addEventListener('beforeprint', autoGrow);
+function clearAll(){ if(!confirm('입력한 내용을 모두 지울까요?'))return; try{localStorage.removeItem('tbmSpreadDraft');}catch(e){}
+  buildSites(); buildRisk(RISK_DEFAULT); buildPhotos(PHOTO_DEFAULT); setToday();
+  ['c_mgr','c_sv','c_wk','c_total'].forEach(k=>{ const el=document.querySelector('[data-k='+k+']'); if(el) el.value=''; }); }
+function saveDraft(){
+  const data={ site:document.getElementById('site').value,
+    vals:Object.fromEntries([...document.querySelectorAll('[data-k]')].map(el=>[el.dataset.k, el.value])),
+    rows:[...document.querySelectorAll('#rrows tr')].map(tr=>{ const pc=tr.querySelector('.pin .hwcell'), sc=tr.querySelector('.rsig');
+      return { risk:tr.querySelector('[data-r=risk]').value, meas:tr.querySelector('[data-r=meas]').value, pin:tr.querySelector('[data-r=pin]').value,
+        pinSig:(pc&&pc.classList.contains('inked'))?pc.querySelector('.hwink').toDataURL('image/png'):'',
+        sig:(sc.querySelector('.ph').style.display==='none')?sc.querySelector('canvas').toDataURL('image/png'):'' }; }),
+    photos:[...document.querySelectorAll('#photogrid .pslot')].map(p=>({ img:p.classList.contains('has')?p.querySelector('img').src:'', content:p.querySelector('[data-pk=content]').value, loc:p.querySelector('[data-pk=loc]').value, date:p.querySelector('[data-pk=date]').value })) };
+  try{ localStorage.setItem('tbmSpreadDraft',JSON.stringify(data)); alert('임시저장 완료.'); }catch(e){ alert('저장 실패: '+e.message); }
+}
+function loadDraft(){
+  let d; try{ d=JSON.parse(localStorage.getItem('tbmSpreadDraft')); }catch(e){ return false; }
+  if(!d) return false;
+  buildSites(); if(d.site) document.getElementById('site').value=d.site;
+  buildRisk(Math.max((d.rows||[]).length,RISK_DEFAULT));
+  const trs=document.querySelectorAll('#rrows tr');
+  function drawInto(el,url,h){ const cnv=el.querySelector('canvas')||el.querySelector('.hwink'), img=new Image();
+    img.onload=()=>{ const r=el.getBoundingClientRect(); cnv.width=r.width*DPR; cnv.height=(r.height||h)*DPR; cnv.getContext('2d').drawImage(img,0,0,cnv.width,cnv.height); }; img.src=url; }
+  (d.rows||[]).forEach((rd,i)=>{ const tr=trs[i]; if(!tr)return; tr.querySelector('[data-r=risk]').value=rd.risk||''; tr.querySelector('[data-r=meas]').value=rd.meas||''; tr.querySelector('[data-r=pin]').value=rd.pin||'';
+    if(rd.pinSig){ const pc=tr.querySelector('.pin .hwcell'); if(pc){ drawInto(pc.querySelector('.hwf'),rd.pinSig,24); pc.classList.add('inked'); } }
+    if(rd.sig){ const sc=tr.querySelector('.rsig'); drawInto(sc,rd.sig,40); sc.querySelector('.ph').style.display='none'; }
+  });
+  if(d.vals) document.querySelectorAll('[data-k]').forEach(el=>{ if(d.vals[el.dataset.k]!=null) el.value=d.vals[el.dataset.k]; });
+  const ph=(d.photos&&d.photos.length)?d.photos:null; buildPhotos(ph?ph.length:PHOTO_DEFAULT);
+  if(ph){ const slots=document.querySelectorAll('#photogrid .pslot'); ph.forEach((p,i)=>{ const s=slots[i]; if(!s)return;
+    if(p.content!=null) s.querySelector('[data-pk=content]').value=p.content; if(p.loc!=null) s.querySelector('[data-pk=loc]').value=p.loc; if(p.date!=null) s.querySelector('[data-pk=date]').value=p.date;
+    if(p.img) setPhoto(s,p.img); }); }
+  calcTotal(); setTimeout(autoGrow,50);
+  return true;
+}
+buildSites();
+if(!loadDraft()){ buildRisk(RISK_DEFAULT); buildPhotos(PHOTO_DEFAULT); setToday(); }
+</script>
+</body>
+</html>
