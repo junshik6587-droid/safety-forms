@@ -216,7 +216,7 @@ window.addEventListener('beforeprint', updatePhotoPrint);
 /* 저장 / 불러오기 */
 function setToday(){ document.querySelector('[data-k=day]').value=new Date().toISOString().slice(0,10); }
 function setPrintTitle(){ const site=document.getElementById('site').value||''; const d=(document.querySelector('[data-k=day]')||{}).value||new Date().toISOString().slice(0,10);
-  document.title=('TBM전파일지_'+site+'_'+d).replace(/[\\/:*?"<>|]/g,'_'); }
+  document.title=((site?site+'_':'')+'TBM전파일지_'+d).replace(/[\\/:*?"<>|]/g,'_'); }
 window.addEventListener('beforeprint', setPrintTitle);
 function printDoc(){ updatePhotoPrint(); setPrintTitle(); window.print(); }
 function autoGrow(){ document.querySelectorAll('#rrows textarea').forEach(ta=>{ ta.style.overflow='hidden'; ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; }); }
