@@ -58,6 +58,7 @@
     body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:0; }
     .controls{ display:none !important; }
     thead th,td.lbl,td.grp,.chkttl,.seg button.on,.appr .h{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .eqtbl input::placeholder{ color:transparent !important; }
     @page{ size:A4 portrait; margin:9mm; }
   }
 </style>
@@ -78,7 +79,7 @@
     <thead><tr><th>구분</th><th>직원</th><th>직영</th><th>협력업체</th><th>일계</th></tr></thead>
     <tbody><tr><td class="lbl">투입인원(명)</td>
       <td><input type="text" data-c="p_off"></td><td><input type="text" data-c="p_own"></td><td><input type="text" data-c="p_par"></td>
-      <td><input type="text" data-c="p_day"></td></tr></tbody>
+      <td><input type="text" data-c="p_day" readonly style="background:#f6f8fa;font-weight:700"></td></tr></tbody>
   </table>
 
   <div class="work">
@@ -96,14 +97,14 @@
   </table>
 
   <table class="grid edu" style="margin-top:12px">
-    <thead><tr><th style="width:32px">구분</th><th>교육구분</th><th style="width:62px">인원</th><th style="width:108px">재해건수</th><th style="width:148px">특기사항<br>(행사,교육,점검 등)</th></tr></thead>
+    <thead><tr><th style="width:32px">구분</th><th style="width:290px">교육구분</th><th style="width:62px">인원</th><th style="width:120px">재해건수</th><th>특기사항<br>(행사,교육,점검 등)</th></tr></thead>
     <tbody>
       <tr>
         <td class="lbl vlabel" rowspan="3">안전교육</td>
         <td><input type="text" data-c="edu_g1"></td>
         <td style="white-space:nowrap"><input type="text" data-c="edu_n1" style="width:38px"> 명</td>
-        <td class="lbl" rowspan="3" style="font-weight:400;color:#111;background:#fff">금일 <input type="text" data-c="acc_day" style="width:34px;border:none;border-bottom:1px solid #999;text-align:center"> 명<br>누계 <input type="text" data-c="acc_tot" style="width:34px;border:none;border-bottom:1px solid #999;text-align:center"> 명</td>
-        <td rowspan="3" style="padding:0"><textarea data-c="edu_note" style="width:100%;border:none;font-family:inherit;font-size:13px;min-height:82px;resize:vertical;padding:6px"></textarea></td>
+        <td class="lbl" rowspan="3" style="font-weight:400;color:#111;background:#fff;border-right:1px solid var(--line)">금일 <input type="text" data-c="acc_day" style="width:34px;border:none;border-bottom:1px solid #999;text-align:center"> 명<br>누계 <input type="text" data-c="acc_tot" style="width:34px;border:none;border-bottom:1px solid #999;text-align:center"> 명</td>
+        <td rowspan="3" style="padding:0;border-left:1px solid var(--line)"><textarea data-c="edu_note" style="width:100%;border:none;font-family:inherit;font-size:13px;min-height:82px;resize:vertical;padding:6px"></textarea></td>
       </tr>
       <tr><td><input type="text" data-c="edu_g2"></td><td style="white-space:nowrap"><input type="text" data-c="edu_n2" style="width:38px"> 명</td></tr>
       <tr><td><input type="text" data-c="edu_g3"></td><td style="white-space:nowrap"><input type="text" data-c="edu_n3" style="width:38px"> 명</td></tr>
@@ -163,10 +164,14 @@ function allGood(){ document.querySelectorAll('.seg').forEach(s=>{ s.querySelect
 
 /* 장비투입현황 */
 const EQUIP = ["백호 1.0","백호 0.8","백호 0.6","백호 0.3","펌프카","크레인 50T","크레인 25T","크레인 15T","지게차"];
+function buildEquipList(){ if(document.getElementById('equipList'))return;
+  const dl=document.createElement('datalist'); dl.id='equipList';
+  dl.innerHTML=EQUIP.map(e=>`<option value="${e}"></option>`).join('');
+  document.body.appendChild(dl); }
+buildEquipList();
 function makeEqRow(){
   const tr=document.createElement('tr');
-  let opts='<option value=""></option>'+EQUIP.map(e=>`<option>${e}</option>`).join('');
-  tr.innerHTML=`<td><select data-e="name">${opts}</select></td><td><input type="text" data-e="cnt" placeholder="대"></td>`;
+  tr.innerHTML=`<td><input list="equipList" data-e="name" placeholder="장비 선택 또는 직접 입력" style="width:100%"></td><td><input type="text" data-e="cnt" placeholder="대"></td>`;
   return tr;
 }
 function addEq(){ document.getElementById('eqrows').appendChild(makeEqRow()); }
@@ -199,8 +204,14 @@ function loadDraft(){
   if(d.checks) Object.entries(d.checks).forEach(([k,v])=>{ const s=document.querySelector(`.seg[data-k="${k}"]`); if(s){ s.querySelector('.y').classList.toggle('on',v==='y'); s.querySelector('.n').classList.toggle('on',v==='n'); }});
   return true;
 }
+/* 투입인원 일계 자동 합산 */
+function numP(k){ const el=document.querySelector('[data-c='+k+']'); return el?(parseInt((el.value||'').replace(/[^0-9]/g,''),10)||0):0; }
+function calcPeople(){ const t=numP('p_off')+numP('p_own')+numP('p_par'); const el=document.querySelector('[data-c=p_day]'); if(el) el.value=t?t:''; }
+['p_off','p_own','p_par'].forEach(k=>{ const el=document.querySelector('[data-c='+k+']'); if(el) el.addEventListener('input',calcPeople); });
+
 buildSites();
 if(!loadDraft()){ buildChecks(); buildEq(4); setToday(); }
+calcPeople();
 </script>
 <script>
 /* AUTO_GROW_TEXTAREA: 입력란 자동 높이조절 (내용 많으면 칸이 늘어나 인쇄 시 잘리지 않음) */
