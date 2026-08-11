@@ -46,8 +46,8 @@
   .pslot{ border:1.5px solid var(--line); margin-bottom:12px; } .pslot:last-child{ margin-bottom:0; }
   .pslot .frame{ position:relative; width:100%; aspect-ratio:16/10; background:#f4f6f8; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; }
   .pslot .frame img{ width:100%; height:100%; object-fit:contain; display:none; }
-  .pslot .frame .add{ color:#8a929c; font-size:14px; font-weight:700; text-align:center; padding:8px; }
-  .pbtns{ position:absolute; left:0; right:0; bottom:8px; display:flex; gap:8px; justify-content:center; z-index:2; }
+  .pslot .frame .add{ display:none; }
+  .pbtns{ position:absolute; inset:0; display:flex; gap:8px; align-items:center; justify-content:center; z-index:2; }
   .pslot.has .pbtns{ display:none; }
   .pbtns button{ border:none; border-radius:16px; padding:7px 14px; font-size:13px; font-weight:700; font-family:inherit; cursor:pointer; box-shadow:0 1px 4px rgba(0,0,0,.2); }
   .pbtns .pcam{ background:var(--accent); color:#fff; } .pbtns .pgal{ background:#fff; color:#333; border:1.5px solid #bbb; }
