@@ -380,7 +380,7 @@ function setPhoto(s,u){ const img=s.querySelector('img'); img.src=u; img.style.d
 function clearPhoto(s){ const img=s.querySelector('img'); img.src=''; img.style.display='none'; s.querySelector('.add').style.display=''; s.classList.remove('has'); s.querySelector('input[type=file]').value=''; }
 function makePhotoSlot(){ const d=document.createElement('div'); d.className='pslot';
   d.innerHTML=`<div class="frame"><div class="add">＋ 사진 촬영 / 선택</div><img alt=""><button type="button" class="del" title="삭제">×</button>
-      <input type="file" accept="image/*" capture="environment" style="display:none"></div>
+      <input type="file" accept="image/*" style="display:none"></div>
     <table class="pmeta"><tr><td class="pl">내 용</td><td colspan="3"><input type="text" data-pk="content" placeholder="교육 사진 내용"></td></tr>
       <tr><td class="pl">위 치</td><td><input type="text" data-pk="loc" placeholder="위치"></td><td class="pl">일 자</td><td class="dtc"><input type="date" data-pk="date"></td></tr></table>`;
   const frame=d.querySelector('.frame'), inp=d.querySelector('input[type=file]'), del=d.querySelector('.del');
