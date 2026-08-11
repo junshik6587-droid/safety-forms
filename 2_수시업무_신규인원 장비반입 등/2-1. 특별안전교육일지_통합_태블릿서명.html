@@ -77,6 +77,11 @@
   .pslot .frame{ position:relative; width:100%; aspect-ratio:16/10; background:#f4f6f8; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; }
   .pslot .frame img{ width:100%; height:100%; object-fit:contain; display:none; }
   .pslot .frame .add{ color:#8a929c; font-size:14px; font-weight:700; text-align:center; padding:8px; }
+  .pbtns{ position:absolute; left:0; right:0; bottom:8px; display:flex; gap:8px; justify-content:center; z-index:2; }
+  .pslot.has .pbtns{ display:none; }
+  .pbtns button{ border:none; border-radius:16px; padding:7px 14px; font-size:13px; font-weight:700; font-family:inherit; cursor:pointer; box-shadow:0 1px 4px rgba(0,0,0,.2); }
+  .pbtns .pcam{ background:var(--accent); color:#fff; } .pbtns .pgal{ background:#fff; color:#333; border:1.5px solid #bbb; }
+  @media print{ .pbtns{ display:none !important; } }
   .pslot .del{ position:absolute; top:6px; right:6px; background:rgba(0,0,0,.55); color:#fff; border:none; border-radius:50%; width:28px; height:28px; font-size:16px; line-height:1; cursor:pointer; display:none; }
   .pslot.has .del{ display:block; }
   table.pmeta{ width:100%; border-collapse:collapse; border-top:1.5px solid var(--line); margin-top:0; }
@@ -250,10 +255,12 @@ function setPhoto(s,u){ const img=s.querySelector('img'); img.src=u; img.style.d
 function clearPhoto(s){ const img=s.querySelector('img'); img.src=''; img.style.display='none'; s.querySelector('.add').style.display=''; s.classList.remove('has'); s.querySelector('input[type=file]').value=''; }
 function makePhotoSlot(){ const d=document.createElement('div'); d.className='pslot';
   d.innerHTML=`<div class="frame"><div class="add">＋ 사진 촬영 / 선택</div><img alt=""><button type="button" class="del" title="삭제">×</button>
-      <input type="file" accept="image/*" style="display:none"></div>
+      <input type="file" accept="image/*" style="display:none"><div class="pbtns"><button type="button" class="pcam">📷 촬영</button><button type="button" class="pgal">🖼 불러오기</button></div></div>
     <table class="pmeta"><tr><td class="pl">내 용</td><td colspan="3"><input type="text" data-pk="content" placeholder="교육 사진 내용"></td></tr>
       <tr><td class="pl">위 치</td><td><input type="text" data-pk="loc" placeholder="위치"></td><td class="pl">일 자</td><td class="dtc"><input type="date" data-pk="date"></td></tr></table>`;
   const frame=d.querySelector('.frame'), inp=d.querySelector('input[type=file]'), del=d.querySelector('.del');
+  d.querySelector('.pcam').addEventListener('click',function(e){ e.stopPropagation(); inp.setAttribute('capture','environment'); inp.click(); });
+  d.querySelector('.pgal').addEventListener('click',function(e){ e.stopPropagation(); inp.removeAttribute('capture'); inp.click(); });
   frame.addEventListener('click',e=>{ if(e.target===del)return; inp.click(); });
   inp.addEventListener('change',()=>{ const f=inp.files[0]; if(f) readScaled(f,u=>setPhoto(d,u)); });
   del.addEventListener('click',()=>clearPhoto(d)); return d; }
