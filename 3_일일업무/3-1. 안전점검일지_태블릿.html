@@ -11,11 +11,20 @@
   .wrap{ max-width:1000px; margin:0 auto; padding:12px; }
   .paper{ background:#fff; padding:18px 20px 26px; box-shadow:0 1px 6px rgba(0,0,0,.15); }
   .top{ display:flex; align-items:flex-start; gap:12px; }
-  h1{ flex:1; text-align:center; font-size:22px; margin:2px 0 12px; letter-spacing:3px; }
+  h1{ flex:1; text-align:center; font-size:22px; margin:2px 0 6px; letter-spacing:3px; }
+  table.grid:not(.edu) th:first-child,table.grid:not(.edu) td:first-child{ width:150px; }
+  table.grid:not(.edu) thead th:not(:first-child),table.grid:not(.edu) tbody td:not(:first-child){ width:calc((100% - 150px)/5); }
   .appr{ border-collapse:collapse; font-size:11px; }
   .appr td{ border:1px solid var(--line); text-align:center; }
   .appr .h{ background:var(--hdbg); color:var(--hd); font-weight:700; padding:3px 6px; }
   .appr .b{ width:60px; height:40px; }
+  .appr .signcell{ position:relative; width:89px; height:53px; padding:0; cursor:pointer; }
+  .appr .signcell canvas{ display:block; width:100%; height:53px; }
+  .appr .signcell .ph{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#bbb; font-size:10px; pointer-events:none; }
+  .modal{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:50; } .modal.show{ display:flex; }
+  .msheet{ background:#fff; border-radius:14px; width:min(94vw,720px); padding:16px; } .msheet h3{ margin:0 0 4px; font-size:17px; text-align:center; } .msheet p{ margin:0 0 10px; text-align:center; color:#666; font-size:13px; }
+  .padwrap{ border:2px dashed #9aa4b0; border-radius:10px; background:#fff; } #padBig{ display:block; width:100%; height:300px; touch-action:none; border-radius:10px; }
+  .msheet .mrow{ display:flex; gap:10px; margin-top:12px; } .msheet .mrow .btn{ flex:1; }
   .meta{ display:flex; flex-wrap:wrap; gap:8px 18px; align-items:center; border:1.5px solid var(--line); padding:10px 12px; margin-bottom:10px; font-size:14px; }
   .meta label{ font-weight:700; margin-right:4px; }
   .meta input[type=text],.meta input[type=date]{ border:none; border-bottom:1px solid #999; font-size:14px; padding:3px 4px; font-family:inherit; }
@@ -28,6 +37,8 @@
   table.grid input{ width:100%; border:none; text-align:center; font-size:14px; font-family:inherit; padding:5px 2px; }
   .work{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
   .work .box{ flex:1; min-width:220px; border:1.5px solid var(--line); }
+  .work .box:first-child{ flex:1.9; }
+  .work .box:last-child{ flex:1; min-width:160px; }
   .work .box .h{ background:var(--hdbg); color:var(--hd); font-weight:700; font-size:13px; padding:6px 8px; border-bottom:1px solid var(--line); }
   .work textarea{ width:100%; min-height:80px; border:none; font-size:13px; font-family:inherit; padding:8px; resize:vertical; }
   .chkttl{ background:var(--hd); color:#fff; font-weight:700; font-size:14px; padding:7px 10px; border-radius:6px 6px 0 0; }
@@ -56,7 +67,7 @@
   .btn.p{ background:var(--accent); color:#fff; } .btn.g{ background:#5b6470; color:#fff; } .btn.d{ background:#fff; color:#333; border:1.5px solid #bbb; }
   @media print{
     body{ background:#fff; } .wrap{ padding:0; max-width:none; } .paper{ box-shadow:none; padding:0; }
-    .controls{ display:none !important; }
+    .controls,.modal{ display:none !important; }
     thead th,td.lbl,td.grp,.chkttl,.seg button.on,.appr .h{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
     .eqtbl input::placeholder{ color:transparent !important; }
     @page{ size:A4 portrait; margin:9mm; }
@@ -66,8 +77,17 @@
 <body>
 <div class="wrap">
  <div class="paper">
-  <h1>안 전 점 검 일 지</h1>
-  <div style="font-weight:700;color:#1f4e79;font-size:13px;letter-spacing:.5px;margin:-4px 0 8px">(주)디아키즈건설</div>
+  <div class="top">
+    <h1>안 전 점 검 일 지</h1>
+    <table class="appr">
+      <tr><td class="h" rowspan="2">결<br>재</td><td class="h">안전관리자</td><td class="h">현장소장</td></tr>
+      <tr>
+        <td class="signcell" data-appr="안전관리자" onclick="openSig(this)"><canvas></canvas><div class="ph">서명</div></td>
+        <td class="signcell" data-appr="현장소장" onclick="openSig(this)"><canvas></canvas><div class="ph">서명</div></td>
+      </tr>
+    </table>
+  </div>
+  <div style="font-weight:700;color:#1f4e79;font-size:13px;letter-spacing:.5px;margin:-6px 0 3px">(주)디아키즈건설</div>
 
   <div class="meta">
     <div><label>현장명</label><select id="site" class="sitesel"></select></div>
@@ -76,10 +96,11 @@
   </div>
 
   <table class="grid">
-    <thead><tr><th>구분</th><th>직원</th><th>직영</th><th>협력업체</th><th>일계</th></tr></thead>
+    <thead><tr><th>구분</th><th>직원</th><th>직영</th><th>협력업체</th><th>일계</th><th>누계</th></tr></thead>
     <tbody><tr><td class="lbl">투입인원(명)</td>
       <td><input type="text" data-c="p_off"></td><td><input type="text" data-c="p_own"></td><td><input type="text" data-c="p_par"></td>
-      <td><input type="text" data-c="p_day" readonly style="background:#f6f8fa;font-weight:700"></td></tr></tbody>
+      <td><input type="text" data-c="p_day" readonly style="background:#f6f8fa;font-weight:700"></td>
+      <td><input type="text" data-c="p_cum"></td></tr></tbody>
   </table>
 
   <div class="work">
@@ -103,7 +124,7 @@
         <td class="lbl vlabel" rowspan="3">안전교육</td>
         <td><input type="text" data-c="edu_g1"></td>
         <td style="white-space:nowrap"><input type="text" data-c="edu_n1" style="width:38px"> 명</td>
-        <td class="lbl" rowspan="3" style="font-weight:400;color:#111;background:#fff;border-right:1px solid var(--line)">금일 <input type="text" data-c="acc_day" style="width:34px;border:none;border-bottom:1px solid #999;text-align:center"> 명<br>누계 <input type="text" data-c="acc_tot" style="width:34px;border:none;border-bottom:1px solid #999;text-align:center"> 명</td>
+        <td class="lbl" rowspan="3" style="font-weight:400;color:#111;background:#fff;border-right:1px solid var(--line)">금일 <input type="text" data-c="acc_day" readonly style="width:34px;border:none;border-bottom:1px solid #999;text-align:center;background:#f6f8fa;font-weight:700"> 명<br>누계 <input type="text" data-c="acc_tot" style="width:34px;border:none;border-bottom:1px solid #999;text-align:center"> 명</td>
         <td rowspan="3" style="padding:0;border-left:1px solid var(--line)"><textarea data-c="edu_note" style="width:100%;border:none;font-family:inherit;font-size:13px;min-height:82px;resize:vertical;padding:6px"></textarea></td>
       </tr>
       <tr><td><input type="text" data-c="edu_g2"></td><td style="white-space:nowrap"><input type="text" data-c="edu_n2" style="width:38px"> 명</td></tr>
@@ -115,6 +136,13 @@
 
   <div class="foot">- 위험성평가 전파일지, 안전조치 이행 및 작업중지권 확인, 건강상태확인 후면 첨부 -</div>
  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="msheet"><h3 id="mTitle">서명</h3><p>아래 칸에 손가락 또는 스타일러스로 서명하세요</p>
+    <div class="padwrap"><canvas id="padBig"></canvas></div>
+    <div class="mrow"><button class="btn d" onclick="undoBig()">↩ 지우기</button><button class="btn g" onclick="closeModal()">취소</button><button class="btn p" onclick="confirmSig()">✔ 서명 완료</button></div>
+  </div>
 </div>
 
 <div class="controls">
@@ -183,13 +211,15 @@ function printDoc(){ setPrintTitle(); window.print(); }
 function setToday(){ document.getElementById('day').value=new Date().toISOString().slice(0,10); }
 function allC(){ return [...document.querySelectorAll('[data-c]')]; }
 function clearAll(){ if(!confirm('입력한 내용을 모두 지울까요?'))return; try{localStorage.removeItem('checkDraft');}catch(e){}
-  buildSites(); buildChecks(); buildEq(4); allC().forEach(el=>el.value=''); document.getElementById('wx').value='맑음'; setToday(); }
+  buildSites(); buildChecks(); buildEq(4); allC().forEach(el=>el.value=''); document.getElementById('wx').value='맑음'; setToday();
+  document.querySelectorAll('.signcell').forEach(c=>{ const cn=c.querySelector('canvas'); cn.getContext('2d').clearRect(0,0,cn.width,cn.height); c.querySelector('.ph').style.display=''; }); }
 function segVal(k){ const s=document.querySelector(`.seg[data-k="${k}"]`); return s.querySelector('.n.on')?'n':'y'; }
 function saveDraft(){
   const data={ site:document.getElementById('site').value, day:day.value, wx:document.getElementById('wx').value,
     fields:Object.fromEntries(allC().map(el=>[el.dataset.c, el.value])),
     eq:[...document.querySelectorAll('#eqrows tr')].map(tr=>({ name:tr.querySelector('[data-e=name]').value, cnt:tr.querySelector('[data-e=cnt]').value })),
-    checks:Object.fromEntries([...document.querySelectorAll('.seg')].map(s=>[s.dataset.k, segVal(s.dataset.k)])) };
+    checks:Object.fromEntries([...document.querySelectorAll('.seg')].map(s=>[s.dataset.k, segVal(s.dataset.k)])),
+    appr:apprData() };
   try{ localStorage.setItem('checkDraft',JSON.stringify(data)); alert('임시저장 완료.'); }catch(e){ alert('저장 실패: '+e.message); }
 }
 function loadDraft(){
@@ -202,12 +232,38 @@ function loadDraft(){
   if(eq){ const trs=document.querySelectorAll('#eqrows tr'); eq.forEach((e,i)=>{ if(trs[i]){ trs[i].querySelector('[data-e=name]').value=e.name||''; trs[i].querySelector('[data-e=cnt]').value=e.cnt||''; }}); }
   if(d.fields) allC().forEach(el=>{ if(d.fields[el.dataset.c]!=null) el.value=d.fields[el.dataset.c]; });
   if(d.checks) Object.entries(d.checks).forEach(([k,v])=>{ const s=document.querySelector(`.seg[data-k="${k}"]`); if(s){ s.querySelector('.y').classList.toggle('on',v==='y'); s.querySelector('.n').classList.toggle('on',v==='n'); }});
+  restoreAppr(d.appr); calcEdu();
   return true;
 }
 /* 투입인원 일계 자동 합산 */
 function numP(k){ const el=document.querySelector('[data-c='+k+']'); return el?(parseInt((el.value||'').replace(/[^0-9]/g,''),10)||0):0; }
 function calcPeople(){ const t=numP('p_off')+numP('p_own')+numP('p_par'); const el=document.querySelector('[data-c=p_day]'); if(el) el.value=t?t:''; }
 ['p_off','p_own','p_par'].forEach(k=>{ const el=document.querySelector('[data-c='+k+']'); if(el) el.addEventListener('input',calcPeople); });
+
+/* 안전교육 금일 인원 = 교육 인원 합산 */
+function calcEdu(){ const t=numP('edu_n1')+numP('edu_n2')+numP('edu_n3'); const el=document.querySelector('[data-c=acc_day]'); if(el) el.value=t?t:''; }
+['edu_n1','edu_n2','edu_n3'].forEach(k=>{ const el=document.querySelector('[data-c='+k+']'); if(el) el.addEventListener('input',calcEdu); });
+
+/* 결재 서명 모달 */
+const DPR=Math.max(window.devicePixelRatio||1,2);
+const modal=document.getElementById('modal'), padBig=document.getElementById('padBig'), bctx=padBig.getContext('2d');
+let drawing=false, hasInk=false, last=null, curCell=null;
+function sizeBig(){ const r=padBig.getBoundingClientRect(); padBig.width=r.width*DPR; padBig.height=r.height*DPR;
+  bctx.setTransform(1,0,0,1,0,0); bctx.scale(DPR,DPR); bctx.lineWidth=6.4; bctx.lineCap='round'; bctx.lineJoin='round'; bctx.strokeStyle='#000'; hasInk=false; }
+function posBig(e){ const r=padBig.getBoundingClientRect(); return {x:e.clientX-r.left,y:e.clientY-r.top}; }
+padBig.addEventListener('pointerdown',e=>{ e.preventDefault(); drawing=true; last=posBig(e); try{padBig.setPointerCapture(e.pointerId);}catch(_){}; bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(last.x+0.1,last.y+0.1); bctx.stroke(); hasInk=true; });
+padBig.addEventListener('pointermove',e=>{ if(!drawing)return; e.preventDefault(); const p=posBig(e); bctx.beginPath(); bctx.moveTo(last.x,last.y); bctx.lineTo(p.x,p.y); bctx.stroke(); last=p; hasInk=true; });
+padBig.addEventListener('pointerup',()=>drawing=false); padBig.addEventListener('pointercancel',()=>drawing=false);
+function openSig(cell){ curCell=cell; document.getElementById('mTitle').textContent=(cell.dataset.appr||'')+' 서명'; modal.classList.add('show'); requestAnimationFrame(sizeBig); }
+function closeModal(){ modal.classList.remove('show'); }
+function undoBig(){ bctx.save(); bctx.setTransform(1,0,0,1,0,0); bctx.clearRect(0,0,padBig.width,padBig.height); bctx.restore(); hasInk=false; }
+function confirmSig(){ const cell=curCell; if(!cell){ closeModal(); return; }
+  if(!hasInk){ const cn=cell.querySelector('canvas'); cn.getContext('2d').clearRect(0,0,cn.width,cn.height); cell.querySelector('.ph').style.display=''; closeModal(); return; }
+  const cnv=cell.querySelector('canvas'), r=cell.getBoundingClientRect(); cnv.width=r.width*DPR; cnv.height=53*DPR;
+  cnv.getContext('2d').drawImage(padBig,0,0,padBig.width,padBig.height,0,0,cnv.width,cnv.height); cell.querySelector('.ph').style.display='none'; closeModal(); }
+function apprData(){ return Object.fromEntries([...document.querySelectorAll('.signcell')].map(c=>[c.dataset.appr,(c.querySelector('.ph').style.display==='none')?c.querySelector('canvas').toDataURL('image/png'):''])); }
+function restoreAppr(d){ if(!d)return; Object.entries(d).forEach(([who,img])=>{ if(!img)return; const cell=document.querySelector('.signcell[data-appr="'+who+'"]'); if(!cell)return; const cn=cell.querySelector('canvas'), im=new Image();
+  im.onload=()=>{ const r=cell.getBoundingClientRect(); cn.width=r.width*DPR; cn.height=53*DPR; cn.getContext('2d').drawImage(im,0,0,cn.width,cn.height); }; im.src=img; cell.querySelector('.ph').style.display='none'; }); }
 
 buildSites();
 if(!loadDraft()){ buildChecks(); buildEq(4); setToday(); }
