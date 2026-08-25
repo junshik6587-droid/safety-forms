@@ -178,11 +178,13 @@ function buildChecks(){
       const tr=document.createElement('tr');
       let grpcell = ii===0 ? `<td class="grp" rowspan="${g[1].length}">${g[0]}</td>` : '';
       tr.innerHTML = grpcell + `<td class="item">${ii+1}. ${it}</td>
-        <td><div class="seg" data-k="${gi}_${ii}"><button type="button" class="y on">양호</button><button type="button" class="n">불량</button></div></td>`;
+        <td><div class="seg" data-k="${gi}_${ii}"><button type="button" class="y">양호</button><button type="button" class="n">불량</button></div></td>`;
       const seg=tr.querySelector('.seg');
       seg.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
-        seg.querySelector('.y').classList.toggle('on', b.classList.contains('y'));
-        seg.querySelector('.n').classList.toggle('on', b.classList.contains('n'));
+        const target=b.classList.contains('y')?seg.querySelector('.y'):seg.querySelector('.n');
+        const wasOn=target.classList.contains('on');
+        seg.querySelector('.y').classList.remove('on'); seg.querySelector('.n').classList.remove('on');
+        if(!wasOn) target.classList.add('on');
       }));
       tb.appendChild(tr);
     });
@@ -213,7 +215,7 @@ function allC(){ return [...document.querySelectorAll('[data-c]')]; }
 function clearAll(){ if(!confirm('입력한 내용을 모두 지울까요?'))return; try{localStorage.removeItem('checkDraft');}catch(e){}
   buildSites(); buildChecks(); buildEq(4); allC().forEach(el=>el.value=''); document.getElementById('wx').value='맑음'; setToday();
   document.querySelectorAll('.signcell').forEach(c=>{ const cn=c.querySelector('canvas'); cn.getContext('2d').clearRect(0,0,cn.width,cn.height); c.querySelector('.ph').style.display=''; }); }
-function segVal(k){ const s=document.querySelector(`.seg[data-k="${k}"]`); return s.querySelector('.n.on')?'n':'y'; }
+function segVal(k){ const s=document.querySelector(`.seg[data-k="${k}"]`); return s.querySelector('.y.on')?'y':(s.querySelector('.n.on')?'n':''); }
 function saveDraft(){
   const data={ site:document.getElementById('site').value, day:day.value, wx:document.getElementById('wx').value,
     fields:Object.fromEntries(allC().map(el=>[el.dataset.c, el.value])),
