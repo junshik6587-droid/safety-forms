@@ -176,8 +176,10 @@ function makeRow(n){
   tr.querySelectorAll('.tog').forEach(tg=>{
     tg.querySelectorAll('button').forEach(b=>{
       b.addEventListener('click',()=>{
+        const cls=b.dataset.v==='y'?'sel-y':'sel-n';
+        const wasSel=b.classList.contains(cls);
         tg.querySelectorAll('button').forEach(x=>x.classList.remove('sel-y','sel-n'));
-        b.classList.add(b.dataset.v==='y'?'sel-y':'sel-n');
+        if(!wasSel) b.classList.add(cls);
       });
     });
   });
