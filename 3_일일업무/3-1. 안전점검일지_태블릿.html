@@ -234,7 +234,7 @@ function loadDraft(){
   if(eq){ const trs=document.querySelectorAll('#eqrows tr'); eq.forEach((e,i)=>{ if(trs[i]){ trs[i].querySelector('[data-e=name]').value=e.name||''; trs[i].querySelector('[data-e=cnt]').value=e.cnt||''; }}); }
   if(d.fields) allC().forEach(el=>{ if(d.fields[el.dataset.c]!=null) el.value=d.fields[el.dataset.c]; });
   if(d.checks) Object.entries(d.checks).forEach(([k,v])=>{ const s=document.querySelector(`.seg[data-k="${k}"]`); if(s){ s.querySelector('.y').classList.toggle('on',v==='y'); s.querySelector('.n').classList.toggle('on',v==='n'); }});
-  restoreAppr(d.appr); calcEdu();
+  restoreAppr(d.appr);
   return true;
 }
 /* 투입인원 일계 자동 합산 */
@@ -242,9 +242,7 @@ function numP(k){ const el=document.querySelector('[data-c='+k+']'); return el?(
 function calcPeople(){ const t=numP('p_off')+numP('p_own')+numP('p_par'); const el=document.querySelector('[data-c=p_day]'); if(el) el.value=t?t:''; }
 ['p_off','p_own','p_par'].forEach(k=>{ const el=document.querySelector('[data-c='+k+']'); if(el) el.addEventListener('input',calcPeople); });
 
-/* 안전교육 금일 인원 = 교육 인원 합산 */
-function calcEdu(){ const t=numP('edu_n1')+numP('edu_n2')+numP('edu_n3'); const el=document.querySelector('[data-c=acc_day]'); if(el) el.value=t?t:''; }
-['edu_n1','edu_n2','edu_n3'].forEach(k=>{ const el=document.querySelector('[data-c='+k+']'); if(el) el.addEventListener('input',calcEdu); });
+
 
 /* 결재 서명 모달 */
 const DPR=Math.max(window.devicePixelRatio||1,2);
